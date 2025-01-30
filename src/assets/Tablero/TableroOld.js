@@ -1,4 +1,5 @@
-var mousedown = false;
+
+  var mousedown = false;
   var mouseStartXposition;
   var zoomContainer = $("#container");
   var $box;
@@ -65,3 +66,4 @@ $(document).ready(function() {
 
   initGrid();//start on page load
 });
+

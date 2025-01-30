@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 
+import { describe, expect, it } from "vitest";
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -11,7 +13,7 @@ function App() {
         <header>Welcome to SnDR</header>
         <body>
           <p>
-          
+            Texto
           </p>
         </body>
       </div>
@@ -20,3 +22,9 @@ function App() {
 }
 
 export default App
+describe("Example Suite",()=> {
+  it("shouldpass",()=>{
+    const sum = 2+2;
+    expect(sum).toEqual(4)
+  })
+})
