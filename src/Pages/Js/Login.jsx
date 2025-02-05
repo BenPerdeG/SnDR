@@ -14,7 +14,7 @@ class Login extends React.Component {
             <a href="#">About</a>
             <a href="#">Services</a>
             <a href="#">Contact</a>
-            <button className="btnLogin-popup">LoginPopUp</button>
+            <button className="btnLogin-popup">Login</button>
           </nav>
         </header>
       </div>
