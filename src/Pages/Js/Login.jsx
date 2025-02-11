@@ -2,24 +2,25 @@ import React, { useState } from "react";
 import "../Css/Login.css";
 
 const Login = () => {
-  const [isActive, setIsActive] = useState(false); 
+  const [isActive, setIsActive] = useState(false);
+  const [isPopUp, setIsPopUp] = useState(false); 
 
   return (
     <div className="LoginContainer">
       <header className="LoginHeader">
         <h2 className="logo">Logo</h2>
         <nav className="navigation">
-          <a href="#">Home</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Contact</a>
-          <button className="btnLogin-popup">Login</button>
+          <a href="#">Inicio</a>
+          <a href="#">Mis Partidas</a>
+          <a href="#">Buscar Partidas</a>
+          <a href="#">Mi Perfil</a>
+          <button className="btnLogin-popup" onClick={() => setIsPopUp(true)}>Login</button>
         </nav>
       </header>
 
       {/* Add 'active' class conditionally */}
-      <div className={`wrapper ${isActive ? "active" : ""}`}>
-        <span className="icon-close" >
+      <div className={`wrapper ${isActive ? "active" : ""} ${isPopUp ? "popUp":""}`}>
+        <span className="icon-close" onClick={() => setIsPopUp(false)}>
           <ion-icon name="close"></ion-icon>
         </span>
 
