@@ -108,7 +108,7 @@ backdrop-filter: blur(20px);
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transition: transform .5s ease, height .2s ease;
+    transition: transform .3s ease, height .2s ease;
     transform: scale(0);
 }
 
