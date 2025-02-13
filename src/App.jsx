@@ -19,7 +19,9 @@ function App() {
             <Route path="/" element={<Inicio isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
             <Route path="/misPartidas" element={<MisPartidas isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
             <Route path="/search" element={<Search isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<Profile isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
+
+
           </Routes>
         </BrowserRouter>
       </UserProvider>

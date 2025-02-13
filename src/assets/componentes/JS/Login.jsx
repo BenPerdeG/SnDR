@@ -3,6 +3,31 @@ import "../CSS/Login.css"
 
 const Login = ({ isPopUp, setIsPopUp }) => {
   const [isActive, setIsActive] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://tu-servidor.com/src/inc/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Login exitoso!");
+        setIsPopUp(false);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      setError("Error de conexión al servidor");
+    }
+  };
+
 
   return (
     <div className={`wrapper ${isActive ? "active" : ""} ${isPopUp ? "popUp" : ""}`}>
@@ -42,10 +67,11 @@ const Login = ({ isPopUp, setIsPopUp }) => {
           </div>
         </form>
       </div>
+
       {/* Register Form */}
       <div className="form-box register">
           <h2 className="mbot20">Register</h2>
-          <form action="#">
+          <form action="register.php">
             <div className="input-box">
               <span className="icon"></span>
               <input type="text" className="mr10" placeholder="Username" required />
