@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../Css/Login.css";
+import "../Css/Profile.css";
 
-const Login = () => {
+const Profile = () => {
   const [isActive, setIsActive] = useState(false);
   const [isPopUp, setIsPopUp] = useState(false); 
 
@@ -11,9 +11,9 @@ const Login = () => {
         <h2 className="logo">Logo</h2>
         <nav className="navigation">
           <a href="/">Inicio</a>
-          <a href="misPartidas">Mis Partidas</a>
+          <a href="misPartidas">MisPartidas</a>
           <a href="search">Buscar Partidas</a>
-          <a href="profile">Mi Perfil</a>
+          <a href="profile">AAAAAAAAAAAAAAAAAAAAAAAAAAAA</a>
           <button className="btnLogin-popup" onClick={() => setIsPopUp(true)}>Login</button>
         </nav>
       </header>
@@ -77,4 +77,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Profile;

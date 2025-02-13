@@ -1,0 +1,230 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('https://dnd.wizards.com/assets/img/footer-background.png');
+    background-size: cover;
+    background-position: center;
+}
+
+
+.LoginHeader{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    padding-left:100px;
+   
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    transition: .5s;
+    
+    
+}
+
+.LoginHeader:hover{
+    background: #192630;
+}
+
+
+.logo{
+    margin-top: 2%;
+    font-size: 2em;
+    color: #fff;
+    user-select: none;
+   
+}
+
+.navigation a{
+    position: relative;
+    font-size: 1em;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
+}
+
+.navigation .btnLogin-popup{
+    width: 130px;
+    height: 50px;
+    background: transparent;
+    border: 2px solid #fff;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: 500;
+    margin-left: 40px;
+    margin-right: 20px;
+    transition: .5s;
+}
+
+.navigation .btnLogin-popup:hover{
+background: #fff;
+color: rgba(22, 41, 56, .5);
+backdrop-filter: blur(20px);
+}
+
+.navigation a::after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: -6px;
+    height: 3px;
+    background: #fff;
+    border-radius: 5px;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform .5s;
+}
+.navigation a:hover::after{
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+.wrapper {
+    position: relative;
+    width: 500px;
+    height: 550px;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, .5);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform .3s ease, height .2s ease;
+    transform: scale(0);
+}
+
+.wrapper.popUp{
+    transform: scale(1);
+}
+
+
+form{
+    text-align: left;
+}
+
+.form-box h2 {
+    font-size: 2em;
+    text-align: center;
+}
+
+.input-box input{
+    padding: 4px;
+    margin-bottom: 5px;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    font-size: 1em;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+}
+
+
+
+.input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #fff;
+    margin: 30px 0;
+}
+
+.btn{
+    width: 100%;
+    height: 45px;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.wrapper .form-box {
+    padding: 40px;
+}
+
+.wrapper .icon-close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    background: #192630;
+    font-size: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   border-bottom-left-radius: 20px;
+   cursor: pointer;
+   z-index: 1;
+}
+
+.remember-forgot{
+    font-size: .9em;
+    font-weight: 500;
+    margin: -15px 0 15px;
+}
+
+.login-register{
+    font-size: .9em;
+    text-align: center;
+    font-weight: 500;
+    margin: 25px 0 10px;
+}
+
+.login-register a{
+    text-decoration: none;
+    font-weight: 600;
+}
+.login-register a:hover{
+    text-decoration:underline;
+}
+
+.wrapper.active{
+    height: 600px;
+}
+
+.wrapper .form-box.login{
+   transition: transform .18s ease;
+   transform: translateX(0);
+}
+.wrapper.active .form-box.login{
+    transition: none;
+    transform: translateX(-400px);
+}
+
+
+.wrapper .form-box.register{
+    position: absolute;
+    transition: none;
+    transform: translate(400px);
+}
+
+.wrapper.active .form-box.register{
+    transition: transform .18s ease;
+   transform: translateX(0);
+}
+
+.mr10 {margin-right: 10px;}
+.mbot20 {margin-bottom: 20px; }
+
