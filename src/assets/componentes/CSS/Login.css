@@ -12,7 +12,7 @@ body{
     min-height: 100vh;
     background: url('https://dnd.wizards.com/assets/img/footer-background.png');
     background-size: cover;
-    background-position: center;
+    background-position: center;   
 }
 
 
@@ -110,6 +110,7 @@ backdrop-filter: blur(20px);
     overflow: hidden;
     transition: transform .3s ease, height .2s ease;
     transform: scale(0);
+    color: #fff;
 }
 
 .wrapper.popUp{

@@ -1,24 +1,29 @@
 import React, { useState } from "react";
-import "../CSS/Login.css"
+import "../CSS/Login.css";
 
 const Login = ({ isPopUp, setIsPopUp }) => {
   const [isActive, setIsActive] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://tu-servidor.com/src/inc/login.php", {
+      const response = await fetch("https://sndr.42web.io/src/inc/registrar.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(form),
       });
 
       const data = await response.json();
       if (data.success) {
-        alert("Login exitoso!");
+        alert("Registro exitoso!");
         setIsPopUp(false);
       } else {
         setError(data.message);
@@ -41,15 +46,15 @@ const Login = ({ isPopUp, setIsPopUp }) => {
         <form action="#">
           <div className="input-box">
             <span className="icon"></span>
-            <input type="email" className="mr10" placeholder="Email" required />
+            <input type="email" name="a" className="mr10" placeholder="Email" required />
           </div>
           <div className="input-box">
             <span className="icon"></span>
-            <input type="password" className="mr10" placeholder="Password" required />
+            <input type="password" name="b" className="mr10" placeholder="Password" required />
           </div>
           <div className="remember-forgot">
             <label>
-              <input type="checkbox" className="mr10 mbot20" />Remember me
+              <input type="checkbox" name="c" className="mr10 mbot20" />Remember me
             </label>
           </div>
           <button type="submit" className="btn">Login</button>
@@ -71,21 +76,21 @@ const Login = ({ isPopUp, setIsPopUp }) => {
       {/* Register Form */}
       <div className="form-box register">
           <h2 className="mbot20">Register</h2>
-          <form action="register.php">
+          <form onSubmit={handleSubmit}>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="text" className="mr10" placeholder="Username" required />
+              <input type="text" name="name" className="mr10" placeholder="Username" required onChange={handleChange} autoComplete="username"/>
             </div>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="email" className="mr10" placeholder="Email" required />
+              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChange} autoComplete="email"/>
             </div>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="password" className="mr10" placeholder="Password" required />
+              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChange} autoComplete="new_password"/>
             </div>
             <div className="remember-forgot">
-              <label><input type="checkbox" className="mr10 mbot20" />I agree to the terms & conditions</label>
+              <label><input type="checkbox" name="terms" className="mr10 mbot20" />I agree to the terms & conditions</label>
             </div>
             <button type="submit" className="btn">Register</button>
             <div className="login-register">

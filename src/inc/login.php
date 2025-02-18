@@ -9,7 +9,7 @@ if (isset($data->email) && isset($data->password)) {
     $email = mysqli_real_escape_string($con, $data->email);
     $password = mysqli_real_escape_string($con, $data->password);
 
-    $query = "SELECT * FROM users WHERE email='$email'";
+    $query = "SELECT * FROM Usuarios WHERE email='$email'";
     $result = mysqli_query($con, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {
