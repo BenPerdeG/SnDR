@@ -20,7 +20,7 @@ $name = mysqli_real_escape_string($con, $data->name);
 $email = mysqli_real_escape_string($con, $data->email);
 $password = password_hash($data->password, PASSWORD_BCRYPT); // Encriptar contraseña
 
-$query = "INSERT INTO Usuario (nombre, email, password) VALUES (?, ?, ?)";
+$query = "INSERT INTO Usuario (nombre, email, 'contraseña') VALUES (?, ?, ?)";
 
 $stmt = mysqli_prepare($con, $query);
 
