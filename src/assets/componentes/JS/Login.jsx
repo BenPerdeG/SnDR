@@ -15,13 +15,15 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://sndr.42web.io/src/inc/registrar.php", {
+      console.log("Form Data:", form); // Debugging statement
+      const response = await fetch("https://sndr.42web.io/src/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
+  
       const data = await response.json();
+      console.log("Response Data:", data); // Debugging statement
       if (data.success) {
         alert("Registro exitoso!");
         setIsPopUp(false);
@@ -29,6 +31,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
         setError(data.message);
       }
     } catch (error) {
+      console.error("Error:", error); // Debugging statement
       setError("Error de conexión al servidor");
     }
   };
