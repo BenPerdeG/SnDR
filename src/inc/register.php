@@ -2,10 +2,17 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include "conn.php";
-header("Access-Control-Allow-Origin: *");
+
+// CORS headers
+header("Access-Control-Allow-Origin: *"); // Allow all domains (or specify your frontend domain, e.g., https://sndr.42web.io)
 header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // Allow POST and OPTIONS requests
+header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow specific headers
+
+// Handle preflight requests (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0); // Exit early for preflight requests
+}
 
 // Debug: Log the request method
 error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);

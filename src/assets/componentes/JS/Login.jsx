@@ -16,7 +16,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
     e.preventDefault();
     try {
       console.log("Form Data:", form); // Debugging statement
-      const response = await fetch("https://sndr.42web.io/src/inc/register.php", {
+      const response = await fetch("https://sndr.42web.io/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
