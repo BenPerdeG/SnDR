@@ -1,23 +1,13 @@
-import Login from "../../assets/componentes/JS/Login.jsx"; // Importa el componente Login
+import Login from "../../assets/componentes/JS/LoginComp.jsx"; // Importa el componente Login
 import "../Css/MisPartidas.css"
+import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 
 const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   return (
     <div className="LoginContainer">
-      <header className="LoginHeader">
-        <h2 className="logo">Logo</h2>
-        <nav className="navigation">
-          <a href="/">Inicio</a>
-          <a href="/misPartidas">MIS PARTIDAS</a>
-          <a href="/search">Buscar Partidas</a>
-          <a href="/profile">Mi Perfil</a>
-          {/* Botón que activa el pop-up */}
-          <button className="btnLogin-popup" onClick={() => setIsPopUp(true)}>
-            Login
-          </button>
-        </nav>
+       <header className="LoginHeader">
+        <TopNav setIsPopUp={setIsPopUp} />
       </header>
-
       {/* Renderiza Login solo si isPopUp es true */}
       {isPopUp && <Login isPopUp={isPopUp} setIsPopUp={setIsPopUp} />}
     </div>

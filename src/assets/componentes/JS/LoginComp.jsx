@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../CSS/Login.css";
+import "../CSS/LoginComp.css";
 
 const Login = ({ isPopUp, setIsPopUp }) => {
   const [isActive, setIsActive] = useState(false);

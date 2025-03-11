@@ -4,6 +4,7 @@ import Inicio from "./Pages/Js/Inicio.jsx";
 import MisPartidas from "./Pages/Js/MisPartidas.jsx";
 import Search from "./Pages/Js/Search.jsx";
 import Profile from "./Pages/Js/Profile.jsx";
+import Login from "./Pages/Js/Login.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./context/UserContext"; // Si existe
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/misPartidas" element={<MisPartidas isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
             <Route path="/search" element={<Search isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
             <Route path="/profile" element={<Profile isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
+            <Route path="/login" element={<Login />} />
 
 
           </Routes>
