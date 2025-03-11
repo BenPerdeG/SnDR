@@ -6,24 +6,28 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [formReg, setFormReg] = useState({ name: "", email: "", password: "" });
+  const [formLog, setFormLog] = useState({ email: "", password: "" });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChangeReg = (e) => {
+    setFormReg({ ...formReg, [e.target.name]: e.target.value });
+  };
+  const handleChangeLog = (e) => {
+    setFormLog({ ...formLog, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmitRegister = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", form); // Debugging statement
-      const response = await fetch("https://sndr.42web.io/inc/register.php", {
+      console.log("Form Data:", formReg); 
+      const responseRegister = await fetch("https://sndr.42web.io/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formReg),
       });
   
-      const data = await response.json();
-      console.log("Response Data:", data); // Debugging statement
+      const data = await responseRegister.json();
+      console.log("Response Data:", data); 
       if (data.success) {
         alert("Registro exitoso!");
         setIsPopUp(false);
@@ -31,7 +35,31 @@ const Login = ({ isPopUp, setIsPopUp }) => {
         setError(data.message);
       }
     } catch (error) {
-      console.error("Error:", error); // Debugging statement
+      console.error("Error:", error); 
+      setError("Error de conexión al servidor");
+    }
+  };
+
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("Form Data:", formLog);
+      const responseLogin = await fetch("https://sndr.42web.io/inc/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formLog),
+      });
+  
+      const data = await responseLogin.json();
+      console.log("Response Data:", data); 
+      if (data.success) {
+        alert("Login exitoso!");
+        setIsPopUp(false);
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
       setError("Error de conexión al servidor");
     }
   };
@@ -46,16 +74,16 @@ const Login = ({ isPopUp, setIsPopUp }) => {
       {/* Login Form */}
       <div className="form-box login">
         <h2 className="mbot20">Login</h2>
-        <form action="#">
+        <form onSubmit={handleSubmitLogin}>
           <div className="input-box">
-            <span className="icon"></span>
-            <input type="email" name="a" className="mr10" placeholder="Email" required />
-          </div>
-          <div className="input-box">
-            <span className="icon"></span>
-            <input type="password" name="b" className="mr10" placeholder="Password" required />
-          </div>
-          <div className="remember-forgot">
+              <span className="icon"></span>
+              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChangeLog} autoComplete="email"/>
+            </div>
+            <div className="input-box">
+              <span className="icon"></span>
+              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChangeLog} autoComplete="new_password"/>
+            </div>
+            <div className="remember-forgot">
             <label>
               <input type="checkbox" name="c" className="mr10 mbot20" />Remember me
             </label>
@@ -79,18 +107,18 @@ const Login = ({ isPopUp, setIsPopUp }) => {
       {/* Register Form */}
       <div className="form-box register">
           <h2 className="mbot20">Register</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmitRegister}>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="text" name="name" className="mr10" placeholder="Username" required onChange={handleChange} autoComplete="username"/>
+              <input type="text" name="name" className="mr10" placeholder="Username" required onChange={handleChangeReg} autoComplete="username"/>
             </div>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChange} autoComplete="email"/>
+              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChangeReg} autoComplete="email"/>
             </div>
             <div className="input-box">
               <span className="icon"></span>
-              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChange} autoComplete="new_password"/>
+              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChangeReg} autoComplete="new_password"/>
             </div>
             <div className="remember-forgot">
               <label><input type="checkbox" name="terms" className="mr10 mbot20" />I agree to the terms & conditions</label>
