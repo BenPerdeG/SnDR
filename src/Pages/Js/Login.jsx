@@ -19,23 +19,24 @@ const Login = () => {
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", formReg); 
+      console.log("Form Data:", formReg);
       const responseRegister = await fetch("https://sndr.42web.io/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formReg),
       });
-  
+
       const data = await responseRegister.json();
-      console.log("Response Data:", data); 
+      console.log("Response Data:", data);
       if (data.success) {
+        setUser(true); // Update UserContext to true
         alert("Registro exitoso!");
-        setIsPopUp(false);
+        setIsPopUp(false); // Close the popup
       } else {
         setError(data.message);
       }
     } catch (error) {
-      console.error("Error:", error); 
+      console.error("Error:", error);
       setError("Error de conexión al servidor");
     }
   };
@@ -49,12 +50,13 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formLog),
       });
-  
+
       const data = await responseLogin.json();
-      console.log("Response Data:", data); 
+      console.log("Response Data:", data);
       if (data.success) {
+        setUser(true); // Update UserContext to true
         alert("Login exitoso!");
-        setIsPopUp(false);
+        setIsPopUp(false); // Close the popup
       } else {
         setError(data.message);
       }

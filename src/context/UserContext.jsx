@@ -7,7 +7,7 @@ export const UserProvider = ({ children }) => {
   // Initialize user state from localStorage or default to false
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : false; // Ensure JSON.parse is used
+    return savedUser ? JSON.parse(savedUser) : false;
   });
 
   // Update localStorage whenever the user state changes
