@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react"; // Add useContext here
 
 // Create the UserContext
 const UserContext = createContext();
@@ -22,7 +22,6 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the UserContext
 export const useUser = () => {
-  return useContext(UserContext);
+  return useContext(UserContext); // Use the imported useContext hook
 };

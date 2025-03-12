@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // Add these hooks
 import "../CSS/LoginComp.css";
 import { useUser } from "../../../context/UserContext.jsx";
 
@@ -8,7 +9,9 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const [formReg, setFormReg] = useState({ name: "", email: "", password: "" });
   const [formLog, setFormLog] = useState({ email: "", password: "" });
 
-  const { setUser } = useUser(); // Use the useUser hook
+  const { setUser } = useUser();
+  const location = useLocation(); // Get the current location
+  const navigate = useNavigate(); // Get the navigate function
 
   const handleChangeReg = (e) => {
     setFormReg({ ...formReg, [e.target.name]: e.target.value });
@@ -21,7 +24,6 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", formReg);
       const responseRegister = await fetch("https://sndr.42web.io/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,11 +31,12 @@ const Login = ({ isPopUp, setIsPopUp }) => {
       });
 
       const data = await responseRegister.json();
-      console.log("Response Data:", data);
       if (data.success) {
         setUser(true); // Update UserContext to true
         alert("Registro exitoso!");
         setIsPopUp(false); // Close the popup
+        const from = location.state?.from || "/";
+        navigate(from);
       } else {
         setError(data.message);
       }
@@ -46,7 +49,6 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", formLog);
       const responseLogin = await fetch("https://sndr.42web.io/inc/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -54,11 +56,12 @@ const Login = ({ isPopUp, setIsPopUp }) => {
       });
 
       const data = await responseLogin.json();
-      console.log("Response Data:", data);
       if (data.success) {
         setUser(true); // Update UserContext to true
         alert("Login exitoso!");
         setIsPopUp(false); // Close the popup
+        const from = location.state?.from || "/";
+        navigate(from);
       } else {
         setError(data.message);
       }

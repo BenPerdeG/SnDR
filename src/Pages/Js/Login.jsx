@@ -1,25 +1,29 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../Css/Login.css";
+import { useUser } from "../../../context/UserContext.jsx";
 
-const Login = () => {
+const LoginPage = () => {
   const [isActive, setIsActive] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [formReg, setFormReg] = useState({ name: "", email: "", password: "" });
   const [formLog, setFormLog] = useState({ email: "", password: "" });
 
+  const { setUser } = useUser();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const handleChangeReg = (e) => {
     setFormReg({ ...formReg, [e.target.name]: e.target.value });
   };
+
   const handleChangeLog = (e) => {
     setFormLog({ ...formLog, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitRegister = async (e) => {
+  const handleSubmitRegisterPage = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", formReg);
       const responseRegister = await fetch("https://sndr.42web.io/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -27,11 +31,11 @@ const Login = () => {
       });
 
       const data = await responseRegister.json();
-      console.log("Response Data:", data);
       if (data.success) {
         setUser(true); // Update UserContext to true
         alert("Registro exitoso!");
-        setIsPopUp(false); // Close the popup
+        const from = location.state?.from || "/";
+        navigate(from); // Navigate to the intended page
       } else {
         setError(data.message);
       }
@@ -41,10 +45,9 @@ const Login = () => {
     }
   };
 
-  const handleSubmitLogin = async (e) => {
+  const handleSubmitLoginPage = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form Data:", formLog);
       const responseLogin = await fetch("https://sndr.42web.io/inc/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,11 +55,11 @@ const Login = () => {
       });
 
       const data = await responseLogin.json();
-      console.log("Response Data:", data);
       if (data.success) {
         setUser(true); // Update UserContext to true
         alert("Login exitoso!");
-        setIsPopUp(false); // Close the popup
+        const from = location.state?.from || "/";
+        navigate(from); // Navigate to the intended page
       } else {
         setError(data.message);
       }
@@ -66,27 +69,45 @@ const Login = () => {
     }
   };
 
-
   return (
     <div className={`wrapper ${isActive ? "active" : ""}`}>
       {/* Login Form */}
       <div className="form-box login">
         <h2 className="mbot20">Login</h2>
-        <form onSubmit={handleSubmitLogin}>
+        <form onSubmit={handleSubmitLoginPage}>
           <div className="input-box">
-              <span className="icon"></span>
-              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChangeLog} autoComplete="email"/>
-            </div>
-            <div className="input-box">
-              <span className="icon"></span>
-              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChangeLog} autoComplete="new_password"/>
-            </div>
-            <div className="remember-forgot">
+            <span className="icon"></span>
+            <input
+              type="email"
+              name="email"
+              className="mr10"
+              placeholder="Email"
+              required
+              onChange={handleChangeLog}
+              autoComplete="email"
+            />
+          </div>
+          <div className="input-box">
+            <span className="icon"></span>
+            <input
+              type="password"
+              name="password"
+              className="mr10"
+              placeholder="Password"
+              required
+              onChange={handleChangeLog}
+              autoComplete="new_password"
+            />
+          </div>
+          <div className="remember-forgot">
             <label>
-              <input type="checkbox" name="c" className="mr10 mbot20" />Remember me
+              <input type="checkbox" name="c" className="mr10 mbot20" />
+              Remember me
             </label>
           </div>
-          <button type="submit" className="btn">Login</button>
+          <button type="submit" className="btn">
+            Login
+          </button>
           <div className="login-register">
             <a href="#">
               <br />
@@ -104,31 +125,65 @@ const Login = () => {
 
       {/* Register Form */}
       <div className="form-box register">
-          <h2 className="mbot20">Register</h2>
-          <form onSubmit={handleSubmitRegister}>
-            <div className="input-box">
-              <span className="icon"></span>
-              <input type="text" name="name" className="mr10" placeholder="Username" required onChange={handleChangeReg} autoComplete="username"/>
-            </div>
-            <div className="input-box">
-              <span className="icon"></span>
-              <input type="email" name="email" className="mr10" placeholder="Email" required onChange={handleChangeReg} autoComplete="email"/>
-            </div>
-            <div className="input-box">
-              <span className="icon"></span>
-              <input type="password" name="password" className="mr10" placeholder="Password" required onChange={handleChangeReg} autoComplete="new_password"/>
-            </div>
-            <div className="remember-forgot">
-              <label><input type="checkbox" name="terms" className="mr10 mbot20" />I agree to the terms & conditions</label>
-            </div>
-            <button type="submit" className="btn">Register</button>
-            <div className="login-register">
-              <p>Already have an account? <a href="#" className="login-link" onClick={() => setIsActive(false)}>Login</a></p>
-            </div>
-          </form>
-        </div>
+        <h2 className="mbot20">Register</h2>
+        <form onSubmit={handleSubmitRegisterPage}>
+          <div className="input-box">
+            <span className="icon"></span>
+            <input
+              type="text"
+              name="name"
+              className="mr10"
+              placeholder="Username"
+              required
+              onChange={handleChangeReg}
+              autoComplete="username"
+            />
+          </div>
+          <div className="input-box">
+            <span className="icon"></span>
+            <input
+              type="email"
+              name="email"
+              className="mr10"
+              placeholder="Email"
+              required
+              onChange={handleChangeReg}
+              autoComplete="email"
+            />
+          </div>
+          <div className="input-box">
+            <span className="icon"></span>
+            <input
+              type="password"
+              name="password"
+              className="mr10"
+              placeholder="Password"
+              required
+              onChange={handleChangeReg}
+              autoComplete="new_password"
+            />
+          </div>
+          <div className="remember-forgot">
+            <label>
+              <input type="checkbox" name="terms" className="mr10 mbot20" />
+              I agree to the terms & conditions
+            </label>
+          </div>
+          <button type="submit" className="btn">
+            Register
+          </button>
+          <div className="login-register">
+            <p>
+              Already have an account?{" "}
+              <a href="#" className="login-link" onClick={() => setIsActive(false)}>
+                Login
+              </a>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;
