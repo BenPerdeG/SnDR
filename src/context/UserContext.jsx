@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from "react"; // Add useContext here
+import React, { createContext, useState, useEffect, useContext } from "react";
 
 // Create the UserContext
 const UserContext = createContext();
@@ -7,7 +7,7 @@ export const UserProvider = ({ children }) => {
   // Initialize user state from localStorage or default to false
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : false;
+    return savedUser ? JSON.parse(savedUser) : false; // Ensure JSON.parse is used
   });
 
   // Update localStorage whenever the user state changes
@@ -24,5 +24,5 @@ export const UserProvider = ({ children }) => {
 
 // Custom hook to use the UserContext
 export const useUser = () => {
-  return useContext(UserContext); // Use the imported useContext hook
+  return useContext(UserContext);
 };
