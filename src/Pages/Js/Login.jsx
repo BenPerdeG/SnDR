@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../Css/Login.css";
-import { useUser } from "../../../context/UserContext.jsx";
+import { useUser } from "../../context/UserContext.jsx";
 
 const LoginPage = () => {
   const [isActive, setIsActive] = useState(false);
@@ -29,13 +29,13 @@ const LoginPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formReg),
       });
-
+  
       const data = await responseRegister.json();
       if (data.success) {
         setUser(true); // Update UserContext to true
         alert("Registro exitoso!");
         const from = location.state?.from || "/";
-        navigate(from); // Navigate to the intended page
+        navigate(from, { state: { isPopUp: location.state?.isPopUp } }); // Pass isPopUp in state
       } else {
         setError(data.message);
       }
@@ -44,7 +44,7 @@ const LoginPage = () => {
       setError("Error de conexión al servidor");
     }
   };
-
+  
   const handleSubmitLoginPage = async (e) => {
     e.preventDefault();
     try {
@@ -53,13 +53,12 @@ const LoginPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formLog),
       });
-
+  
       const data = await responseLogin.json();
       if (data.success) {
         setUser(true); // Update UserContext to true
-        alert("Login exitoso!");
         const from = location.state?.from || "/";
-        navigate(from); // Navigate to the intended page
+        navigate(from, { state: { isPopUp: location.state?.isPopUp } }); // Pass isPopUp in state
       } else {
         setError(data.message);
       }

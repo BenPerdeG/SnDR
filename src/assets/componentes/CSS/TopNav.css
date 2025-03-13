@@ -1,0 +1,6 @@
+.btnLogin-popup{
+    transform: scale(1);
+}
+.btnLogin-popup.active{
+    transform: scale(0);
+    }

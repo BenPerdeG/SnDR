@@ -23,5 +23,5 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => {
-  return useContext(UserContext); // Use the imported useContext hook
+  return useContext(UserContext);
 };
