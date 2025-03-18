@@ -16,12 +16,12 @@ const Profile = ({ isPopUp, setIsPopUp }) => {
       <header className="LoginHeader">
         <TopNav setIsPopUp={setIsPopUp} />
       </header>
-
+      <div className="profile-container">
     
       <button className="cerrar" onClick={handleLogout}>
         CERRAR SESIÓN
       </button>
-
+      </div>
       {isPopUp && <Login isPopUp={isPopUp} setIsPopUp={setIsPopUp} />}
     </div>
   );
