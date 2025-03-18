@@ -64,6 +64,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
         navigate(from);
       } else {
         setError(data.message);
+        alert("Ha habido algún error en el Login");
       }
     } catch (error) {
       console.error("Error:", error);

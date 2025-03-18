@@ -4,18 +4,15 @@ ini_set('display_errors', 1);
 include "conn.php";
 
 // CORS headers
-header("Access-Control-Allow-Origin: *"); // Allow all domains (or specify your frontend domain, e.g., https://sndr.42web.io)
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
-header("Access-Control-Allow-Methods: POST, OPTIONS"); // Allow POST and OPTIONS requests
-header("Access-Control-Allow-Headers: Content-Type, Authorization"); // Allow specific headers
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Handle preflight requests (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0); // Exit early for preflight requests
+    exit(0);
 }
-
-// Debug: Log the request method
-error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Método no permitido"]);
@@ -40,12 +37,11 @@ if (empty($data->password)) {
     exit;
 }
 
-
 $email = mysqli_real_escape_string($con, $data->email);
-$password = password_hash($data->password, PASSWORD_BCRYPT); 
+$password = $data->password;
 
-$query = "Select email,password from Usuario where email= ? and password= ? "; 
-
+// Fetch the hashed password from the database based on the email
+$query = "SELECT password FROM Usuario WHERE email = ?";
 $stmt = mysqli_prepare($con, $query);
 
 if (!$stmt) {
@@ -53,13 +49,15 @@ if (!$stmt) {
     exit;
 }
 
-// Bind parameters in the correct order: name, email, password
-mysqli_stmt_bind_param($stmt, "ss",$email, $password);
+mysqli_stmt_bind_param($stmt, "s", $email);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_result($stmt, $hashed_password);
+mysqli_stmt_fetch($stmt);
 
-if (mysqli_stmt_execute($stmt)) {
+if ($hashed_password && password_verify($password, $hashed_password)) {
     echo json_encode(["success" => true, "message" => "Usuario Loggeado correctamente"]);
 } else {
-    echo json_encode(["success" => false, "message" => "Error al Loggear: " . mysqli_stmt_error($stmt)]);
+    echo json_encode(["success" => false, "message" => "Credenciales incorrectas"]);
 }
 
 mysqli_stmt_close($stmt);

@@ -15,6 +15,10 @@ body{
     background-position: center;
 }
 
+.cerrar{
+    size: 3rem;
+}
+
 
 .LoginHeader{
     position: fixed;
