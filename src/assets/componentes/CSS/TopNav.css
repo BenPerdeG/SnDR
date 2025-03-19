@@ -3,4 +3,15 @@
 }
 .btnLogin-popup.active{
     transform: scale(0);
-    }
+}
+
+.logo{
+    font-size: 2em;
+    color: #fff;
+    user-select: none;
+    margin-top: -0.5%;
+}
+
+.logo :hover{
+    background-color: #192630;
+}

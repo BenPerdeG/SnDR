@@ -1,13 +1,14 @@
 import React from "react";
 import { useUser } from "../../../context/UserContext.jsx";
 import "../CSS/TopNav.css";
+import Logo from "../../images/Logo.png"
 
 function TopNav({ setIsPopUp }) {
   const { user } = useUser(); // Assuming useUser provides a user object
 
   return (
     <>
-      <h2 className="logo">Logo</h2>
+     <img src={Logo} alt="Logo" className="logo" href="/" />
       <nav className="navigation">
         <a href="/">Inicio</a>
         <a href="/misPartidas">Mis Partidas</a>

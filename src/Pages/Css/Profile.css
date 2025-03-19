@@ -1,65 +1,53 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body{
+    font-family: "Poppins", sans-serif;
+  }
+  
+  body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('https://dnd.wizards.com/assets/img/footer-background.png');
+    background: url("https://dnd.wizards.com/assets/img/footer-background.png");
     background-size: cover;
     background-position: center;
-}
-
-.cerrar{
+  }
+  
+  .cerrar {
     size: 3rem;
-}
-
-
-.LoginHeader{
+  }
+  
+  .LoginHeader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 10%;
-    padding-left:100px;
-   
+    padding-left: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 99;
     transition: .5s;
-    
-    
-}
-
-.LoginHeader:hover{
+  }
+  
+  .LoginHeader:hover {
     background: #192630;
-}
-
-
-.logo{
-    margin-top: 2%;
-    font-size: 2em;
-    color: #fff;
-    user-select: none;
-   
-}
-
-.navigation a{
+  }
+  
+  
+  .navigation a {
     position: relative;
     font-size: 1em;
     color: #fff;
     text-decoration: none;
     font-weight: 500;
     margin-left: 40px;
-}
-
-.navigation .btnLogin-popup{
+  }
+  
+  .navigation .btnLogin-popup {
     width: 130px;
     height: 50px;
     background: transparent;
@@ -73,16 +61,16 @@ body{
     margin-left: 40px;
     margin-right: 20px;
     transition: .5s;
-}
-
-.navigation .btnLogin-popup:hover{
-background: #fff;
-color: rgba(22, 41, 56, .5);
-backdrop-filter: blur(20px);
-}
-
-.navigation a::after{
-    content: '';
+  }
+  
+  .navigation .btnLogin-popup:hover {
+    background: #fff;
+    color: rgba(22, 41, 56, 0.5);
+    backdrop-filter: blur(20px);
+  }
+  
+  .navigation a::after {
+    content: "";
     position: absolute;
     width: 100%;
     left: 0;
@@ -93,13 +81,242 @@ backdrop-filter: blur(20px);
     transform-origin: right;
     transform: scaleX(0);
     transition: transform .5s;
-}
-.navigation a:hover::after{
+  }
+  
+  .navigation a:hover::after {
     transform-origin: left;
     transform: scaleX(1);
-}
-
-
-.mr10 {margin-right: 10px;}
-.mbot20 {margin-bottom: 20px; }
-
+  }
+  
+  .mr10 {
+    margin-right: 10px;
+  }
+  .mbot20 {
+    margin-bottom: 20px;
+  }
+  
+  /* Figma design styles */
+  .figma-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* Full height */
+    position: absolute; /* Position absolute to cover the entire viewport */
+    top: 0;
+    left: 0;
+    padding-top: 80px; /* Space for the fixed header */
+  }
+  
+  /* Left sidebar styles */
+  .figma-sidebar {
+    width: 40%;
+    background-color: #c5c1c1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 120px 20px 40px; /* Increased top padding to account for header */
+    height: 100%; /* Full height */
+    position: fixed; /* Fixed position */
+    left: 0;
+    top: 0;
+    overflow-y: auto; /* Add scroll if content is too long */
+  }
+  
+  .figma-avatar {
+    width: 130px;
+    height: 130px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    margin-bottom: 30px;
+  }
+  
+  .figma-input-container {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .figma-username-input {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 50px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .figma-info-group {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .figma-label {
+    font-size: 18px;
+    color: #000;
+    margin-bottom: 5px;
+  }
+  
+  .figma-value {
+    font-size: 18px;
+    color: #3e62bd;
+  }
+  
+  .figma-private-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 2px solid #000;
+    border-radius: 50px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .figma-lock-icon {
+    font-size: 16px;
+  }
+  
+  .figma-logout-btn {
+    background: transparent;
+    border: none;
+    color: #3e62bd;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .figma-delete-btn {
+    background: transparent;
+    border: none;
+    color: #ef0909;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  /* Right content styles */
+  .figma-content {
+    width: 60%;
+    margin-left: 40%; /* Match the sidebar width */
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    /* Removed the black background */
+  }
+  
+  .figma-card {
+    background-color: #aca1a1;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .figma-card-header {
+    background-color: #d9d9d9;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .figma-card-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+  }
+  
+  .figma-card-body {
+    background-color: #192630;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .figma-card-image {
+    width: 160px;
+    height: 160px;
+    background-color: #c5c1c1;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  
+  .figma-card-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .figma-card-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  .figma-card-description {
+    margin-bottom: 15px;
+  }
+  
+  .figma-description-label {
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+  
+  .figma-description-text {
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .figma-enter-btn {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: auto;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 992px) {
+    .figma-layout {
+      flex-direction: column;
+    }
+  
+    .figma-sidebar {
+      width: 100%;
+      position: relative;
+      height: auto;
+      padding-top: 100px;
+    }
+  
+    .figma-content {
+      width: 100%;
+      margin-left: 0;
+    }
+  
+    .figma-card-body {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .figma-card-image {
+      margin-bottom: 15px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .figma-avatar {
+      width: 100px;
+      height: 100px;
+    }
+  
+    .figma-card-image {
+      width: 120px;
+      height: 120px;
+    }
+  }
+  
+  
