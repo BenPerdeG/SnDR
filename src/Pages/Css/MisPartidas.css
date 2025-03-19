@@ -1,11 +1,11 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
 
-body{
+body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,79 +15,124 @@ body{
     background-position: center;
 }
 
+/* Main Container */
+.mis-partidas-container {
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 80px;
+    padding-bottom: 50px;
+}
 
-.LoginHeader{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10%;
-    padding-left:100px;
-   
+/* Page Title */
+.title {
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    z-index: 99;
-    transition: .5s;
-    
-    
-}
-
-.LoginHeader:hover{
-    background: #192630;
-}
-
-
-.navigation a{
-    position: relative;
-    font-size: 1em;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 40px;
-}
-
-.navigation .btnLogin-popup{
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #fff;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1em;
-    color: #fff;
-    font-weight: 500;
-    margin-left: 40px;
-    margin-right: 20px;
-    transition: .5s;
-}
-
-.navigation .btnLogin-popup:hover{
-background: #fff;
-color: rgba(22, 41, 56, .5);
-backdrop-filter: blur(20px);
-}
-
-.navigation a::after{
-    content: '';
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    width: 350px;
     position: absolute;
-    width: 100%;
-    left: 0;
-    bottom: -6px;
-    height: 3px;
-    background: #fff;
+    right: 20px;
+    top: 100px;
+    backdrop-filter: blur(8px);
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 1em;
+}
+
+.search-bar button {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
     border-radius: 5px;
-    transform-origin: right;
-    transform: scaleX(0);
-    transition: transform .5s;
-}
-.navigation a:hover::after{
-    transform-origin: left;
-    transform: scaleX(1);
 }
 
+/* Game List */
+.partidas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
 
-.mr10 {margin-right: 10px;}
-.mbot20 {margin-bottom: 20px; }
+/* Individual Game Card */
+.partida-card {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);  /* Semi-transparent gray */
+    backdrop-filter: blur(10px); /* Blurry glass effect */
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+}
 
+/* Placeholder for Game Image */
+.image-placeholder {
+    width: 150px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.2); /* Lighter semi-transparent gray */
+    border-radius: 10px;
+    margin-right: 20px;
+    backdrop-filter: blur(5px);
+}
+
+/* Game Info Section */
+.partida-info {
+    flex: 1;
+    color: white;
+}
+
+.partida-info h2 {
+    font-size: 1.3em;
+}
+
+.partida-info p {
+    font-size: 0.9em;
+    color: #ddd;
+    margin-top: 5px;
+}
+
+/* Enter Button */
+.enter-btn {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Create Game Button */
+.crear-partida {
+    position: absolute;
+    right: 20px;
+    bottom: 50px;
+    background: black;
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 1em;
+}
