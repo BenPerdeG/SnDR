@@ -55,14 +55,6 @@ body {
     font-size: 1em;
 }
 
-.search-bar button {
-    background: black;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
 
 /* Game List */
 .partidas-list {
@@ -137,15 +129,16 @@ body {
 /* Create Game Button */
 .crear-partida {
     position: fixed;
-    right: 20px;
-    bottom: 50px;
+    right: 100px;
+    bottom: 75px;
     background: black;
     color: white;
     border: none;
-    padding: 15px 20px;
+    padding: 20px 30px;
     cursor: pointer;
     border-radius: 8px;
     font-size: 1em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* No Results Message */
@@ -153,4 +146,12 @@ body {
     color: white;
     text-align: center;
     margin-top: 20px;
+}
+
+.QnA{
+    right: 25px !important;
+    bottom: 300px !important;
+    font-size: 20px !important;
+    position: fixed !important;
+
 }

@@ -1,0 +1,59 @@
+/* Swiper container */
+.swiper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevent horizontal scrolling */
+  }
+  
+  /* Swiper slides */
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ensure slides take full width */
+    height: 100%; /* Ensure slides take full height */
+    opacity: 0.3; /* Dim non-active slides */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition */
+  }
+  
+  /* Active slide */
+  .swiper-slide-active {
+    opacity: 1; /* Fully visible active slide */
+  }
+  
+  /* Blurred grey boxes with outline and rounded corners */
+  .swiper-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 20px; /* Rounded corners */
+    width: 300px; /* Box width */
+    height: 400px; /* Box height (tall rectangle) */
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white; /* Text color */
+  }
+  .swiper-box h3 {
+    margin: 0; 
+    padding-bottom: 10px; 
+  }
+  
+  .swiper-box p {
+    margin: 10px; 
+    padding-top: 0; 
+  }
+  
+  /* Yellow pagination */
+  .swiper-pagination-bullet {
+    background: #ccc; /* Default bullet color */
+    opacity: 1;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: #ffcc00; /* Active bullet color (yellow) */
+  }

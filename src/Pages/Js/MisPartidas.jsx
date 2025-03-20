@@ -2,10 +2,30 @@ import { useState, useEffect } from "react";
 import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/MisPartidas.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
+import Swiper from "../../assets/componentes/JS/Swiper.jsx";
 
 const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPartidas, setFilteredPartidas] = useState([]);
+
+  const faqData = [
+    {
+      question: "¿Qué es SnDR?",
+      answer: "SnDR es una página web donde puedes crear o unirte a sesiones. Dentro de estas sesiones, hay un tablero virtual donde se puede llevar a cabo todo lo necesario para una partida de un TTRPG."
+    },
+    {
+      question: "¿Qué es un TTRPG?",
+      answer: "El término TTRPG significa 'juego de rol de mesa' (o RPG de mesa). La principal diferencia entre los TTRPG y los videojuegos RPG es que los TTRPG generalmente tienen lugar entre un grupo de jugadores sentados alrededor de una mesa, y la acción ocurre principalmente en el 'teatro de la mente'."
+    },
+    {
+      question: "¿Es SnDR un juego?",
+      answer: "NO."
+    },
+    {
+      question: "¿Es SnDR un jasdaduego?",
+      answer: "NO."
+    }
+  ];
 
   // Sample game data with different names and descriptions
   const partidas = [
@@ -67,9 +87,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button>🔍</button>
       </div>
-
       {/* Game List */}
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
@@ -87,7 +105,9 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
           <p className="no-results">No se encontraron partidas.</p>
         )}
       </div>
-
+      <div className="QnA">
+        <Swiper data={faqData}/>
+      </div>
       {/* Create Game Button */}
       <button className="crear-partida">Crear Partida</button>
     </div>
