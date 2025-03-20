@@ -6,20 +6,18 @@
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url('https://dnd.wizards.com/assets/img/footer-background.png');
+    display: block;
+    background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center top fixed;
     background-size: cover;
-    background-position: center;
+    padding-top: 80px;
 }
+
 
 /* Main Container */
 .mis-partidas-container {
     width: 90%;
     max-width: 1200px;
-    margin-top: 80px;
+    margin: 0 auto;
     padding-bottom: 50px;
 }
 
@@ -39,11 +37,12 @@ body {
     background: rgba(255, 255, 255, 0.2);
     padding: 10px;
     border-radius: 10px;
-    width: 350px;
-    position: absolute;
-    right: 20px;
+    width: 300px;
+    position: fixed;
+    right: 30px;
     top: 100px;
     backdrop-filter: blur(8px);
+    z-index: 10;
 }
 
 .search-bar input {
@@ -67,30 +66,42 @@ body {
 
 /* Game List */
 .partidas-list {
+    min-height: 400px; /* Prevent shifting when filtering */
+    margin-top: 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 100%;
 }
 
 /* Individual Game Card */
 .partida-card {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);  /* Semi-transparent gray */
-    backdrop-filter: blur(10px); /* Blurry glass effect */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 20px;
     width: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Hide and move up cards that are being filtered out */
+.partida-card.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
 }
 
 /* Placeholder for Game Image */
 .image-placeholder {
     width: 150px;
     height: 100px;
-    background: rgba(255, 255, 255, 0.2); /* Lighter semi-transparent gray */
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     margin-right: 20px;
     backdrop-filter: blur(5px);
@@ -125,7 +136,7 @@ body {
 
 /* Create Game Button */
 .crear-partida {
-    position: absolute;
+    position: fixed;
     right: 20px;
     bottom: 50px;
     background: black;
@@ -135,4 +146,11 @@ body {
     cursor: pointer;
     border-radius: 8px;
     font-size: 1em;
+}
+
+/* No Results Message */
+.no-results {
+    color: white;
+    text-align: center;
+    margin-top: 20px;
 }

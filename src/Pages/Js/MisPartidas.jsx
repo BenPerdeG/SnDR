@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/MisPartidas.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 
 const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPartidas, setFilteredPartidas] = useState([]);
 
   // Sample game data with different names and descriptions
   const partidas = [
@@ -12,13 +13,41 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     { id: 2, name: "El Bosque Perdido", description: "Explora un bosque lleno de misterios." },
     { id: 3, name: "Guerra de Reinos", description: "Batallas épicas entre clanes rivales." },
     { id: 4, name: "Cueva de los Ancestros", description: "Descubre los secretos de una antigua civilización." },
-    { id: 5, name: "El Reino de los Magos", description: "Magia y hechicería en una tierra olvidada." }
+    { id: 5, name: "El Reino de los Magos", description: "Magia y hechicería en una tierra olvidada." },
+    { id: 6, name: "El Reino de los Magos 2", description: "Magia y hechicería en una tierra no tan olvidada." },
+    { id: 7, name: "El Reino de los Magos 3", description: "Magia y hechicería en una tierra para nada olvidada." }
   ];
 
-  // Filter the games based on the search term
-  const filteredPartidas = partidas.filter((partida) =>
-    partida.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Set initial state with all partidas to prevent empty display
+  useEffect(() => {
+    setFilteredPartidas(partidas);
+  }, []);
+
+  // Debounce function definition
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function (...args) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
+
+  // Debounced search function
+  const debouncedSearch = debounce((term) => {
+    const filtered = partidas.filter((partida) =>
+      partida.name.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredPartidas(filtered);
+  }, 300); // 300ms delay
+
+  // Update filteredPartidas whenever searchTerm changes
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+  }, [searchTerm]);
 
   return (
     <div className="mis-partidas-container">

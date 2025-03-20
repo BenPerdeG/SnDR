@@ -5,14 +5,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url('https://dnd.wizards.com/assets/img/footer-background.png');
+body {
+    display: block;
+    background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center top fixed;
     background-size: cover;
-    background-position: center;   
+    padding-top: 80px;
 }
 
 
