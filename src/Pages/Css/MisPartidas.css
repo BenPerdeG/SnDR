@@ -23,10 +23,11 @@ body {
 
 /* Page Title */
 .title {
-    font-size: 2em;
+    font-size: 50px;
     font-weight: bold;
     color: white;
     margin-bottom: 20px;
+    margin-left: 10px;
 }
 
 /* Search Bar */
