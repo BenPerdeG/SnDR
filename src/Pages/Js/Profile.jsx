@@ -27,6 +27,7 @@ function Profile({ isPopUp, setIsPopUp }) {
               type="text"
               placeholder="Nombre de Usuario"
               className="figma-username-input"
+              readOnly="true"
               defaultValue={user?.username || ""}
             />
           </div>
@@ -42,7 +43,7 @@ function Profile({ isPopUp, setIsPopUp }) {
           </div>
 
           <button type="button" className="figma-private-btn">
-            <span className="figma-lock-icon">⭐</span>
+            <input type="checkbox"></input>
             <span>Privada</span>
           </button>
 
