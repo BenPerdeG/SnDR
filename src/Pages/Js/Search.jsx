@@ -9,7 +9,6 @@ const Search = ({ isPopUp, setIsPopUp }) => {
   const [filteredPartidas, setFilteredPartidas] = useState([]);
 
 
-  // Sample game data with different names and descriptions
   const partidas = [
     { id: 1, name: "Dragón Sombrío", description: "Aventura en un castillo maldito." },
     { id: 2, name: "El Bosque Perdido", description: "Explora un bosque lleno de misterios." },
@@ -20,12 +19,12 @@ const Search = ({ isPopUp, setIsPopUp }) => {
     { id: 7, name: "El Reino de los Magos 3", description: "Magia y hechicería en una tierra para nada olvidada." }
   ];
 
-  // Set initial state with all partidas to prevent empty display
+
   useEffect(() => {
     setFilteredPartidas(partidas);
   }, []);
 
-  // Debounce function definition
+
   const debounce = (func, delay) => {
     let timeoutId;
     return function (...args) {
@@ -38,7 +37,7 @@ const Search = ({ isPopUp, setIsPopUp }) => {
     };
   };
 
-  // Debounced search function
+  
   const debouncedSearch = debounce((term) => {
     const filtered = partidas.filter((partida) =>
       partida.name.toLowerCase().includes(term.toLowerCase())
@@ -46,7 +45,7 @@ const Search = ({ isPopUp, setIsPopUp }) => {
     setFilteredPartidas(filtered);
   }, 300); // 300ms delay
 
-  // Update filteredPartidas whenever searchTerm changes
+  // Update
   useEffect(() => {
     debouncedSearch(searchTerm);
   }, [searchTerm]);

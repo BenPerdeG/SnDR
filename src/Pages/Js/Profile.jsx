@@ -18,7 +18,6 @@ function Profile({ isPopUp, setIsPopUp }) {
       </header>
 
       <div className="figma-layout">
-        {/* Left sidebar - User profile */}
         <div className="figma-sidebar">
           <div className="figma-avatar"></div>
 

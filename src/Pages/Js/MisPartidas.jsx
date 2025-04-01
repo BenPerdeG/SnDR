@@ -27,7 +27,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     }
   ];
 
-  // Sample game data with different names and descriptions
+ 
   const partidas = [
     { id: 1, name: "Dragón Sombrío", description: "Aventura en un castillo maldito." },
     { id: 2, name: "El Bosque Perdido", description: "Explora un bosque lleno de misterios." },
@@ -38,12 +38,11 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     { id: 7, name: "El Reino de los Magos 3", description: "Magia y hechicería en una tierra para nada olvidada." }
   ];
 
-  // Set initial state with all partidas to prevent empty display
   useEffect(() => {
     setFilteredPartidas(partidas);
   }, []);
 
-  // Debounce function definition
+  
   const debounce = (func, delay) => {
     let timeoutId;
     return function (...args) {
@@ -56,7 +55,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     };
   };
 
-  // Debounced search function
+ 
   const debouncedSearch = debounce((term) => {
     const filtered = partidas.filter((partida) =>
       partida.name.toLowerCase().includes(term.toLowerCase())
@@ -64,7 +63,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     setFilteredPartidas(filtered);
   }, 300); // 300ms delay
 
-  // Update filteredPartidas whenever searchTerm changes
+
   useEffect(() => {
     debouncedSearch(searchTerm);
   }, [searchTerm]);
@@ -108,7 +107,6 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       <div className="QnA">
         <Swiper data={faqData}/>
       </div>
-      {/* Create Game Button */}
       <button className="crear-partida">Crear Partida</button>
     </div>
   );

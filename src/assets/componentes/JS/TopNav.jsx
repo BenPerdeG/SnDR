@@ -5,7 +5,7 @@ import Logo from "../../images/Logo.png"
 import { useNavigate } from "react-router-dom";
 
 function TopNav({ setIsPopUp }) {
-  const { user } = useUser(); // Assuming useUser provides a user object
+  const { user } = useUser(); 
   const navigate = useNavigate();
 
   return (

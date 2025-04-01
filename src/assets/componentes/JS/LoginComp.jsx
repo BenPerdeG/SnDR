@@ -10,8 +10,8 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const [formLog, setFormLog] = useState({ email: "", password: "" });
 
   const { setUser } = useUser();
-  const location = useLocation(); // Get the current location
-  const navigate = useNavigate(); // Get the navigate function
+  const location = useLocation(); //Dirección actual
+  const navigate = useNavigate();
 
   const handleChangeReg = (e) => {
     setFormReg({ ...formReg, [e.target.name]: e.target.value });
@@ -32,9 +32,9 @@ const Login = ({ isPopUp, setIsPopUp }) => {
 
       const data = await responseRegister.json();
       if (data.success) {
-        setUser(true); // Update UserContext to true
+        setUser(true);
         alert("Registro exitoso!");
-        setIsPopUp(false); // Close the popup
+        setIsPopUp(false);
         const from = location.state?.from || "/";
         navigate(from);
       } else {
@@ -57,9 +57,9 @@ const Login = ({ isPopUp, setIsPopUp }) => {
 
       const data = await responseLogin.json();
       if (data.success) {
-        setUser(true); // Update UserContext to true
+        setUser(true); 
         alert("Login exitoso!");
-        setIsPopUp(false); // Close the popup
+        setIsPopUp(false); 
         const from = location.state?.from || "/";
         navigate(from);
       } else {

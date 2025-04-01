@@ -16,10 +16,10 @@ export default function NewsSwiper({ data }) {
 
   return (
     <Swiper
-      modules={[Pagination]} // Enable Pagination
-      pagination={{ clickable: true }} // Configure Pagination
-      slidesPerView={1} // Show 1 slide at a time
-      spaceBetween={5} // Reduce space between slides (adjust as needed)
+      modules={[Pagination]}
+      pagination={{ clickable: true }} 
+      slidesPerView={1} 
+      spaceBetween={5}
       loop={true}
       style={{ height: '400px', width: '300px' }}
     >

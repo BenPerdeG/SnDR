@@ -19,6 +19,7 @@ function App() {
         <BrowserRouter>
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
+              
               {/* Ruta inicial con isPopUp */}
               <Route path="/" element={<Inicio isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
               

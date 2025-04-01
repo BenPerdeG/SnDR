@@ -56,9 +56,9 @@ const LoginPage = () => {
   
       const data = await responseLogin.json();
       if (data.success) {
-        setUser(true); // Update UserContext to true
+        setUser(true); // Update UserContext
         const from = location.state?.from || "/";
-        navigate(from, { state: { isPopUp: location.state?.isPopUp } }); // Pass isPopUp in state
+        navigate(from, { state: { isPopUp: location.state?.isPopUp } });
       } else {
         setError(data.message);
       }
