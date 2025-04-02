@@ -75,7 +75,9 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   return (
     <div className={`wrapper ${isActive ? "active" : ""} ${isPopUp ? "popUp" : ""}`}>
       <span className="icon-close" onClick={() => setIsPopUp(false)}>
-        <ion-icon name="close"></ion-icon>
+      <span className="icon-close" onClick={() => setIsPopUp(false)}>
+  ×
+</span>
       </span>
 
       {/* Login Form */}

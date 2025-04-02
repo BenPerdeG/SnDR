@@ -305,7 +305,53 @@ body {
   font-size: 16px;
   cursor: pointer;
   margin-top: auto;
-  transition: background 0.3s ease;
+}
+
+/* Add this to your Profile.css without affecting other layouts */
+.profile-loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 1000;
+}
+
+.profile-error-container {
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: center;
+  border: 1px solid #ffcccc;
+  background: #fff0f0;
+  border-radius: 5px;
+}
+
+/* Logout button spinner */
+.figma-logout-btn .logout-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Make sure this doesn't conflict with other buttons */
+.figma-logout-btn:disabled {
+  background-color: #ccc !important;
+  cursor: not-allowed !important;
 }
 
 .figma-enter-btn:hover {

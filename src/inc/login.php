@@ -1,15 +1,15 @@
 <?php
-error_reporting(E_ALL);
+ob_start();
+session_start();
+error_reporting(0);
 ini_set('display_errors', 1);
 include "conn.php";
 
-// CORS headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Handle preflight requests (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Recibir datos JSON
 $data = json_decode(file_get_contents("php://input"));
 
 if ($data === null) {
@@ -40,8 +39,7 @@ if (empty($data->password)) {
 $email = mysqli_real_escape_string($con, $data->email);
 $password = $data->password;
 
-// Fetch the hashed password from the database based on the email
-$query = "SELECT password FROM Usuario WHERE email = ?";
+$query = "SELECT id, password FROM Usuario WHERE email = ?";
 $stmt = mysqli_prepare($con, $query);
 
 if (!$stmt) {
@@ -51,11 +49,12 @@ if (!$stmt) {
 
 mysqli_stmt_bind_param($stmt, "s", $email);
 mysqli_stmt_execute($stmt);
-mysqli_stmt_bind_result($stmt, $hashed_password);
+mysqli_stmt_bind_result($stmt, $user_id, $hashed_password);
 mysqli_stmt_fetch($stmt);
 
 if ($hashed_password && password_verify($password, $hashed_password)) {
-    echo json_encode(["success" => true, "message" => "Usuario Loggeado correctamente"]);
+    $_SESSION['user_id'] = $user_id;
+    echo json_encode(["success" => true, "message" => "Usuario Loggeado correctamente", "user_id" => $_SESSION['user_id']]);
 } else {
     echo json_encode(["success" => false, "message" => "Credenciales incorrectas"]);
 }
