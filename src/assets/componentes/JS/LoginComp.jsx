@@ -53,6 +53,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formLog),
+        credentials: 'include'
       });
 
       const data = await responseLogin.json();

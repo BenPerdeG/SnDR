@@ -3,7 +3,7 @@ session_start();
 include "conn.php";
 
 // Enable CORS
-header("Access-Control-Allow-Origin: https://sndr.42web.io");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 

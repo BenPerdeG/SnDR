@@ -8,7 +8,7 @@ session_destroy();
 // Clear the session cookie
 setcookie(session_name(), '', time() - 3600, '/');
 
-header("Access-Control-Allow-Origin: https://sndr.42web.io");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
