@@ -1,0 +1,261 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  display: block;
+  background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center top fixed;
+  background-size: cover;
+  padding-top: 80px;
+}
+
+/* Scoped styles for PartidaDetails to avoid conflicts with TopNav */
+.partida-details-container {
+  width: 100%;
+  min-height: 100vh;
+  color: white;
+  background: transparent; /* Eliminamos el background duplicado ya que está en body */
+}
+
+.partida-details-content {
+  max-width: 1200px;
+  margin: 0 auto 40px; /* Ajustamos el margen superior ya que body tiene padding-top */
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+}
+
+.partida-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.partida-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.partida-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 992px) {
+  .partida-main-content {
+      flex-direction: row;
+  }
+
+  .partida-left-column {
+      flex: 2;
+      margin-right: 20px;
+  }
+
+  .partida-right-column {
+      flex: 1;
+  }
+}
+
+.partida-image-container {
+  margin-bottom: 20px;
+}
+
+.partida-image-placeholder {
+  width: 100%;
+  height: 300px;
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image-upload-text {
+  text-align: center;
+  padding: 20px;
+}
+
+.image-size-hint {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.choose-file-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #740000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.choose-file-button:hover {
+  background: #740000;
+}
+
+.partida-info {
+  background: rgba(30, 30, 30, 0.6);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.partida-info h2 {
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+.partida-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s;
+}
+
+.control-button.primary {
+  background: #740000;
+  color: white;
+}
+
+.control-button.primary:hover {
+  background: #740000;
+}
+
+/* Right column styles */
+.created-by-section,
+.players-section {
+  background: rgba(30, 30, 30, 0.6);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.created-by-section h3,
+.players-section h3 {
+  margin-top: 0;
+  font-size: 1.2em;
+  color: #740000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+.creator-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.creator-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #740000;
+}
+
+.creator-details p {
+  margin: 5px 0;
+}
+
+.creator-name {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.creator-membership,
+.creator-hours {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.players-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.invite-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #740000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s;
+}
+
+.invite-button:hover {
+  background: #740000;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 15px;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.player-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #192630;
+  margin-bottom: 5px;
+}
+
+.player-name {
+  font-size: 0.9em;
+  margin: 5px 0 0;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.player-card.empty .empty-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  margin-bottom: 5px;
+}
+
+.player-card.empty .empty-name {
+  font-size: 0.9em;
+  margin: 5px 0 0;
+  opacity: 0.5;
+}

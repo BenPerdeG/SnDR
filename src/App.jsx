@@ -10,7 +10,7 @@ const MisPartidas = lazy(() => import("./Pages/Js/MisPartidas.jsx"));
 const Search = lazy(() => import("./Pages/Js/Search.jsx"));
 const Profile = lazy(() => import("./Pages/Js/Profile.jsx"));
 const Login = lazy(() => import("./Pages/Js/Login.jsx"));
-const PartidaDetails = lazy(() => import("./Pages/Js/PartidaLobby.jsx"));
+const PartidaDetails = lazy(() => import("./Pages/Js/PartidaDetails.jsx"));
 
 function App() {
   const [isPopUp, setIsPopUp] = useState(false); 
@@ -28,7 +28,7 @@ function App() {
                 <Route path="/misPartidas" element={<MisPartidas isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/search" element={<Search isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/profile" element={<Profile isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
-                <Route path="/partida/:id" element={<PartidaDetails />} />
+                <Route path="/partida/:id" element={<PartidaDetails isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
               </Route>
               
               <Route path="/login" element={<Login />} />
