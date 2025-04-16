@@ -3,11 +3,13 @@ import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/MisPartidas.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 import Swiper from "../../assets/componentes/JS/Swiper.jsx";
+import { useNavigate } from "react-router-dom";
 
 const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPartidas, setFilteredPartidas] = useState([]);
-
+  const navigate = useNavigate();
+  
   const faqData = [
     {
       question: "¿Qué es SnDR?",
@@ -97,7 +99,12 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
                 <h2>{partida.name}</h2>
                 <p>{partida.description}</p>
               </div>
-              <button className="enter-btn">Entrar</button>
+              <button
+                className="enter-btn"
+                onClick={() => navigate(`/partida/${partida.id}`)}
+              >
+                Unirte
+              </button>
             </div>
           ))
         ) : (
