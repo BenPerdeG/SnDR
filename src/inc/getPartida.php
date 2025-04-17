@@ -1,101 +1,71 @@
 <?php
-session_start();
-include "conn.php";
+// Añade esto al inicio absoluto del archivo
+header('Content-Type: application/json');
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+try {
+    include "conn.php";
+    
+    if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+        throw new Exception("ID de partida inválido");
+    }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    $partidaId = (int)$_GET['id'];
+    
+    // CONSULTA PRINCIPAL
+    $stmt = mysqli_prepare($con, 
+        "SELECT p.id, p.nombre, p.descripcion, p.private, p.id_admin,
+                u.nombre as admin_nombre, u.imagen_perfil as admin_avatar
+         FROM Partida p
+         JOIN Usuario u ON p.id_admin = u.id
+         WHERE p.id = ?");
+    
+    if (!$stmt) throw new Exception("Error en la consulta: " . mysqli_error($con));
+    
+    mysqli_stmt_bind_param($stmt, "i", $partidaId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if (mysqli_num_rows($result) === 0) {
+        throw new Exception("Partida no encontrada");
+    }
+    
+    $partida = mysqli_fetch_assoc($result);
+    
+    // CONSULTA JUGADORES
+    $stmtJugadores = mysqli_prepare($con,
+        "SELECT u.id, u.nombre, u.imagen_perfil as avatar
+         FROM Usuarios_Partidas up
+         JOIN Usuario u ON up.id_usuario = u.id
+         WHERE up.id_partida = ?");
+    
+    if (!$stmtJugadores) throw new Exception("Error al obtener jugadores");
+    
+    mysqli_stmt_bind_param($stmtJugadores, "i", $partidaId);
+    mysqli_stmt_execute($stmtJugadores);
+    $jugadores = mysqli_fetch_all(mysqli_stmt_get_result($stmtJugadores), MYSQLI_ASSOC);
+    
+    // RESPUESTA EXITOSA
+    echo json_encode([
+        "success" => true,
+        "partida" => [
+            "id" => $partida['id'],
+            "nombre" => $partida['nombre'],
+            "descripcion" => $partida['descripcion'],
+            "private" => (bool)$partida['private'],
+            "admin" => [
+                "id" => $partida['id_admin'],
+                "nombre" => $partida['admin_nombre'],
+                "avatar" => $partida['admin_avatar'] ?? 'default-avatar.png'
+            ],
+            "jugadores" => $jugadores
+        ]
+    ]);
+
+} catch (Exception $e) {
+    // RESPUESTA DE ERROR CONTROLADA
     echo json_encode([
         "success" => false,
-        "message" => "ID de partida no válido"
+        "message" => $e->getMessage()
     ]);
-    exit;
 }
-
-$partidaId = (int)$_GET['id'];
-
-// 1. Obtener información básica de la partida
-$queryPartida = "SELECT 
-                id, 
-                nombre, 
-                descripcion,
-                id_admin
-              FROM Partida
-              WHERE id = ?";
-              
-$stmtPartida = mysqli_prepare($con, $queryPartida);
-mysqli_stmt_bind_param($stmtPartida, "i", $partidaId);
-mysqli_stmt_execute($stmtPartida);
-$resultPartida = mysqli_stmt_get_result($stmtPartida);
-
-if (mysqli_num_rows($resultPartida) === 0) {
-    echo json_encode([
-        "success" => false,
-        "message" => "Partida no encontrada"
-    ]);
-    exit;
-}
-
-$partidaData = mysqli_fetch_assoc($resultPartida);
-
-// 2. Obtener datos del ADMINISTRADOR
-$queryAdmin = "SELECT 
-                id, 
-                nombre, 
-                imagen_perfil AS avatar,
-                horas_jugadas
-              FROM Usuario
-              WHERE id = ?";
-              
-$stmtAdmin = mysqli_prepare($con, $queryAdmin);
-mysqli_stmt_bind_param($stmtAdmin, "i", $partidaData['id_admin']);
-mysqli_stmt_execute($stmtAdmin);
-$resultAdmin = mysqli_stmt_get_result($stmtAdmin);
-$adminData = mysqli_fetch_assoc($resultAdmin);
-
-// 3. Obtener JUGADORES (excluyendo al admin)
-$queryJugadores = "SELECT 
-                    u.id, 
-                    u.nombre, 
-                    u.imagen_perfil AS avatar
-                  FROM Usuarios_Partidas up
-                  JOIN Usuario u ON up.id_usuario = u.id
-                  WHERE up.id_partida = ? AND up.id_usuario != ?";
-                  
-$stmtJugadores = mysqli_prepare($con, $queryJugadores);
-mysqli_stmt_bind_param($stmtJugadores, "ii", $partidaId, $partidaData['id_admin']);
-mysqli_stmt_execute($stmtJugadores);
-$resultJugadores = mysqli_stmt_get_result($stmtJugadores);
-
-$jugadores = [];
-while ($jugador = mysqli_fetch_assoc($resultJugadores)) {
-    $jugadores[] = $jugador;
-}
-
-// 4. Preparar respuesta
-$response = [
-    "success" => true,
-    "partida" => [
-        "id" => $partidaData['id'],
-        "nombre" => $partidaData['nombre'],
-        "descripcion" => $partidaData['descripcion'],
-        "admin_id" => $adminData['id'],
-        "admin_nombre" => $adminData['nombre'],
-        "admin_avatar" => $adminData['avatar'] ?: "/default-avatar.png",
-        "admin_horas_jugadas" => (int)$adminData['horas_jugadas'],
-        "jugadores" => $jugadores,
-        "max_jugadores" => 6
-    ]
-];
-
-echo json_encode($response);
-
-// Cerrar conexiones
-mysqli_stmt_close($stmtPartida);
-mysqli_stmt_close($stmtAdmin);
-mysqli_stmt_close($stmtJugadores);
-mysqli_close($con);
 ?>

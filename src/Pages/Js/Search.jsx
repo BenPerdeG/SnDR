@@ -14,7 +14,9 @@ const Search = ({ isPopUp, setIsPopUp }) => {
 
   const fetchPublicPartidas = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/getPublicPartidas.php');
+      const response = await fetch('https://sndr.42web.io/inc/getPublicPartidas.php', {
+        credentials: 'include' 
+      });
       const data = await response.json();
       
       console.log("Datos API Search:", data);

@@ -1,0 +1,62 @@
+.access-denied-page {
+    min-height: 100vh;
+    background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center center fixed;
+    background-size: cover;
+    padding-top: 80px;
+}
+
+.access-denied-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.denied-icon {
+    color: #ff4d4d;
+    margin-bottom: 1.5rem;
+}
+
+.denied-message {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+.denied-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.primary-button {
+    background: #740000;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.primary-button:hover {
+    background: #9a0000;
+}
+
+.secondary-button {
+    background: transparent;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #740000;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.secondary-button:hover {
+    background: rgba(116, 0, 0, 0.2);
+}

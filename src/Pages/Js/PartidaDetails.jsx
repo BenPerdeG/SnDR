@@ -11,56 +11,75 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPartida = async () => {
-      try {
-        const timestamp = new Date().getTime();
-        const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}&t=${timestamp}`, {
+  const fetchPartida = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Añadimos timestamp para evitar caché
+      const timestamp = Date.now();
+      const response = await fetch(
+        `https://sndr.42web.io/inc/getPartida.php?id=${id}&t=${timestamp}`,
+        {
           credentials: 'include',
           headers: {
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache',
+            'Accept': 'application/json'
           }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
         }
+      );
 
-        const data = await response.json();
-        
-        if (data.success && data.partida) {
-          setPartida({
-            id: data.partida.id,
-            name: data.partida.nombre,
-            description: data.partida.descripcion,
-            createdBy: {
-              id: data.partida.admin_id,
-              name: data.partida.admin_nombre,
-              avatar: data.partida.admin_avatar,
-              hoursPlayed: data.partida.admin_horas_jugadas || 0
-            },
-            players: data.partida.jugadores.map(jugador => ({
-              id: jugador.id,
-              name: jugador.nombre,
-              avatar: jugador.avatar
-            })),
-            maxPlayers: data.partida.max_jugadores || 6
-          });
-        } else {
-          setError(data.message || "Partida no encontrada");
-        }
-      } catch (error) {
-        console.error("Error fetching partida:", error);
-        setError(`Error al cargar la partida: ${error.message}`);
-      } finally {
-        setLoading(false);
+      // Depuración: mostramos la respuesta cruda
+      const text = await response.text();
+      console.log("Respuesta cruda del servidor:", text);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`El servidor respondió con formato inválido: ${text.substring(0, 100)}...`);
       }
-    };
 
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || `Error ${response.status}`);
+      }
+
+      if (!data.partida) {
+        throw new Error("Estructura de datos incorrecta del servidor");
+      }
+
+      // Mapeamos los datos a nuestro formato esperado
+      setPartida({
+        id: data.partida.id,
+        name: data.partida.nombre,
+        description: data.partida.descripcion,
+        isPrivate: data.partida.private,
+        createdBy: {
+          id: data.partida.admin.id,
+          name: data.partida.admin.nombre,
+          avatar: data.partida.admin.avatar,
+          hoursPlayed: data.partida.admin.horas_jugadas || 0
+        },
+        players: data.partida.jugadores.map(jugador => ({
+          id: jugador.id,
+          name: jugador.nombre,
+          avatar: jugador.avatar
+        })),
+        maxPlayers: data.partida.max_jugadores || 6
+      });
+
+    } catch (error) {
+      console.error("Error al cargar partida:", error);
+      setError(`Error al cargar la partida: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPartida();
   }, [id]);
 
-  // Componente para mostrar avatar o icono de fallback
   const AvatarComponent = ({ avatar, name, isAdmin = false }) => {
     if (avatar && !avatar.includes('default-avatar.png') && !avatar.includes('default-player.png')) {
       return (
@@ -69,14 +88,14 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           alt={name}
           className={isAdmin ? "creator-avatar" : "player-avatar"}
           onError={(e) => {
-            e.target.style.display = 'none';
+            e.target.onerror = null;
+            e.target.src = isAdmin ? "default-avatar.png" : "default-player.png";
           }}
           loading="lazy"
         />
       );
     }
     
-    // Mostrar icono si no hay avatar válido
     return isAdmin ? (
       <div className="icon-avatar creator-icon">
         <User size={48} />
@@ -88,26 +107,60 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     );
   };
 
-  if (loading) return (
-    <div className="partida-details-container">
-      <div className="loading">Cargando partida...</div>
-    </div>
-  );
+  const handleJoinGame = () => {
+    if (partida.isPrivate && !partida.players.some(p => p.id === partida.createdBy.id)) {
+      alert("Debes ser invitado para unirte a esta partida privada");
+      return;
+    }
+    navigate(`/game/${partida.id}`);
+  };
 
-  if (error) return (
-    <div className="partida-details-container">
-      <div className="error">{error}</div>
-      <button onClick={() => window.location.reload()} className="retry-button">
-        Reintentar
-      </button>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="partida-details-container">
+        <header className="LoginHeader">
+          <TopNav setIsPopUp={setIsPopUp} />
+        </header>
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Cargando detalles de la partida...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!partida) return (
-    <div className="partida-details-container">
-      <div className="error">No se pudo cargar la partida</div>
-    </div>
-  );
+  if (error) {
+    return (
+      <div className="partida-details-container">
+        <header className="LoginHeader">
+          <TopNav setIsPopUp={setIsPopUp} />
+        </header>
+        <div className="error-container">
+          <h2>Error</h2>
+          <p>{error}</p>
+          <div className="error-actions">
+            <button onClick={() => window.location.reload()}>Reintentar</button>
+            <button onClick={() => navigate(-1)}>Volver atrás</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!partida) {
+    return (
+      <div className="partida-details-container">
+        <header className="LoginHeader">
+          <TopNav setIsPopUp={setIsPopUp} />
+        </header>
+        <div className="no-partida">
+          <h2>No se encontró la partida</h2>
+          <p>La partida solicitada no existe o fue eliminada</p>
+          <button onClick={() => navigate('/search')}>Buscar partidas</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="partida-details-container">
@@ -118,6 +171,9 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
       <div className="partida-details-content">
         <div className="partida-header">
           <h1>{partida.name}</h1>
+          {partida.isPrivate && (
+            <span className="private-badge">PRIVADA</span>
+          )}
         </div>
 
         <div className="partida-main-content">
@@ -134,13 +190,16 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
             <div className="partida-info">
               <h2>Descripción:</h2>
-              <p>{partida.description}</p>
+              <p>{partida.description || "No hay descripción disponible"}</p>
             </div>
 
             <div className="partida-controls">
-              <button className="control-button primary">
+              <button 
+                className="control-button primary"
+                onClick={handleJoinGame}
+              >
                 <Play size={18} />
-                <span>Entrar</span>
+                <span>Entrar a la partida</span>
               </button>
             </div>
           </div>
@@ -156,15 +215,22 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 />
                 <div className="creator-details">
                   <p className="creator-name">{partida.createdBy.name}</p>
-                  <p className="creator-hours">Horas jugadas: {partida.createdBy.hoursPlayed}</p>
+                  <p className="creator-hours">
+                    Horas jugadas: {partida.createdBy.hoursPlayed}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="players-section">
               <div className="players-header">
-                <h3>{partida.players.length} JUGADORES</h3>
-                <button className="invite-button" onClick={() => alert(`Invitando jugadores a ${partida.name}`)}>
+                <h3>
+                  {partida.players.length} / {partida.maxPlayers} JUGADORES
+                </h3>
+                <button 
+                  className="invite-button" 
+                  onClick={() => alert(`Invitando jugadores a ${partida.name}`)}
+                >
                   <UserPlus size={18} />
                   <span>Invitar Jugadores</span>
                 </button>
@@ -183,10 +249,8 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
                 {Array.from({ length: partida.maxPlayers - partida.players.length }).map((_, index) => (
                   <div key={`empty-${index}`} className="player-card empty">
-                    <div className="icon-avatar player-icon">
-                      <Users size={32} />
-                    </div>
-                    <p className="empty-name"></p>
+                    <div className="empty-avatar"></div>
+                    <p className="empty-name">Vacante</p>
                   </div>
                 ))}
               </div>
@@ -194,6 +258,8 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           </div>
         </div>
       </div>
+
+      {isPopUp && <Login isPopUp={isPopUp} setIsPopUp={setIsPopUp} />}
     </div>
   );
 };
