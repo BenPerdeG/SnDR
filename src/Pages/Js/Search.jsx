@@ -1,50 +1,55 @@
 import { useState, useEffect } from "react";
-import Login from "../../assets/componentes/JS/LoginComp.jsx"; // Importa el componente Login
+import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/Search.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 import { useNavigate } from "react-router-dom";
 
 const Search = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [allPartidas, setAllPartidas] = useState([]);
   const [filteredPartidas, setFilteredPartidas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  
-  const partidas = [
-    { id: 1, name: "Dragón Sombrío", description: "Aventura en un castillo maldito." },
-    { id: 2, name: "El Bosque Perdido", description: "Explora un bosque lleno de misterios." },
-    { id: 3, name: "Guerra de Reinos", description: "Batallas épicas entre clanes rivales." },
-    { id: 4, name: "Cueva de los Ancestros", description: "Descubre los secretos de una antigua civilización." },
-    { id: 5, name: "El Reino de los Magos", description: "Magia y hechicería en una tierra olvidada." },
-    { id: 6, name: "El Reino de los Magos 2", description: "Magia y hechicería en una tierra no tan olvidada." },
-    { id: 7, name: "El Reino de los Magos 3", description: "Magia y hechicería en una tierra para nada olvidada." },
-  ];
 
-  useEffect(() => {
-    setFilteredPartidas(partidas);
-  }, []);
-
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return function (...args) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+  const fetchPublicPartidas = async () => {
+    try {
+      const response = await fetch('https://sndr.42web.io/inc/getPublicPartidas.php');
+      const data = await response.json();
+      
+      console.log("Datos API Search:", data);
+      
+      if (data.success && data.partidas) {
+        setAllPartidas(data.partidas);
+        setFilteredPartidas(data.partidas);
+      } else {
+        setError(data.message || "No se encontraron partidas públicas");
       }
-      timeoutId = setTimeout(() => {
-        func.apply(this, args);
-      }, delay);
-    };
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Error al cargar partidas públicas");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const debouncedSearch = debounce((term) => {
-    const filtered = partidas.filter((partida) =>
-      partida.name.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredPartidas(filtered);
-  }, 300); // 300ms delay
+  useEffect(() => {
+    fetchPublicPartidas();
+  }, []);
 
   useEffect(() => {
-    debouncedSearch(searchTerm);
-  }, [searchTerm]);
+    if (searchTerm.trim() === "") {
+      setFilteredPartidas(allPartidas);
+    } else {
+      const filtered = allPartidas.filter((partida) =>
+        partida.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredPartidas(filtered);
+    }
+  }, [searchTerm, allPartidas]);
+
+  if (loading) return <div className="loading">Cargando partidas...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="search-container">
@@ -56,7 +61,6 @@ const Search = ({ isPopUp, setIsPopUp }) => {
 
       <h1 className="title">Buscar Partidas</h1>
 
-      {/* Search Bar */}
       <div className="search-bar">
         <input
           type="text"
@@ -66,15 +70,14 @@ const Search = ({ isPopUp, setIsPopUp }) => {
         />
       </div>
 
-      {/* Game List */}
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
           filteredPartidas.map((partida) => (
             <div key={partida.id} className="partida-card">
               <div className="image-placeholder"></div>
               <div className="partida-info">
-                <h2>{partida.name}</h2>
-                <p>{partida.description}</p>
+                <h2>{partida.nombre}</h2>
+                <p>{partida.descripcion}</p>
               </div>
               <button
                 className="enter-btn"

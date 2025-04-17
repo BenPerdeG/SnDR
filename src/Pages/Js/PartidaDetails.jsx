@@ -1,141 +1,113 @@
-import { useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { Users, Play, UserPlus } from "lucide-react"
-import TopNav from "../../assets/componentes/JS/TopNav.jsx"
-import "../Css/PartidaDetails.css"
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Play, UserPlus, User, Users } from "lucide-react";
+import TopNav from "../../assets/componentes/JS/TopNav.jsx";
+import "../Css/PartidaDetails.css";
 
 const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  // Mock data with 7 partidas - in a real app, you would fetch this from an API
-  const partidas = [
-    {
-      id: 1,
-      name: "Dragón Sombrío",
-      description:
-        "Aventura en un castillo maldito. Los jugadores deberán enfrentarse a un antiguo dragón que ha despertado tras siglos de letargo y ahora amenaza con destruir el reino.",
-      createdBy: {
-        name: "DungeonMaster42",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 256,
-      },
-      players: [
-        { id: 1, name: "Alanegra", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 2, name: "Carlos V.", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 3, name: "Danny", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 5,
-    },
-    {
-      id: 2,
-      name: "El Bosque Perdido",
-      description:
-        "Explora un bosque lleno de misterios y criaturas ancestrales. Una antigua maldición ha caído sobre el bosque y los aldeanos están desapareciendo uno a uno.",
-      createdBy: {
-        name: "ElfoSabio",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 124,
-      },
-      players: [
-        { id: 4, name: "Gandalf", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 5, name: "Legolas", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 4,
-    },
-    {
-      id: 3,
-      name: "La Ciudad de Plata",
-      description:
-        "Una metrópolis futurista donde la magia y la tecnología se entrelazan. Los jugadores deberán resolver una serie de misteriosos asesinatos que amenazan con desestabilizar la frágil paz entre las distintas facciones.",
-      createdBy: {
-        name: "TecnoMago",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 342,
-      },
-      players: [
-        { id: 6, name: "NeoHacker", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 7, name: "ElectroWizard", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 8, name: "CyberElf", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 9, name: "Quantum", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 6,
-    },
-    {
-      id: 4,
-      name: "Reinos en Guerra",
-      description:
-        "Una campaña épica donde cuatro reinos luchan por la supremacía. Los jugadores deberán elegir un bando y participar en batallas masivas, intrigas políticas y misiones de espionaje.",
-      createdBy: {
-        name: "WarMaster",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 512,
-      },
-      players: [
-        { id: 10, name: "GeneralOscuro", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 11, name: "ArqueroReal", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 12, name: "CaballeroNegro", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 8,
-    },
-    {
-      id: 5,
-      name: "Piratas del Mar Eterno",
-      description:
-        "Surca los mares en busca de tesoros legendarios y enfrenta a temibles criaturas marinas. Una aventura llena de traiciones, ron y batallas navales.",
-      createdBy: {
-        name: "CapitánBarbanegra",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 187,
-      },
-      players: [
-        { id: 13, name: "MarineroLoco", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 14, name: "ContramaestRe", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 15, name: "CañoneroExperto", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 16, name: "VigíaAgudo", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 17, name: "TimonelSabio", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 6,
-    },
-    {
-      id: 6,
-      name: "El Culto Prohibido",
-      description:
-        "Una aventura de horror cósmico donde los jugadores investigan un culto que amenaza con invocar a entidades de otro plano de existencia. El miedo y la locura serán tus compañeros.",
-      createdBy: {
-        name: "NarradorDeMiedos",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 298,
-      },
-      players: [
-        { id: 18, name: "DetectiveOculto", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 19, name: "MédicoForense", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 20, name: "PeriodistaCurioso", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 5,
-    },
-    {
-      id: 7,
-      name: "Leyendas del Desierto",
-      description:
-        "Una campaña ambientada en un vasto desierto lleno de ruinas antiguas, tribus nómadas y secretos enterrados bajo las arenas. Descubre la verdad sobre una civilización perdida.",
-      createdBy: {
-        name: "ArqueólogoMístico",
-        avatar: "/placeholder.svg?height=80&width=80",
-        hoursPlayed: 156,
-      },
-      players: [
-        { id: 21, name: "ExploraRuinas", avatar: "/placeholder.svg?height=60&width=60" },
-        { id: 22, name: "CazaTesoros", avatar: "/placeholder.svg?height=60&width=60" },
-      ],
-      maxPlayers: 4,
-    },
-  ]
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [partida, setPartida] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const partida = partidas.find((p) => p.id === Number.parseInt(id))
+  useEffect(() => {
+    const fetchPartida = async () => {
+      try {
+        const timestamp = new Date().getTime();
+        const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}&t=${timestamp}`, {
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-  if (!partida) {
-    return <div>Partida no encontrada</div>
-  }
+        const data = await response.json();
+        
+        if (data.success && data.partida) {
+          setPartida({
+            id: data.partida.id,
+            name: data.partida.nombre,
+            description: data.partida.descripcion,
+            createdBy: {
+              id: data.partida.admin_id,
+              name: data.partida.admin_nombre,
+              avatar: data.partida.admin_avatar,
+              hoursPlayed: data.partida.admin_horas_jugadas || 0
+            },
+            players: data.partida.jugadores.map(jugador => ({
+              id: jugador.id,
+              name: jugador.nombre,
+              avatar: jugador.avatar
+            })),
+            maxPlayers: data.partida.max_jugadores || 6
+          });
+        } else {
+          setError(data.message || "Partida no encontrada");
+        }
+      } catch (error) {
+        console.error("Error fetching partida:", error);
+        setError(`Error al cargar la partida: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPartida();
+  }, [id]);
+
+  // Componente para mostrar avatar o icono de fallback
+  const AvatarComponent = ({ avatar, name, isAdmin = false }) => {
+    if (avatar && !avatar.includes('default-avatar.png') && !avatar.includes('default-player.png')) {
+      return (
+        <img 
+          src={avatar} 
+          alt={name}
+          className={isAdmin ? "creator-avatar" : "player-avatar"}
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
+          loading="lazy"
+        />
+      );
+    }
+    
+    // Mostrar icono si no hay avatar válido
+    return isAdmin ? (
+      <div className="icon-avatar creator-icon">
+        <User size={48} />
+      </div>
+    ) : (
+      <div className="icon-avatar player-icon">
+        <Users size={32} />
+      </div>
+    );
+  };
+
+  if (loading) return (
+    <div className="partida-details-container">
+      <div className="loading">Cargando partida...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="partida-details-container">
+      <div className="error">{error}</div>
+      <button onClick={() => window.location.reload()} className="retry-button">
+        Reintentar
+      </button>
+    </div>
+  );
+
+  if (!partida) return (
+    <div className="partida-details-container">
+      <div className="error">No se pudo cargar la partida</div>
+    </div>
+  );
 
   return (
     <div className="partida-details-container">
@@ -153,11 +125,9 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
             <div className="partida-image-container">
               <div className="partida-image-placeholder">
                 <div className="image-upload-text">
-                  <p>Drop a File</p>
-                  <p className="image-size-hint">Suggested size: 1600 x 800 pixels</p>
-                  <p>(JPG, PNG, GIF)</p>
-                  <p>or</p>
-                  <button className="choose-file-button">Choose a File...</button>
+                  <p>Arrastra una imagen</p>
+                  <p>o</p>
+                  <button className="choose-file-button">Sube una imagen...</button>
                 </div>
               </div>
             </div>
@@ -179,10 +149,10 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
             <div className="created-by-section">
               <h3>CREADO POR</h3>
               <div className="creator-info">
-                <img
-                  src={partida.createdBy.avatar || "/placeholder.svg"}
-                  alt={partida.createdBy.name}
-                  className="creator-avatar"
+                <AvatarComponent 
+                  avatar={partida.createdBy.avatar} 
+                  name={partida.createdBy.name}
+                  isAdmin
                 />
                 <div className="creator-details">
                   <p className="creator-name">{partida.createdBy.name}</p>
@@ -203,15 +173,20 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
               <div className="players-grid">
                 {partida.players.map((player) => (
                   <div key={player.id} className="player-card">
-                    <img src={player.avatar || "/placeholder.svg"} alt={player.name} className="player-avatar" />
+                    <AvatarComponent 
+                      avatar={player.avatar} 
+                      name={player.name}
+                    />
                     <p className="player-name">{player.name}</p>
                   </div>
                 ))}
 
                 {Array.from({ length: partida.maxPlayers - partida.players.length }).map((_, index) => (
                   <div key={`empty-${index}`} className="player-card empty">
-                    <div className="empty-avatar"></div>
-                    <p className="empty-name">Vacío</p>
+                    <div className="icon-avatar player-icon">
+                      <Users size={32} />
+                    </div>
+                    <p className="empty-name"></p>
                   </div>
                 ))}
               </div>
@@ -220,7 +195,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PartidaDetails
+export default PartidaDetails;

@@ -197,6 +197,43 @@ body {
   align-items: center;
   margin-bottom: 15px;
 }
+/* Estilos para avatares e iconos */
+.creator-avatar, .player-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.creator-avatar {
+  width: 60px;
+  height: 60px;
+}
+
+.player-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+}
+
+.creator-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.player-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.player-card.empty .icon-avatar {
+  opacity: 0.5;
+}
 
 .invite-button {
   display: flex;
