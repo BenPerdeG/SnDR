@@ -1,4 +1,4 @@
-* {
+*{
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -12,17 +12,21 @@ body {
   padding-top: 80px;
 }
 
-/* Scoped styles for PartidaDetails to avoid conflicts with TopNav */
+
+.mr10 {margin-right: 10px;}
+.mbot20 {margin-bottom: 20px; }
+
+
 .partida-details-container {
   width: 100%;
   min-height: 100vh;
   color: white;
-  background: transparent; /* Eliminamos el background duplicado ya que está en body */
+  background: transparent;
 }
 
 .partida-details-content {
   max-width: 1200px;
-  margin: 0 auto 40px; /* Ajustamos el margen superior ya que body tiene padding-top */
+  margin: 0 auto 40px;
   padding: 20px;
   background: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
@@ -295,4 +299,95 @@ body {
   font-size: 0.9em;
   margin: 5px 0 0;
   opacity: 0.5;
+}
+
+
+/* Loco no funciona el css del TopNav aqui */
+.btnLogin-popup{
+  transform: scale(1);
+}
+.btnLogin-popup.active{
+  transform: scale(0);
+}
+
+.logo{
+  font-size: 2em;
+  color: #fff;
+  user-select: none;
+  margin-top: -0.5%;
+}
+
+.logo :hover{
+  background-color: #192630;
+}
+
+.LoginHeader{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  padding-left:100px;
+ 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+  transition: .5s;
+  
+  
+}
+
+.LoginHeader:hover{
+  background: #192630;
+}
+
+
+.navigation a{
+  position: relative;
+  font-size: 1em;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 40px;
+}
+
+.navigation .btnLogin-popup{
+  width: 130px;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #fff;
+  outline: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #fff;
+  font-weight: 500;
+  margin-left: 40px;
+  margin-right: 20px;
+  transition: .5s;
+}
+
+.navigation .btnLogin-popup:hover{
+background: #fff;
+color: rgba(22, 41, 56, .5);
+backdrop-filter: blur(20px);
+}
+
+.navigation a::after{
+  content: '';
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: -6px;
+  height: 3px;
+  background: #fff;
+  border-radius: 5px;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform .5s;
+}
+.navigation a:hover::after{
+  transform-origin: left;
+  transform: scaleX(1);
 }

@@ -48,7 +48,6 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
         throw new Error("Estructura de datos incorrecta del servidor");
       }
 
-      // Mapeamos los datos a nuestro formato esperado
       setPartida({
         id: data.partida.id,
         name: data.partida.nombre,
