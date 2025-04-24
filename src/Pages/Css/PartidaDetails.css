@@ -1,4 +1,5 @@
-*{
+/* Estructura general */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11,11 +12,6 @@ body {
   background-size: cover;
   padding-top: 80px;
 }
-
-
-.mr10 {margin-right: 10px;}
-.mbot20 {margin-bottom: 20px; }
-
 
 .partida-details-container {
   width: 100%;
@@ -33,6 +29,7 @@ body {
   backdrop-filter: blur(5px);
 }
 
+/* Header */
 .partida-header {
   text-align: center;
   margin-bottom: 20px;
@@ -43,6 +40,7 @@ body {
   margin: 0;
 }
 
+/* Main content */
 .partida-main-content {
   display: flex;
   flex-direction: column;
@@ -51,65 +49,24 @@ body {
 
 @media (min-width: 992px) {
   .partida-main-content {
-      flex-direction: row;
+    flex-direction: row;
   }
 
   .partida-left-column {
-      flex: 2;
-      margin-right: 20px;
+    flex: 2;
+    margin-right: 20px;
   }
 
   .partida-right-column {
-      flex: 1;
+    flex: 1;
   }
 }
 
-.partida-image-container {
-  margin-bottom: 20px;
-}
-
-.partida-image-placeholder {
-  width: 100%;
-  height: 300px;
-  background: rgba(30, 30, 30, 0.6);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.image-upload-text {
-  text-align: center;
-  padding: 20px;
-}
-
-.image-size-hint {
-  font-size: 0.9em;
-  opacity: 0.8;
-}
-
-.choose-file-button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background: #740000;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s;
-}
-
-.choose-file-button:hover {
-  background: #740000;
-}
-
+/* Descripción */
 .partida-info {
   background: rgba(30, 30, 30, 0.6);
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 20px;
 }
 
 .partida-info h2 {
@@ -118,36 +75,7 @@ body {
   padding-bottom: 10px;
 }
 
-.partida-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.control-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.2s;
-}
-
-.control-button.primary {
-  background: #740000;
-  color: white;
-}
-
-.control-button.primary:hover {
-  background: #740000;
-}
-
-/* Right column styles */
+/* Admin y jugadores */
 .created-by-section,
 .players-section {
   background: rgba(30, 30, 30, 0.6);
@@ -189,74 +117,12 @@ body {
   font-size: 1.1em;
 }
 
-.creator-membership,
-.creator-hours {
+.creator-membership {
   font-size: 0.9em;
   opacity: 0.8;
 }
 
-.players-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-/* Estilos para avatares e iconos */
-.creator-avatar, .player-avatar {
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.creator-avatar {
-  width: 60px;
-  height: 60px;
-}
-
-.player-avatar {
-  width: 40px;
-  height: 40px;
-}
-
-.icon-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-}
-
-.creator-icon {
-  width: 60px;
-  height: 60px;
-}
-
-.player-icon {
-  width: 40px;
-  height: 40px;
-}
-
-.player-card.empty .icon-avatar {
-  opacity: 0.5;
-}
-
-.invite-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #740000;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s;
-}
-
-.invite-button:hover {
-  background: #740000;
-}
-
+/* Jugadores */
 .players-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -281,113 +147,45 @@ body {
 
 .player-name {
   font-size: 0.9em;
-  margin: 5px 0 0;
+  margin-top: 5px;
   word-break: break-word;
   max-width: 100%;
 }
 
-.player-card.empty .empty-avatar {
+.icon-avatar {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  margin-bottom: 5px;
-}
-
-.player-card.empty .empty-name {
-  font-size: 0.9em;
-  margin: 5px 0 0;
-  opacity: 0.5;
-}
-
-
-/* Loco no funciona el css del TopNav aqui */
-.btnLogin-popup{
-  transform: scale(1);
-}
-.btnLogin-popup.active{
-  transform: scale(0);
-}
-
-.logo{
-  font-size: 2em;
-  color: #fff;
-  user-select: none;
-  margin-top: -0.5%;
-}
-
-.logo :hover{
-  background-color: #192630;
-}
-
-.LoginHeader{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 10%;
-  padding-left:100px;
- 
+  border-radius: 50%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  z-index: 99;
-  transition: .5s;
-  
-  
-}
-
-.LoginHeader:hover{
-  background: #192630;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.2em;
+  border: 2px dashed rgba(255, 255, 255, 0.3);
 }
 
 
-.navigation a{
-  position: relative;
+.icon-avatar.small {
+  width: 40px;
+  height: 40px;
   font-size: 1em;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  margin-left: 40px;
 }
 
-.navigation .btnLogin-popup{
-  width: 130px;
-  height: 50px;
-  background: transparent;
-  border: 2px solid #fff;
-  outline: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.1em;
-  color: #fff;
-  font-weight: 500;
-  margin-left: 40px;
-  margin-right: 20px;
-  transition: .5s;
-}
 
-.navigation .btnLogin-popup:hover{
-background: #fff;
-color: rgba(22, 41, 56, .5);
-backdrop-filter: blur(20px);
-}
-
-.navigation a::after{
-  content: '';
-  position: absolute;
+.partida-image-placeholder img {
+  border-radius: 10px;
+  object-fit: cover;
   width: 100%;
-  left: 0;
-  bottom: -6px;
-  height: 3px;
-  background: #fff;
-  border-radius: 5px;
-  transform-origin: right;
-  transform: scaleX(0);
-  transition: transform .5s;
+  height: 100%;
 }
-.navigation a:hover::after{
-  transform-origin: left;
-  transform: scaleX(1);
+.image-upload-text {
+  text-align: center;
+  color: #aaa;
+  font-size: 1em;
+}
+
+.image-upload-text p:first-child {
+  font-size: 2.5em;
 }
