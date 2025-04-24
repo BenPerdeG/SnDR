@@ -16,7 +16,6 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
       setLoading(true);
       setError(null);
       
-      // Añadimos timestamp para evitar caché
       const timestamp = Date.now();
       const response = await fetch(
         `https://sndr.42web.io/inc/getPartida.php?id=${id}&t=${timestamp}`,
@@ -28,6 +27,19 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           }
         }
       );
+
+      if (!response.ok || !data.success) {
+        if (data.message === "No tienes acceso a esta partida") {
+          navigate('/acceso-denegado', { 
+            state: { 
+              message: 'No tienes permisos para ver esta partida',
+              redirectTo: '/search' 
+            } 
+          });
+          return;
+        }
+        throw new Error(data.message || `Error ${response.status}`);
+      }
 
       // Depuración: mostramos la respuesta cruda
       const text = await response.text();
