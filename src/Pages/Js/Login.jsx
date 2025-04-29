@@ -32,7 +32,7 @@ const LoginPage = () => {
   
       const data = await responseRegister.json();
       if (data.success) {
-        setUser(true); // Update UserContext to true
+        setUser(true);
         alert("Registro exitoso!");
         const from = location.state?.from || "/";
         navigate(from, { state: { isPopUp: location.state?.isPopUp } }); // Pass isPopUp in state

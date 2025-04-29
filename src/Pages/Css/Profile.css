@@ -216,7 +216,6 @@ body {
   color: #ff3333;
 }
 
-/* Right content styles */
 .figma-content {
   width: 60%;
   margin-left: 40%;
@@ -307,7 +306,7 @@ body {
   margin-top: auto;
 }
 
-/* Add this to your Profile.css without affecting other layouts */
+
 .profile-loading-container {
   position: fixed;
   top: 0;
@@ -332,7 +331,6 @@ body {
   border-radius: 5px;
 }
 
-/* Logout button spinner */
 .figma-logout-btn .logout-spinner {
   display: inline-block;
   width: 12px;
@@ -348,7 +346,7 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Make sure this doesn't conflict with other buttons */
+
 .figma-logout-btn:disabled {
   background-color: #ccc !important;
   cursor: not-allowed !important;
@@ -358,7 +356,6 @@ body {
   background: #333;
 }
 
-/* Responsive styles */
 @media (max-width: 992px) {
   .figma-layout {
     flex-direction: column;
