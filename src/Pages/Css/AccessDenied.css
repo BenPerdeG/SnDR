@@ -1,6 +1,6 @@
 .access-denied-page {
     min-height: 100vh;
-    background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center center fixed;
+    background: url('../../assets/images/footer-background.png') no-repeat center center fixed;
     background-size: cover;
     padding-top: 80px;
 }

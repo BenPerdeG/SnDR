@@ -7,7 +7,7 @@
 
 body {
     display: block;
-    background: url('https://dnd.wizards.com/assets/img/footer-background.png') no-repeat center top fixed;
+    background: url('../../assets/images/footer-background.png') no-repeat center top fixed;
     background-size: cover;
     padding-top: 80px;
 }
@@ -38,8 +38,8 @@ body {
     padding: 10px;
     border-radius: 10px;
     width: 800px;
-    position: fixed;
-    right: 27.5%;
+    position: relative;
+    margin-right: 25%;
     top: 225px;
     backdrop-filter: blur(8px);
     z-index: 10;

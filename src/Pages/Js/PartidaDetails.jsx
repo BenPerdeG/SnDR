@@ -15,40 +15,81 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const [editedDescripcion, setEditedDescripcion] = useState("");
   const [editedImagen, setEditedImagen] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Función para verificar si el usuario es admin
+  const checkAdminStatus = async () => {
+    try {
+      const response = await fetch(
+        `https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`,
+        { 
+          credentials: "include",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        console.error("Error del servidor:", data.message);
+        return;
+      }
+      
+      setIsAdmin(data.isAdmin);
+    } catch (err) {
+      console.error("Error verificando admin:", err);
+      setError("Error al verificar permisos");
+    }
+  };
+
+  // Función para cargar los datos de la partida
+  const fetchPartida = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://sndr.42web.io/inc/getPartida.php?id=${id}`,
+        { credentials: "include" }
+      );
+      const data = await response.json();
+      
+      if (data.success) {
+        setPartida(data.partida);
+        setEditedNombre(data.partida.nombre);
+        setEditedDescripcion(data.partida.descripcion);
+        setEditedImagen(data.partida.imagen || "");
+        setIsPrivate(data.partida.private === true || data.partida.private === 1);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Error al cargar los datos de la partida");
+      console.error("Error fetching partida:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPartida = async () => {
-      try {
-        const response = await fetch(
-          `https://sndr.42web.io/inc/getPartida.php?id=${id}`,
-          { credentials: "include" }
-        );
-        const data = await response.json();
-        if (data.success) {
-          setPartida(data.partida);
-          setEditedNombre(data.partida.nombre);
-          setEditedDescripcion(data.partida.descripcion);
-          setEditedImagen(data.partida.imagen || "");
-          setIsPrivate(data.partida.private === 1);
-        } else {
-          setError(data.message);
-        }
-      } catch (err) {
-        setError("Error al cargar los datos de la partida");
-      }
-    };
-
-    fetchPartida();
-  }, [id]);
-
-  // Verificación más estricta de usuario y permisos
-  const isAdmin = user && partida && user.id === partida.id_admin;
+    if (user) {
+      checkAdminStatus();
+      fetchPartida();
+    }
+  }, [id, user]);
 
   const handlePrivacyChange = async (e) => {
     if (!isAdmin) return;
     
     const newValue = e.target.checked;
     setIsPrivate(newValue);
+    
     try {
       await fetch('https://sndr.42web.io/inc/updatePrivacy.php', {
         method: 'POST',
@@ -100,6 +141,18 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     return <div className="partida-details-container">Por favor inicia sesión para ver los detalles de la partida</div>;
   }
 
+  if (loading) {
+    return <div className="partida-details-container">Cargando partida...</div>;
+  }
+
+  if (error) {
+    return <div className="partida-details-container error-message">{error}</div>;
+  }
+
+  if (!partida) {
+    return <div className="partida-details-container">No se encontró la partida</div>;
+  }
+
   return (
     <div className="partida-details-container">
       <header className="LoginHeader">
@@ -108,13 +161,10 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
       {isPopUp && <Login isPopUp={isPopUp} setIsPopUp={setIsPopUp} />}
 
-      {error && <p className="error-message">{error}</p>}
-
       {partida && (
         <div className="partida-details-content">
           <div className="partida-header">
             <h1>{partida.nombre}</h1>
-            {/* Botón SOLO visible para admin */}
             {isAdmin && (
               <button
                 onClick={() => setShowForm(!showForm)}
@@ -132,7 +182,6 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 <p>{partida.descripcion}</p>
               </div>
               
-          
               {isAdmin && showForm && (
                 <form className="edit-partida-form" onSubmit={handleUpdate}>
                   <label>
