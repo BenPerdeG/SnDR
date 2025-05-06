@@ -98,6 +98,7 @@ body {
   align-items: center;
   gap: 15px;
   margin-top: 15px;
+  margin-left: 20px;
 }
 
 .creator-avatar {
@@ -127,6 +128,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 15px;
+  margin-top: 15px;
 }
 
 .player-card {

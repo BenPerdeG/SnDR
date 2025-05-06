@@ -4,6 +4,9 @@ import TopNav from "../../assets/componentes/JS/TopNav";
 import Login from "../../assets/componentes/JS/LoginComp";
 import "../Css/PartidaDetails.css";
 import { useUser } from "../../context/UserContext";
+import Logo from "../../assets/images/Logo.png";
+import Gris from "../../assets/images/gris.jpg";
+
 
 const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const { id } = useParams();
@@ -226,21 +229,21 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 {partida.imagen ? (
                   <img src={partida.imagen} alt="Imagen de partida" />
                 ) : (
-                  <div className="image-upload-text">
-                    <p>🖼️</p>
-                    <p>Sin imagen de partida</p>
-                  </div>
+                  <img src={Gris} alt="Imagen de partida" />
+            
                 )}
               </div>
 
               <div className="created-by-section">
                 <h3>Creado por</h3>
                 <div className="creator-info">
-                  <img
-                    src={partida.admin?.avatar || "/default-avatar.png"}
-                    alt="Avatar del administrador"
-                    className="creator-avatar"
-                  />
+                  
+                {partida.admin?.imagen_perfil?  (
+                  <img src={partida.admin?.imagen_perfil } alt="Administrador" />
+                ) : (
+                  <div className="icon-avatar small">👤</div>
+            
+                )}
                   <div className="creator-details">
                     <p className="creator-name">{partida.admin?.nombre || "Administrador"}</p>
                     <p className="creator-membership">Administrador</p>
@@ -253,7 +256,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 <div className="players-grid">
                   {partida.jugadores?.map((jugador) => (
                     <div key={jugador.id} className="player-card">
-                      {jugador.avatar ? (
+                      {jugador.imagen_perfil? (
                         <img
                           src={jugador.avatar}
                           alt={jugador.nombre}
