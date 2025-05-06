@@ -39,7 +39,7 @@ body {
     padding: 10px;
     border-radius: 10px;
     width: 300px;
-    position: fixed;
+    position: absolute;
     right: 30px;
     top: 100px;
     backdrop-filter: blur(8px);
@@ -114,6 +114,22 @@ body {
     font-size: 0.9em;
     color: #ddd;
     margin-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 4.5em; 
+    line-height: 1.5em;
+    position: relative;
+}
+.partida-info p::after {
+    content: '...';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1) 50%);
+    padding-left: 10px;
 }
 
 /* Enter Button */

@@ -62,11 +62,19 @@ body {
   }
 }
 
-/* Descripción */
+
 .partida-info {
   background: rgba(30, 30, 30, 0.6);
   padding: 15px;
   border-radius: 10px;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+  max-width: 100%; 
+}
+
+.partida-info p {
+  white-space: pre-line; 
+  word-break: break-word; 
 }
 
 .partida-info h2 {
@@ -197,13 +205,23 @@ body {
   flex-direction: column;
   color: black;
   gap: 10px;
+  align-items: flex-start; 
+  width: 100%; 
 }
+
+.edit-partida-form label {
+  margin-left: 0;
+  width: 100%; 
+  text-align: left; 
+}
+
 .edit-partida-form input,
 .edit-partida-form textarea {
   padding: 10px;
   border-radius: 5px;
   border: none;
   color: black;
+  width: 100%;
 }
 .edit-partida-form button {
   background: #740000;
@@ -216,7 +234,8 @@ body {
 .edit-partida-form button:hover {
   background: #a00000;
 }
-.figma-private-btn {
+
+.edit-partida-form .figma-private-btn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -230,6 +249,7 @@ body {
   color: white;
   backdrop-filter: blur(5px);
   transition: all 0.3s ease;
+  width: auto;
 }
 
 .figma-private-btn:hover {

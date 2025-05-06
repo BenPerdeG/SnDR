@@ -223,6 +223,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  color: white;
 }
 
 .figma-card {
