@@ -38,8 +38,8 @@ body {
     padding: 10px;
     border-radius: 10px;
     width: 800px;
-    position: relative;
-    margin-right: 25%;
+    right: 27.5%;
+    position: absolute;
     top: 225px;
     backdrop-filter: blur(8px);
     z-index: 10;
