@@ -109,12 +109,6 @@ const Login = ({ isPopUp, setIsPopUp }) => {
               autoComplete="new_password"
             />
           </div>
-          <div className="remember-forgot">
-            <label>
-              <input type="checkbox" name="c" className="mr10 mbot20" />
-              Remember me
-            </label>
-          </div>
           <button type="submit" className="btn">
             Login
           </button>

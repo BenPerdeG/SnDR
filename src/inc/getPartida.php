@@ -16,7 +16,7 @@ $userId = (int)$_SESSION['user_id'];
 
 // Primero verificamos si la partida existe y obtener sus datos básicos
 $stmt = mysqli_prepare($con, 
-    "SELECT p.id, p.nombre, p.descripcion, p.private, p.id_admin, u.nombre AS admin_nombre, u.imagen_perfil AS admin_avatar
+    "SELECT p.id, p.nombre, p.descripcion, p.private, p.imagen, p.id_admin, u.nombre AS admin_nombre, u.imagen_perfil AS admin_avatar
      FROM Partida p
      JOIN Usuario u ON p.id_admin = u.id
      WHERE p.id = ?");
@@ -71,6 +71,7 @@ echo json_encode([
         "nombre" => $partida['nombre'],
         "descripcion" => $partida['descripcion'],
         "private" => (bool)$partida['private'],
+        "imagen"=> $partida['imagen'],
         "admin" => [
             "id" => $partida['id_admin'],
             "nombre" => $partida['admin_nombre'],

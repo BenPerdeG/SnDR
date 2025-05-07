@@ -1,0 +1,91 @@
+.invitar-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: 250px;
+    background: rgba(30, 30, 30, 0.9);
+    border: 2px solid rgba(50, 50, 50, 1);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: transform .3s ease, height .2s ease;
+    color: white;
+    z-index: 1000;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  
+  .invitar-container.popUp {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  
+  .invitar-container .form-box {
+    padding: 40px;
+    width: 100%;
+  }
+  
+  .invitar-container h2 {
+    font-size: 1.5em;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 30px;
+  }
+  
+  .invitar-form .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #ffffff;
+    margin: 30px 0;
+  }
+  
+  .invitar-form .input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 0.8em;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+  }
+  
+  .invitar-form .btn {
+    width: 100%;
+    height: 45px;
+    background: #740000;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #fff;
+    font-weight: 500;
+    transition: .5s;
+  }
+  
+  .invitar-form .btn:hover {
+    background: #740000;
+  }
+  
+  
+  @media (max-width: 600px) {
+    .invitar-container {
+      width: 90%;
+      height: auto;
+      min-height: 250px;
+    }
+  
+    .invitar-container .form-box {
+      padding: 30px;
+    }
+  
+    .invitar-container h2 {
+      font-size: 1.7em;
+    }
+  }
+  

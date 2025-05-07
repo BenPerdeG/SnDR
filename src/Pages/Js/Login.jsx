@@ -163,12 +163,6 @@ const LoginPage = () => {
               autoComplete="new_password"
             />
           </div>
-          <div className="remember-forgot">
-            <label>
-              <input type="checkbox" name="terms" className="mr10 mbot20" />
-              I agree to the terms & conditions
-            </label>
-          </div>
           <button type="submit" className="btn">
             Register
           </button>
