@@ -32,7 +32,7 @@ function Profile({ isPopUp, setIsPopUp }) {
         setUserData(data.user);
         setIsPrivate(data.user.private || false);
         setUser(prev => ({ ...prev, ...data.user }));
-        
+
         // Fetch last game after user data is loaded
         fetchLastGame();
       } catch (error) {
@@ -140,6 +140,29 @@ function Profile({ isPopUp, setIsPopUp }) {
     </div>
   );
 
+  const handleCreatePartida = async () => {
+    try {
+      const response = await fetch('https://sndr.42web.io/inc/crearPartida.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirect to the new game or refresh the list
+        navigate(`/partida/${data.partida_id}`);
+      } else {
+        alert('Error al crear partida: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al crear partida');
+    }
+  };
   return (
     <div className="LoginContainer">
       <header className="LoginHeader">
@@ -208,18 +231,17 @@ function Profile({ isPopUp, setIsPopUp }) {
               {loadingGame ? (
                 <div className="loading-spinner-small"></div>
               ) : lastGame ? (
-                 <PartidaCard 
-                              key={lastGame.id} 
-                              partida={lastGame} 
-                              buttonText="Entrar"
-                            />
+                <PartidaCard
+                  key={lastGame.id}
+                  partida={lastGame}
+                  buttonText="Entrar"
+                />
               ) : (
                 <div className="perfil-no-game">
                   <p>No has creado ninguna partida</p>
-                  <button 
-                    type="button" 
-                    className="perfil-create-btn"
-                    onClick={() => navigate('/crear-partida')}
+                  <button
+                    className="crear-partida"
+                    onClick={handleCreatePartida}
                   >
                     Crear Partida
                   </button>

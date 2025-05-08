@@ -37,7 +37,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
         credentials: 'include'
       });
       const data = await response.json();
-      
+
       if (data.success && data.partidas) {
         setAllPartidas(data.partidas);
         setFilteredPartidas(data.partidas);
@@ -69,8 +69,28 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     }
   }, [searchTerm, allPartidas]);
 
-  const handleCreatePartida = () => {
-   
+  const handleCreatePartida = async () => {
+    try {
+      const response = await fetch('https://sndr.42web.io/inc/crearPartida.php', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirect to the new game or refresh the list
+        navigate(`/partida/${data.partida_id}`);
+      } else {
+        alert('Error al crear partida: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al crear partida');
+    }
   };
 
   if (loading) return <div className="loading">Cargando partidas...</div>;
@@ -98,9 +118,9 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
           filteredPartidas.map((partida) => (
-            <PartidaCard 
-              key={partida.id} 
-              partida={partida} 
+            <PartidaCard
+              key={partida.id}
+              partida={partida}
               buttonText="Entrar"
             />
           ))
@@ -110,10 +130,10 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       </div>
 
       <div className="QnA">
-        <Swiper data={faqData}/>
+        <Swiper data={faqData} />
       </div>
-      <button 
-        className="crear-partida" 
+      <button
+        className="crear-partida"
         onClick={handleCreatePartida}
       >
         Crear Partida
