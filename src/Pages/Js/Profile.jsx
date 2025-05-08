@@ -4,6 +4,7 @@ import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/Profile.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 import { useUser } from "../../context/UserContext.jsx";
+import PartidaCard from "../../assets/componentes/JS/PartidaCard.jsx";
 
 function Profile({ isPopUp, setIsPopUp }) {
   const navigate = useNavigate();
@@ -145,32 +146,32 @@ function Profile({ isPopUp, setIsPopUp }) {
         <TopNav setIsPopUp={setIsPopUp} />
       </header>
 
-      <div className="figma-layout">
-        <div className="figma-sidebar">
-          <div className="figma-avatar">
+      <div className="perfil-layout">
+        <div className="perfil-sidebar">
+          <div className="perfil-avatar">
             {userData?.imagen_perfil && <img src={userData.imagen_perfil} alt="Avatar" />}
           </div>
 
-          <div className="figma-input-container">
+          <div className="perfil-input-container">
             <input
               type="text"
-              className="figma-username-input"
+              className="perfil-username-input"
               readOnly
               value={userData?.nombre || ""}
             />
           </div>
 
-          <div className="figma-info-group">
-            <p className="figma-label">Correo:</p>
-            <p className="figma-value">{userData?.email || "No disponible"}</p>
+          <div className="perfil-info-group">
+            <p className="perfil-label">Correo:</p>
+            <p className="perfil-value">{userData?.email || "No disponible"}</p>
           </div>
 
-          <div className="figma-info-group">
-            <p className="figma-label">Horas Jugadas:</p>
-            <p className="figma-value">{userData?.horas_jugadas || 0}</p>
+          <div className="perfil-info-group">
+            <p className="perfil-label">Horas Jugadas:</p>
+            <p className="perfil-value">{userData?.horas_jugadas || 0}</p>
           </div>
 
-          <label className="figma-private-btn">
+          <label className="perfil-private-btn">
             <input
               type="checkbox"
               checked={isPrivate}
@@ -182,7 +183,7 @@ function Profile({ isPopUp, setIsPopUp }) {
           <button
             type="button"
             onClick={handleLogout}
-            className="figma-logout-btn"
+            className="perfil-logout-btn"
             disabled={logoutLoading}
           >
             {logoutLoading ? 'Cerrando...' : 'Cerrar sesión'}
@@ -191,50 +192,33 @@ function Profile({ isPopUp, setIsPopUp }) {
           <button
             type="button"
             onClick={handleDeleteAccount}
-            className="figma-delete-btn"
+            className="perfil-delete-btn"
             disabled={isDeleting}
           >
             {isDeleting ? 'Eliminando...' : 'Eliminar cuenta'}
           </button>
         </div>
 
-        <div className="figma-content">
-          <div className="figma-card">
-            <div className="figma-card-header">
+        <div className="perfil-content">
+          <div className="perfil-card">
+            <div className="perfil-card-header">
               <h2>Última Partida Creada</h2>
             </div>
-            <div className="figma-card-body">
+            <div className="perfil-card-body">
               {loadingGame ? (
                 <div className="loading-spinner-small"></div>
               ) : lastGame ? (
-                <>
-                  <div className="figma-card-image">
-                    {lastGame.imagen ? (
-                      <img src={lastGame.imagen} alt={lastGame.nombre} />
-                    ) : (
-                      <div className="figma-default-game-image"></div>
-                    )}
-                  </div>
-                  <div className="figma-card-details">
-                    <h3 className="figma-card-title">{lastGame.nombre}</h3>
-                    <div className="figma-card-description">
-                      <p>{lastGame.descripcion || "Sin descripción"}</p>
-                    </div>
-                    <button 
-                      type="button" 
-                      className="figma-enter-btn"
-                      onClick={handleEnterGame}
-                    >
-                      Entrar
-                    </button>
-                  </div>
-                </>
+                 <PartidaCard 
+                              key={lastGame.id} 
+                              partida={lastGame} 
+                              buttonText="Entrar"
+                            />
               ) : (
-                <div className="figma-no-game">
+                <div className="perfil-no-game">
                   <p>No has creado ninguna partida</p>
                   <button 
                     type="button" 
-                    className="figma-create-btn"
+                    className="perfil-create-btn"
                     onClick={() => navigate('/crear-partida')}
                   >
                     Crear Partida

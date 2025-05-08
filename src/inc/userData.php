@@ -23,7 +23,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
-$query = "SELECT nombre, email, horas_jugadas, imagen_perfil, private, partidas_creadas 
+$query = "SELECT nombre, email, horas_jugadas, imagen_perfil, private
           FROM Usuario 
           WHERE id = ?";
 $stmt = mysqli_prepare($con, $query);
@@ -60,8 +60,7 @@ if ($userData) {
             "email" => $userData['email'],
             "horas_jugadas" => $userData['horas_jugadas'] ?? 0,
             "imagen_perfil" => $userData['imagen_perfil'],
-            "private" => (bool)$userData['private'],
-            "partidas_creadas" => $userData['partidas_creadas'] ?? 0
+            "private" => (bool)$userData['private']
         ],
         "session_info" => [
             "id" => session_id(),

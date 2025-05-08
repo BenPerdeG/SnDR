@@ -1,0 +1,76 @@
+
+.partida-card {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    width: 1200px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+.partida-card.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+
+.image-placeholder {
+    width: 150px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-right: 20px;
+    backdrop-filter: blur(5px);
+}
+
+
+.partida-info {
+    flex: 1;
+    color: white;
+}
+
+.partida-info h2 {
+    font-size: 1.3em;
+}
+
+.partida-info p {
+    font-size: 0.9em;
+    color: #ddd;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 4.5em; 
+    line-height: 1.5em;
+    position: relative;
+}
+
+.partida-image{
+    border-radius: 5px;
+    max-width: 150px;
+    max-height: 120px;
+    overflow: hidden;
+}
+
+/* Enter Button */
+.enter-btn {
+    background: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+}

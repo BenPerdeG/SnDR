@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Asegurar que la conexión a la base de datos funciona
+
 if (!$con) {
     echo json_encode([
         "success" => false,
@@ -29,7 +29,7 @@ if (!$con) {
 $userId = (int)$_SESSION['user_id'];
 
 // Consulta idéntica a la que funciona en otras partes
-$query = "SELECT id, nombre, descripcion FROM Partida WHERE id_admin = ?";
+$query = "SELECT id, nombre, descripcion, imagen FROM Partida WHERE id_admin = ?";
 $stmt = mysqli_prepare($con, $query);
 
 if (!$stmt) {
@@ -50,7 +50,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     $partidas[] = [
         'id' => (int)$row['id'],
         'nombre' => $row['nombre'],
-        'descripcion' => $row['descripcion']
+        'descripcion' => $row['descripcion'],
+        'imagen' => $row['imagen'] 
     ];
 }
 

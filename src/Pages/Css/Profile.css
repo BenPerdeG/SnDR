@@ -90,8 +90,8 @@ body {
   margin-bottom: 20px;
 }
 
-/* Figma design styles - updated to match search page */
-.figma-layout {
+/* perfil design styles - updated to match search page */
+.perfil-layout {
   display: flex;
   width: 100%;
   min-height: 100vh;
@@ -102,7 +102,7 @@ body {
 }
 
 /* Left sidebar styles */
-.figma-sidebar {
+.perfil-sidebar {
   width: 40%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -119,7 +119,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.figma-avatar {
+.perfil-avatar {
   width: 130px;
   height: 130px;
   background: rgba(255, 255, 255, 0.2);
@@ -129,13 +129,20 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.figma-input-container {
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.perfil-input-container {
   width: 100%;
   max-width: 300px;
   margin-bottom: 20px;
 }
 
-.figma-username-input {
+.perfil-username-input {
   width: 100%;
   padding: 12px 20px;
   border-radius: 50px;
@@ -147,23 +154,23 @@ body {
   color: white;
 }
 
-.figma-info-group {
+.perfil-info-group {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.figma-label {
+.perfil-label {
   font-size: 18px;
   color: #fff;
   margin-bottom: 5px;
 }
 
-.figma-value {
+.perfil-value {
   font-size: 18px;
   color: #ddd;
 }
 
-.figma-private-btn {
+.perfil-private-btn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -179,15 +186,15 @@ body {
   transition: all 0.3s ease;
 }
 
-.figma-private-btn:hover {
+.perfil-private-btn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.figma-lock-icon {
+.perfil-lock-icon {
   font-size: 16px;
 }
 
-.figma-logout-btn {
+.perfil-logout-btn {
   background: transparent;
   border: none;
   color: #ddd;
@@ -197,12 +204,12 @@ body {
   transition: color 0.3s ease;
 }
 
-.figma-logout-btn:hover {
+.perfil-logout-btn:hover {
   color: white;
   border: 1px solid white;
 }
 
-.figma-delete-btn {
+.perfil-delete-btn {
   background: transparent;
   border: none;
   color: #ef0909;
@@ -211,12 +218,12 @@ body {
   transition: color 0.3s ease;
 }
 
-.figma-delete-btn:hover {
+.perfil-delete-btn:hover {
   border: 1px solid white;
   color: #ff3333;
 }
 
-.figma-content {
+.perfil-content {
   width: 60%;
   margin-left: 40%;
   padding: 40px 20px;
@@ -226,7 +233,7 @@ body {
   color: white;
 }
 
-.figma-card {
+.perfil-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 15px;
@@ -236,67 +243,81 @@ body {
   transition: transform 0.3s ease;
 }
 
-.figma-card:hover {
+.perfil-card:hover {
   transform: translateY(-5px);
 }
 
-.figma-card-header {
+.perfil-card-header {
   background: rgba(255, 255, 255, 0.2);
   padding: 15px;
   text-align: center;
 }
 
-.figma-card-header h2 {
+.perfil-card-header h2 {
   font-size: 24px;
   font-weight: bold;
   color: white;
 }
 
-.figma-card-body {
+.perfil-card-body {
   padding: 20px;
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
-.figma-card-image {
-  width: 160px;
-  height: 160px;
+.perfil-card-image {
+  width: 150px;
+  height: 120px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.figma-card-details {
+.perfil-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.perfil-card-details {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 120px;
+  position: relative;
+  padding-bottom: 50px;
 }
 
-.figma-card-title {
+.perfil-card-title {
   font-size: 20px;
   font-weight: bold;
   color: #fff;
   margin-bottom: 10px;
 }
 
-.figma-card-description {
+.perfil-card-description {
   margin-bottom: 15px;
 }
 
-.figma-description-label {
+.perfil-description-label {
   font-weight: bold;
   color: #fff;
   margin-bottom: 5px;
 }
 
-.figma-description-text {
+.perfil-description-text {
   color: #ddd;
   font-size: 14px;
   line-height: 1.5;
 }
 
-.figma-enter-btn {
-  width: 100%;
+.perfil-enter-btn {
+  width: 200px;
   background: black;
   color: white;
   border: none;
@@ -304,9 +325,38 @@ body {
   padding: 12px;
   font-size: 16px;
   cursor: pointer;
-  margin-top: auto;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: background-color 0.3s ease;
 }
 
+.perfil-enter-btn:hover {
+  background: #333;
+}
+
+.perfil-no-game {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+
+.perfil-create-btn {
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.perfil-create-btn:hover {
+  background: #333;
+}
 
 .profile-loading-container {
   position: fixed;
@@ -322,6 +372,22 @@ body {
   z-index: 1000;
 }
 
+.loading-spinner, .loading-spinner-small {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.loading-spinner-small {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
 .profile-error-container {
   padding: 20px;
   margin: 20px auto;
@@ -332,7 +398,7 @@ body {
   border-radius: 5px;
 }
 
-.figma-logout-btn .logout-spinner {
+.perfil-logout-btn .logout-spinner {
   display: inline-block;
   width: 12px;
   height: 12px;
@@ -347,52 +413,75 @@ body {
   to { transform: rotate(360deg); }
 }
 
-
-.figma-logout-btn:disabled {
+.perfil-logout-btn:disabled {
   background-color: #ccc !important;
   cursor: not-allowed !important;
 }
 
-.figma-enter-btn:hover {
-  background: #333;
+.perfil-default-game-image {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
 }
 
 @media (max-width: 992px) {
-  .figma-layout {
+  .perfil-layout {
     flex-direction: column;
   }
 
-  .figma-sidebar {
+  .perfil-sidebar {
     width: 100%;
     position: relative;
     height: auto;
     padding-top: 100px;
   }
 
-  .figma-content {
+  .perfil-content {
     width: 100%;
     margin-left: 0;
   }
 
-  .figma-card-body {
+  .perfil-card-body {
     flex-direction: column;
     align-items: center;
   }
 
-  .figma-card-image {
+  .perfil-card-image {
     margin-bottom: 15px;
+  }
+  
+  .perfil-card-details {
+    padding-bottom: 60px;
+    text-align: center;
+  }
+  
+  .perfil-enter-btn {
+    position: relative;
+    margin-top: 20px;
   }
 }
 
 @media (max-width: 576px) {
-  .figma-avatar {
+  .perfil-avatar {
     width: 100px;
     height: 100px;
   }
 
-  .figma-card-image {
+  .perfil-card-image {
     width: 120px;
     height: 120px;
   }
+  
+  .LoginHeader {
+    padding-left: 20px;
+  }
+  
+  .perfil-enter-btn {
+    width: 150px;
+  }
 }
-

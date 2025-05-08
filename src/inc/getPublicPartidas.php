@@ -5,7 +5,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
 // Consulta simplificada - solo lo esencial
-$query = "SELECT id, nombre, descripcion 
+$query = "SELECT id, nombre, descripcion, imagen 
           FROM Partida 
           WHERE private = false";
 $result = mysqli_query($con, $query);

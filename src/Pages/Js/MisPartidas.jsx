@@ -3,8 +3,9 @@ import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/MisPartidas.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 import Swiper from "../../assets/componentes/JS/Swiper.jsx";
-import { useNavigate } from "react-router-dom";
+import PartidaCard from "../../assets/componentes/JS/PartidaCard.jsx";
 import { useUser } from "../../context/UserContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,8 +38,6 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       });
       const data = await response.json();
       
-      console.log("Datos API MisPartidas:", data);
-      
       if (data.success && data.partidas) {
         setAllPartidas(data.partidas);
         setFilteredPartidas(data.partidas);
@@ -70,6 +69,10 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
     }
   }, [searchTerm, allPartidas]);
 
+  const handleCreatePartida = () => {
+   
+  };
+
   if (loading) return <div className="loading">Cargando partidas...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -95,19 +98,11 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
           filteredPartidas.map((partida) => (
-            <div key={partida.id} className="partida-card">
-              <div className="image-placeholder"></div>
-              <div className="partida-info">
-                <h2>{partida.nombre}</h2>
-                <p>{partida.descripcion}</p>
-              </div>
-              <button
-                className="enter-btn"
-                onClick={() => navigate(`/partida/${partida.id}`)}
-              >
-                Unirte
-              </button>
-            </div>
+            <PartidaCard 
+              key={partida.id} 
+              partida={partida} 
+              buttonText="Entrar"
+            />
           ))
         ) : (
           <p className="no-results">No se encontraron partidas.</p>
@@ -117,7 +112,12 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
       <div className="QnA">
         <Swiper data={faqData}/>
       </div>
-      <button className="crear-partida">Crear Partida</button>
+      <button 
+        className="crear-partida" 
+        onClick={handleCreatePartida}
+      >
+        Crear Partida
+      </button>
     </div>
   );
 };

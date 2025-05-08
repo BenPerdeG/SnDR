@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Login from "../../assets/componentes/JS/LoginComp.jsx";
 import "../Css/Search.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
-import { useNavigate } from "react-router-dom";
+import PartidaCard from "../../assets/componentes/JS/PartidaCard.jsx";
 
 const Search = ({ isPopUp, setIsPopUp }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,7 +10,6 @@ const Search = ({ isPopUp, setIsPopUp }) => {
   const [filteredPartidas, setFilteredPartidas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   const fetchPublicPartidas = async () => {
     try {
@@ -18,8 +17,6 @@ const Search = ({ isPopUp, setIsPopUp }) => {
         credentials: 'include' 
       });
       const data = await response.json();
-      
-      console.log("Datos API Search:", data);
       
       if (data.success && data.partidas) {
         setAllPartidas(data.partidas);
@@ -75,19 +72,11 @@ const Search = ({ isPopUp, setIsPopUp }) => {
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
           filteredPartidas.map((partida) => (
-            <div key={partida.id} className="partida-card">
-              <div className="image-placeholder"></div>
-              <div className="partida-info">
-                <h2>{partida.nombre}</h2>
-                <p>{partida.descripcion}</p>
-              </div>
-              <button
-                className="enter-btn"
-                onClick={() => navigate(`/partida/${partida.id}`)}
-              >
-                Unirte
-              </button>
-            </div>
+            <PartidaCard 
+              key={partida.id} 
+              partida={partida} 
+              buttonText="Unirte"
+            />
           ))
         ) : (
           <p className="no-results">No se encontraron partidas.</p>
