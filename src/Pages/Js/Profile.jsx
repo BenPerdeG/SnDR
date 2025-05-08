@@ -16,6 +16,8 @@ function Profile({ isPopUp, setIsPopUp }) {
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [lastGame, setLastGame] = useState(null);
+  const [loadingGame, setLoadingGame] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,6 +31,9 @@ function Profile({ isPopUp, setIsPopUp }) {
         setUserData(data.user);
         setIsPrivate(data.user.private || false);
         setUser(prev => ({ ...prev, ...data.user }));
+        
+        // Fetch last game after user data is loaded
+        fetchLastGame();
       } catch (error) {
         setError(error.message);
         if (error.message.includes('autorizado')) handleLogout();
@@ -38,6 +43,23 @@ function Profile({ isPopUp, setIsPopUp }) {
     };
     fetchUserData();
   }, [setUser]);
+
+  const fetchLastGame = async () => {
+    setLoadingGame(true);
+    try {
+      const response = await fetch('https://sndr.42web.io/inc/ultimaPartida.php', {
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || `Error ${response.status}`);
+      setLastGame(data.partida);
+    } catch (error) {
+      console.error('Error fetching last game:', error);
+    } finally {
+      setLoadingGame(false);
+    }
+  };
 
   const handleLogout = async () => {
     setLogoutLoading(true);
@@ -95,6 +117,12 @@ function Profile({ isPopUp, setIsPopUp }) {
       console.error('Account deletion failed:', error);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleEnterGame = () => {
+    if (lastGame) {
+      navigate(`/partida/${lastGame.id}`);
     }
   };
 
@@ -173,17 +201,46 @@ function Profile({ isPopUp, setIsPopUp }) {
         <div className="figma-content">
           <div className="figma-card">
             <div className="figma-card-header">
-              <h2>Ultima Partida Creada</h2>
+              <h2>Última Partida Creada</h2>
             </div>
             <div className="figma-card-body">
-              <div className="figma-card-image"></div>
-              <div className="figma-card-details">
-                <h3 className="figma-card-title">Nombre de partida</h3>
-                <div className="figma-card-description">
-                  <p>Descripción de la partida</p>
+              {loadingGame ? (
+                <div className="loading-spinner-small"></div>
+              ) : lastGame ? (
+                <>
+                  <div className="figma-card-image">
+                    {lastGame.imagen ? (
+                      <img src={lastGame.imagen} alt={lastGame.nombre} />
+                    ) : (
+                      <div className="figma-default-game-image"></div>
+                    )}
+                  </div>
+                  <div className="figma-card-details">
+                    <h3 className="figma-card-title">{lastGame.nombre}</h3>
+                    <div className="figma-card-description">
+                      <p>{lastGame.descripcion || "Sin descripción"}</p>
+                    </div>
+                    <button 
+                      type="button" 
+                      className="figma-enter-btn"
+                      onClick={handleEnterGame}
+                    >
+                      Entrar
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="figma-no-game">
+                  <p>No has creado ninguna partida</p>
+                  <button 
+                    type="button" 
+                    className="figma-create-btn"
+                    onClick={() => navigate('/crear-partida')}
+                  >
+                    Crear Partida
+                  </button>
                 </div>
-                <button type="button" className="figma-enter-btn">Entrar</button>
-              </div>
+              )}
             </div>
           </div>
         </div>

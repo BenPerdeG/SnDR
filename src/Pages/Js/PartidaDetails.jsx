@@ -135,8 +135,41 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
         });
         setShowForm(false);
       }
+      fetchPartida();
     } catch (err) {
       alert("Error de red");
+    }
+  };
+
+  const handleExpulsar = async (jugadorId) => {
+    if (!isAdmin) return;
+    
+    if (window.confirm(`¿Estás seguro de que quieres expulsar a este jugador?`)) {
+      try {
+        const response = await fetch('https://sndr.42web.io/inc/expulsar.php', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jugador_id: jugadorId,
+            partida_id: id  // from useParams
+          })
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          alert('Jugador expulsado correctamente');
+          // Refresh the game data
+          fetchPartida();
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+        fetchPartida();
+      } catch (error) {
+        console.error('Error expulsando jugador:', error);
+        alert('Error al expulsar al jugador');
+      }
     }
   };
 
@@ -263,15 +296,21 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 <div className="players-grid">
                   {partida.jugadores?.map((jugador) => (
                     <div key={jugador.id} className="player-card">
-                      {jugador.imagen_perfil ? (
-                        <img
-                          src={jugador.avatar}
-                          alt={jugador.nombre}
-                          className="player-avatar"
-                        />
-                      ) : (
-                        <div className="icon-avatar small">👤</div>
-                      )}
+                      <div
+                        className="player-avatar-container"
+                        onClick={() => isAdmin && handleExpulsar(jugador.id)}
+                      >
+                        {jugador.imagen_perfil ? (
+                          <img
+                            src={jugador.avatar}
+                            alt={jugador.nombre}
+                            className="player-avatar"
+                          />
+                        ) : (
+                          <div className="icon-avatar small">👤</div>
+                        )}
+                        {isAdmin && <div className="player-expel-overlay">✕</div>}
+                      </div>
                       <p className="player-name">{jugador.nombre}</p>
                     </div>
                   ))}
