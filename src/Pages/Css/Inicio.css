@@ -12,6 +12,17 @@ body {
     padding-top: 80px;
 }
 
+.info-container{
+    color: white;
+    margin-top: 10%;
+    max-width: 500px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.info-container .info{
+    margin-top: 10%;
+}
 
 .mr10 {margin-right: 10px;}
 .mbot20 {margin-bottom: 20px; }
