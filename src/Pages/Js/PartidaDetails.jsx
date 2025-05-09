@@ -152,7 +152,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             jugador_id: jugadorId,
-            partida_id: id  // from useParams
+            partida_id: id 
           })
         });
   
@@ -160,7 +160,6 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   
         if (data.success) {
           alert('Jugador expulsado correctamente');
-          // Refresh the game data
           fetchPartida();
         } else {
           alert(`Error: ${data.message}`);
