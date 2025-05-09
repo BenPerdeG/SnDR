@@ -71,7 +71,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
 
   const handleCreatePartida = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/crearPartida.php', {
+      const response = await fetch('https://sndr.42web.io/inc/createPartida.php', {
         method: 'POST',
         credentials: 'include',
         headers: {
