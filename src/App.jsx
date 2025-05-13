@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from "react";
-import "./App.css";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./context/UserContext"; 
 import ProtectedRoutesUser from "./context/ProtectedRoutes.jsx";
@@ -12,6 +12,7 @@ const Profile = lazy(() => import("./Pages/Js/Profile.jsx"));
 const Login = lazy(() => import("./Pages/Js/Login.jsx"));
 const PartidaDetails = lazy(() => import("./Pages/Js/PartidaDetails.jsx"));
 const AccessDenied = lazy(() => import("./Pages/Js/AccessDenied.jsx"));
+const Tablero = lazy(() => import("../src/assets/Tablero/TableroOld.jsx"));
 
 function App() {
   const [isPopUp, setIsPopUp] = useState(false); 
@@ -30,9 +31,10 @@ function App() {
                 <Route path="/search" element={<Search isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/profile" element={<Profile isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/partida/:id" element={<PartidaDetails isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
-                <Route path="/acceso-denegado" element={<AccessDenied />} />
+                <Route path="/tablero" element={<Tablero />} />
               </Route>
-              
+
+              <Route path="/acceso-denegado" element={<AccessDenied />} />
               <Route path="/login" element={<Login />} />
             </Routes>
           </Suspense>

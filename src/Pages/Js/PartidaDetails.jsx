@@ -6,6 +6,7 @@ import "../Css/PartidaDetails.css"
 import { useUser } from "../../context/UserContext"
 import Gris from "../../assets/images/gris.jpg"
 import Invitar from "../../assets/componentes/JS/Invitar"
+import { useNavigate } from "react-router-dom";
 
 const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const { id } = useParams()
@@ -134,7 +135,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
       alert("Error de red")
     }
   }
-
+  const navigate = useNavigate();
   const handleExpulsar = async (jugadorId) => {
     if (!isAdmin) return
 
@@ -313,7 +314,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                   ))}
                 </div>
               </div>
-              <button className="entrar">Entrar</button>
+              <button className="entrar" onClick={() => navigate('/tablero')}>Entrar</button>
             </div>
           </div>
         </div>

@@ -1,64 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root{
+  padding: 0;
+  
+}
+
+body {
+  background-color: white;
+  background: white;
+  margin: 0;
+  padding: 0;
+}
+
 #container {
-    position: relative;
-    transform-origin: center;
-    box-sizing: content-box;
-  }
-  
-  #parentContainer {
-    width: 2000px;
-    height: 2000px;
-  
-    overflow: auto;
-    box-sizing: content-box;
-  }
-  
-  
-  .box {
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b4/Litoria_infrafrenata_-_Julatten.jpg');
-    background-size: cover; /* Ajusta la imagen para que cubra todo el área */
-    background-position: center; /* Centra la imagen dentro del contenedor */
-    border: 1px solid red;
-    box-sizing: border-box; /* importante, de lo contrario necesitaríamos hacer cálculos para el borde */
-  }
-  
-  
-  .grid {
-   
-    box-sizing: border-box;
-    border: none;
-    background: 
-     linear-gradient(0deg, #CCC 1px, rgba(0, 0, 0, 0) 1px),
-     linear-gradient(90deg, #CCC 1px, rgba(0, 0, 0, 0) 1px), 
-     linear-gradient(0deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px), 
-     linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px)
-   
-  }
-  
-  /* pixel % calculated as : 100 / number_of_grids; */
-  
-  .g-10 {
-    background-size: 10% 10%, 10% 10%, 10% 10%, 10% 10%;
-  }
-  
-  .g-20 {
-    background-size: 5% 5%, 5% 5%, 5% 5%, 5% 5%;
-  }
-  
-  .g-30 {
-    background-size: 3.3% 3.3%, 3.3% 3.3%, 3.3% 3.3%, 3.3% 3.3%;
-  }
-  
-  .g-40 {
-    background-size: 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%;
-  }
-  
-  .g-50 {
-    background-size: 2% 2%, 2% 2%, 2% 2%, 2% 2%;
-  }
-  
-  .g-60 {
-    background-size: 1.65% 1.65%, 1.65% 1.65%, 1.65% 1.65%, 1.65% 1.65%;
-  }
+  position: relative;
+  transform-origin: center;
+  box-sizing: content-box;
+  width: 2000px;
+  height: 2000px;
+}
+
+#parentContainer {
+  width: 2000px;
+  height: 2000px;
+
+  overflow: auto;
+  box-sizing: content-box;
+}
+
+
+.box {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b4/Litoria_infrafrenata_-_Julatten.jpg');
+  background-size: cover;
+  /* Ajusta la imagen para que cubra todo el área */
+  background-position: center;
+  /* Centra la imagen dentro del contenedor */
+  border: 1px solid red;
+  box-sizing: border-box;
+  /* importante, de lo contrario necesitaríamos hacer cálculos para el borde */
+}
+
+
+.grid {
+
+  box-sizing: border-box;
+  border: none;
+  background:
+    linear-gradient(0deg, #CCC 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(90deg, #CCC 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px)
+}
+
+
+
+.g {
+  background-size: 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%;
+}
