@@ -1,116 +1,110 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import TopNav from "../../assets/componentes/JS/TopNav";
-import Login from "../../assets/componentes/JS/LoginComp";
-import "../Css/PartidaDetails.css";
-import { useUser } from "../../context/UserContext";
-import Gris from "../../assets/images/gris.jpg";
-import Invitar from "../../assets/componentes/JS/Invitar";
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import TopNav from "../../assets/componentes/JS/TopNav"
+import Login from "../../assets/componentes/JS/LoginComp"
+import "../Css/PartidaDetails.css"
+import { useUser } from "../../context/UserContext"
+import Gris from "../../assets/images/gris.jpg"
+import Invitar from "../../assets/componentes/JS/Invitar"
 
 const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
-  const { id } = useParams();
-  const { user } = useUser();
-  const [partida, setPartida] = useState(null);
-  const [error, setError] = useState(null);
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [editedNombre, setEditedNombre] = useState("");
-  const [editedDescripcion, setEditedDescripcion] = useState("");
-  const [editedImagen, setEditedImagen] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isPopUpInvi, setIsPopUpInvi] = useState(false);
+  const { id } = useParams()
+  const { user } = useUser()
+  const [partida, setPartida] = useState(null)
+  const [error, setError] = useState(null)
+  const [isPrivate, setIsPrivate] = useState(false)
+  const [editedNombre, setEditedNombre] = useState("")
+  const [editedDescripcion, setEditedDescripcion] = useState("")
+  const [editedImagen, setEditedImagen] = useState("")
+  const [showForm, setShowForm] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isPopUpInvi, setIsPopUpInvi] = useState(false)
 
   // Función para verificar si el usuario es admin
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch(
-        `https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`,
-        {
-          credentials: "include",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await fetch(`https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`, {
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!data.success) {
-        console.error("Error del servidor:", data.message);
-        return;
+        console.error("Error del servidor:", data.message)
+        return
       }
 
-      setIsAdmin(data.isAdmin);
+      setIsAdmin(data.isAdmin)
     } catch (err) {
-      console.error("Error verificando admin:", err);
-      setError("Error al verificar permisos");
+      console.error("Error verificando admin:", err)
+      setError("Error al verificar permisos")
     }
-  };
+  }
 
   // Función para cargar los datos de la partida
   const fetchPartida = async () => {
     try {
-      setLoading(true);
-      const response = await fetch(
-        `https://sndr.42web.io/inc/getPartida.php?id=${id}`,
-        { credentials: "include" }
-      );
-      const data = await response.json();
+      setLoading(true)
+      const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, { credentials: "include" })
+      const data = await response.json()
 
       if (data.success) {
-        setPartida(data.partida);
-        setEditedNombre(data.partida.nombre);
-        setEditedDescripcion(data.partida.descripcion);
-        setEditedImagen(data.partida.imagen);
-        setIsPrivate(data.partida.private === true || data.partida.private === 1);
+        setPartida(data.partida)
+        setEditedNombre(data.partida.nombre)
+        setEditedDescripcion(data.partida.descripcion)
+        setEditedImagen(data.partida.imagen)
+        setIsPrivate(data.partida.private === true || data.partida.private === 1)
       } else {
-        setError(data.message);
+        setError(data.message)
       }
     } catch (err) {
-      setError("Error al cargar los datos de la partida");
-      console.error("Error fetching partida:", err);
+      setError("Error al cargar los datos de la partida")
+      console.error("Error fetching partida:", err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (user) {
-      checkAdminStatus();
-      fetchPartida();
+      checkAdminStatus()
+      fetchPartida()
     }
-  }, [id, user]);
+  }, [id, user])
 
   const handlePrivacyChange = async (e) => {
-    if (!isAdmin) return;
+    if (!isAdmin) return
 
-    const newValue = e.target.checked;
-    setIsPrivate(newValue);
+    const newValue = e.target.checked
+    setIsPrivate(newValue)
 
     try {
-      await fetch('https://sndr.42web.io/inc/updatePrivacy.php', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("https://sndr.42web.io/inc/updatePrivacy.php", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: partida.id,
-          private: newValue ? 1 : 0
-        })
-      });
+          private: newValue ? 1 : 0,
+        }),
+      })
     } catch (error) {
-      setIsPrivate(!newValue);
+      setIsPrivate(!newValue)
     }
-  };
+  }
 
   const handleUpdate = async (e) => {
-    e.preventDefault();
-    if (!isAdmin) return;
+    e.preventDefault()
+    if (!isAdmin) return
 
     try {
       const response = await fetch("https://sndr.42web.io/inc/updatePartida.php", {
@@ -121,71 +115,71 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           id: partida.id,
           nombre: editedNombre,
           descripcion: editedDescripcion,
-          imagen: editedImagen
+          imagen: editedImagen,
         }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
       if (data.success) {
         setPartida({
           ...partida,
           nombre: editedNombre,
           descripcion: editedDescripcion,
-          imagen: editedImagen
-        });
-        setShowForm(false);
+          imagen: editedImagen,
+        })
+        setShowForm(false)
       }
-      fetchPartida();
+      fetchPartida()
     } catch (err) {
-      alert("Error de red");
+      alert("Error de red")
     }
-  };
+  }
 
   const handleExpulsar = async (jugadorId) => {
-    if (!isAdmin) return;
-    
+    if (!isAdmin) return
+
     if (window.confirm(`¿Estás seguro de que quieres expulsar a este jugador?`)) {
       try {
-        const response = await fetch('https://sndr.42web.io/inc/expulsar.php', {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("https://sndr.42web.io/inc/expulsar.php", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             jugador_id: jugadorId,
-            partida_id: id 
-          })
-        });
-  
-        const data = await response.json();
-  
+            partida_id: id,
+          }),
+        })
+
+        const data = await response.json()
+
         if (data.success) {
-          alert('Jugador expulsado correctamente');
-          fetchPartida();
+          alert("Jugador expulsado correctamente")
+          fetchPartida()
         } else {
-          alert(`Error: ${data.message}`);
+          alert(`Error: ${data.message}`)
         }
-        fetchPartida();
+        fetchPartida()
       } catch (error) {
-        console.error('Error expulsando jugador:', error);
-        alert('Error al expulsar al jugador');
+        console.error("Error expulsando jugador:", error)
+        alert("Error al expulsar al jugador")
       }
     }
-  };
+  }
 
   if (!user) {
-    return <div className="partida-details-container">Por favor inicia sesión para ver los detalles de la partida</div>;
+    return <div className="partida-details-container">Por favor inicia sesión para ver los detalles de la partida</div>
   }
 
   if (loading) {
-    return <div className="partida-details-container">Cargando partida...</div>;
+    return <div className="partida-details-container">Cargando partida...</div>
   }
 
   if (error) {
-    return <div className="partida-details-container error-message">{error}</div>;
+    return <div className="partida-details-container error-message">{error}</div>
   }
 
   if (!partida) {
-    return <div className="partida-details-container">No se encontró la partida</div>;
+    return <div className="partida-details-container">No se encontró la partida</div>
   }
 
   return (
@@ -195,12 +189,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
       </header>
 
       {isPopUp && <Login isPopUp={isPopUp} setIsPopUp={setIsPopUp} />}
-      {isPopUpInvi && (
-        <Invitar
-          isPopUpInvi={isPopUpInvi}
-          setIsPopUpInvi={setIsPopUpInvi}
-        />
-      )}
+      {isPopUpInvi && <Invitar isPopUpInvi={isPopUpInvi} setIsPopUpInvi={setIsPopUpInvi} />}
       {partida && (
         <div className="partida-details-content">
           <div className="partida-header">
@@ -214,51 +203,39 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 <p>{partida.descripcion}</p>
               </div>
               {isAdmin && (
-                <button
-                  onClick={() => setShowForm(!showForm)}
-                  className="toggle-form-button"
-                >
+                <button onClick={() => setShowForm(!showForm)} className="toggle-form-button">
                   {showForm ? "Ocultar Formulario" : "Editar Partida"}
                 </button>
               )}
               {isAdmin && showForm && (
-                <div>
+                <div className="adminOnly">
                   <form className="edit-partida-form" onSubmit={handleUpdate}>
                     <label>
                       Nombre:
-                      <input
-                        type="text"
-                        value={editedNombre}
-                        onChange={(e) => setEditedNombre(e.target.value)}
-                      />
+                      <input type="text" value={editedNombre} onChange={(e) => setEditedNombre(e.target.value)} />
                     </label>
                     <label>
                       Descripción:
-                      <textarea
-                        value={editedDescripcion}
-                        onChange={(e) => setEditedDescripcion(e.target.value)}
-                      />
+                      <textarea value={editedDescripcion} onChange={(e) => setEditedDescripcion(e.target.value)} />
                     </label>
                     <label>
                       Imagen (URL):
-                      <input
-                        type="text"
-                        value={editedImagen}
-                        onChange={(e) => setEditedImagen(e.target.value)}
-                      />
+                      <input type="text" value={editedImagen} onChange={(e) => setEditedImagen(e.target.value)} />
                     </label>
                     <label className="figma-private-btn">
-                      <input
-                        type="checkbox"
-                        checked={isPrivate}
-                        onChange={handlePrivacyChange}
-                        disabled={!isAdmin}
-                      />
+                      <input type="checkbox" checked={isPrivate} onChange={handlePrivacyChange} disabled={!isAdmin} />
                       <span>Privada</span>
                     </label>
                     <button type="submit">Guardar Cambios</button>
                   </form>
-                  <button className="Invitar" onClick={() => setIsPopUpInvi(!isPopUpInvi)}>Invitar jugador</button>
+                  <div className="admin-buttons-container">
+                    <button className="invitar" onClick={() => setIsPopUpInvi(!isPopUpInvi)}>
+                      Invitar jugador
+                    </button>
+                    <button className="eliminar" onClick={() => setIsPopUpInvi(!isPopUpInvi)}>
+                      Borrar Partida
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -266,22 +243,19 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
             <div className="partida-right-column">
               <div className="partida-image-placeholder">
                 {partida.imagen ? (
-                  <img src={partida.imagen} alt="Imagen de partida" />
+                  <img src={partida.imagen || "/placeholder.svg"} alt="Imagen de partida" />
                 ) : (
-                  <img src={Gris} alt="Imagen de partida" />
-
+                  <img src={Gris || "/placeholder.svg"} alt="Imagen de partida" />
                 )}
               </div>
 
               <div className="created-by-section">
                 <h3>Creado por</h3>
                 <div className="creator-info">
-
                   {partida.admin?.imagen_perfil ? (
-                    <img src={partida.admin?.imagen_perfil} alt="Administrador" />
+                    <img src={partida.admin?.imagen_perfil || "/placeholder.svg"} alt="Administrador" />
                   ) : (
                     <div className="icon-avatar small">👤</div>
-
                   )}
                   <div className="creator-details">
                     <p className="creator-name">{partida.admin?.nombre || "Administrador"}</p>
@@ -295,13 +269,10 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                 <div className="players-grid">
                   {partida.jugadores?.map((jugador) => (
                     <div key={jugador.id} className="player-card">
-                      <div
-                        className="player-avatar-container"
-                        onClick={() => isAdmin && handleExpulsar(jugador.id)}
-                      >
+                      <div className="player-avatar-container" onClick={() => isAdmin && handleExpulsar(jugador.id)}>
                         {jugador.imagen_perfil ? (
                           <img
-                            src={jugador.avatar}
+                            src={jugador.avatar || "/placeholder.svg"}
                             alt={jugador.nombre}
                             className="player-avatar"
                           />
@@ -314,7 +285,6 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                     </div>
                   ))}
                 </div>
-
               </div>
               <button className="entrar">Entrar</button>
             </div>
@@ -322,7 +292,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PartidaDetails;
+export default PartidaDetails
