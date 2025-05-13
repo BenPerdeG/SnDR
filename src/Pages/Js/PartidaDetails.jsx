@@ -165,6 +165,33 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
       }
     }
   }
+  const handleDeletePartida = async () => {
+    if (!isAdmin) return;
+
+    if (window.confirm("¿Estás seguro de que quieres borrar esta partida? Esta acción no se puede deshacer.")) {
+      try {
+        const response = await fetch("https://sndr.42web.io/inc/borrarPartida.php", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            partida_id: id,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          window.location.href = "/misPartidas";
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      } catch (error) {
+        console.error("Error borrando partida:", error);
+        alert("Error al borrar la partida");
+      }
+    }
+  };
 
   if (!user) {
     return <div className="partida-details-container">Por favor inicia sesión para ver los detalles de la partida</div>
@@ -232,7 +259,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                     <button className="invitar" onClick={() => setIsPopUpInvi(!isPopUpInvi)}>
                       Invitar jugador
                     </button>
-                    <button className="eliminar" onClick={() => setIsPopUpInvi(!isPopUpInvi)}>
+                    <button className="eliminar" onClick={handleDeletePartida}>
                       Borrar Partida
                     </button>
                   </div>

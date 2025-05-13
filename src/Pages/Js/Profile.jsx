@@ -189,10 +189,11 @@ function Profile({ isPopUp, setIsPopUp }) {
             <p className="perfil-value">{userData?.email || "No disponible"}</p>
           </div>
 
-          <div className="perfil-info-group">
+            {/* Ya haré las horas jugadas en otra acualización */}
+          {/* <div className="perfil-info-group">
             <p className="perfil-label">Horas Jugadas:</p>
             <p className="perfil-value">{userData?.horas_jugadas || 0}</p>
-          </div>
+          </div> */}
 
           <label className="perfil-private-btn">
             <input
