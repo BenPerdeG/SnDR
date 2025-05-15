@@ -142,7 +142,7 @@ function Profile({ isPopUp, setIsPopUp }) {
 
   const handleCreatePartida = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/crearPartida.php', {
+      const response = await fetch('https://sndr.42web.io/inc/createPartida.php', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -153,7 +153,6 @@ function Profile({ isPopUp, setIsPopUp }) {
       const data = await response.json();
 
       if (data.success) {
-        // Redirect to the new game or refresh the list
         navigate(`/partida/${data.partida_id}`);
       } else {
         alert('Error al crear partida: ' + data.message);

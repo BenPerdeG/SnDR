@@ -12,7 +12,7 @@ const Profile = lazy(() => import("./Pages/Js/Profile.jsx"));
 const Login = lazy(() => import("./Pages/Js/Login.jsx"));
 const PartidaDetails = lazy(() => import("./Pages/Js/PartidaDetails.jsx"));
 const AccessDenied = lazy(() => import("./Pages/Js/AccessDenied.jsx"));
-const Tablero = lazy(() => import("../src/assets/Tablero/TableroOld.jsx"));
+const Tablero = lazy(() => import("./assets/Tablero/Tablero.jsx"));
 
 function App() {
   const [isPopUp, setIsPopUp] = useState(false); 

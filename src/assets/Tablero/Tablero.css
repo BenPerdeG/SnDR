@@ -1,0 +1,338 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  padding: 0;
+}
+
+body {
+  background-color: white;
+  background: white;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+}
+
+.tablero-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#container {
+  position: relative;
+  transform-origin: center;
+  box-sizing: content-box;
+  width: 2000px;
+  height: 2000px;
+}
+
+#parentContainer {
+  width: 2000px;
+  height: 2000px;
+  overflow: auto;
+  box-sizing: content-box;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/b/b4/Litoria_infrafrenata_-_Julatten.jpg");
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #ff5555;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.box:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.grid {
+  box-sizing: border-box;
+  border: none;
+  background: linear-gradient(0deg, #ccc 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(90deg, #ccc 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0) 1px);
+}
+
+.g {
+  background-size: 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%, 2.5% 2.5%;
+}
+
+/* Left Menu Styles */
+.left-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, width 0.3s ease;
+  display: flex;
+}
+
+.left-menu.collapsed {
+  transform: translateX(-200px);
+}
+
+.left-menu-content {
+  flex: 1;
+  padding: 20px 15px;
+  overflow-y: auto;
+}
+
+.left-menu-header {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.left-menu-header h3 {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.left-menu-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.left-menu-button {
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.left-menu-button:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Menu Styles */
+.right-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  z-index: 1000;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, width 0.3s ease;
+  display: flex;
+}
+
+.right-menu.collapsed {
+  transform: translateX(280px);
+}
+
+.right-menu-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tabs-container {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+}
+
+.tab:hover {
+  background-color: #f0f0f0;
+}
+
+.tab.active {
+  background-color: #f0f7ff;
+  color: #0066cc;
+  border-bottom: 2px solid #0066cc;
+}
+
+.tab-content-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tab-content h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.layer-item,
+.setting-item,
+.property-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 10px 0;
+}
+
+.tab-button {
+  padding: 8px 12px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: #0055aa;
+}
+
+/* Collapse buttons */
+.collapse-button {
+  width: 24px;
+  height: 60px;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  position: fixed;
+  z-index: 1010; /* Mayor que el menú para estar siempre visible */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.collapse-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Botones de toggle independientes */
+.left-toggle-button {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-right: 1px solid #ddd;
+}
+
+.right-toggle-button {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-left: 1px solid #ddd;
+}
+
+/* Form elements styling */
+select,
+input[type="number"],
+input[type="color"] {
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+label {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Chat styles */
+.chat-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  max-height: 300px;
+}
+
+.message {
+  margin-bottom: 8px;
+  padding: 5px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.chat-input-container {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input-container input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.chat-input-container button {
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chat-input-container button:hover {
+  background-color: #45a049;
+}
