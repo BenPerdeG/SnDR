@@ -66,6 +66,7 @@
     color: #fff;
     font-weight: 500;
     transition: .5s;
+    margin-bottom: 5%;
   }
   
   .invitar-form .btn:hover {

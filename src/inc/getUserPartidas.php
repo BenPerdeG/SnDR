@@ -2,7 +2,6 @@
 session_start();
 include "conn.php";
 
-// Configuración de headers idéntica a Profile
 header("Access-Control-Allow-Origin: https://sndr.42web.io");
 header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
@@ -17,7 +16,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-
 if (!$con) {
     echo json_encode([
         "success" => false,
@@ -28,8 +26,18 @@ if (!$con) {
 
 $userId = (int)$_SESSION['user_id'];
 
-// Consulta idéntica a la que funciona en otras partes
-$query = "SELECT id, nombre, descripcion, imagen FROM Partida WHERE id_admin = ?";
+// Combined query to get both admin-owned and participant games
+$query = "(SELECT p.id, p.nombre, p.descripcion, p.imagen 
+          FROM Partida p 
+          WHERE p.id_admin = ?)
+          
+          UNION
+          
+          (SELECT p.id, p.nombre, p.descripcion, p.imagen 
+          FROM Partida p 
+          JOIN Usuarios_Partidas up ON p.id = up.id_partida 
+          WHERE up.id_usuario = ?)";
+
 $stmt = mysqli_prepare($con, $query);
 
 if (!$stmt) {
@@ -41,7 +49,8 @@ if (!$stmt) {
     exit;
 }
 
-mysqli_stmt_bind_param($stmt, "i", $userId);
+// Bind both parameters (same user ID for both conditions)
+mysqli_stmt_bind_param($stmt, "ii", $userId, $userId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
