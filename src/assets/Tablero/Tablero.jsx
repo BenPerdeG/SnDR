@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight, Layers, Settings, Box, Move } from "lucide-react"
 import "./Tablero.css"
+import { initializeApp } from "firebase/app";
+import { useParams } from "react-router-dom"
+import { useUser } from "../../context/UserContext"
+import ChatTab from "../componentes/JS/ChatTab"; 
+
 
 const Tablero = () => {
   const containerRef = useRef(null)
@@ -9,6 +14,54 @@ const Tablero = () => {
   const [snapToGrid, setSnapToGrid] = useState(40)
   const [mouseDownBox, setMouseDownBox] = useState(null)
   const canvasSize = 2000
+  const { id } = useParams()
+  const { user, setUser } = useUser();
+  const [userData, setUserData] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const handleSetChatInput = useCallback((value) => setChatInput(value), []);
+  const handleSetChatMessages = useCallback((updater) => setChatMessages(updater), []);
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('https://sndr.42web.io/inc/userData.php', {
+          credentials: 'include',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await response.json();
+  
+        if (!response.ok || !data.success) throw new Error(data.message || `Error ${response.status}`);
+  
+        setUserData(data.user);
+        setIsPrivate(data.user.private || false);
+        setUser(prev => ({ ...prev, ...data.user }));
+  
+        // <- asegúrate de que esto tampoco esté causando loops
+      } catch (error) {
+        setError(error.message);
+        if (error.message.includes('autorizado')) handleLogout();
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUserData();
+  }, []); 
+  
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyerHDixc74S5J8N0HZ2f24Ka1zenTSlc",
+    authDomain: "sndr-6f63a.firebaseapp.com",
+    projectId: "sndr-6f63a",
+    storageBucket: "sndr-6f63a.firebasestorage.app",
+    messagingSenderId: "216451953397",
+    appId: "1:216451953397:web:82b40246d509628e8e0bbc"
+  };
+  
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
 
   // States for menu management
   const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
@@ -70,62 +123,46 @@ const Tablero = () => {
     switch (activeTab) {
       case 0:
         return (
-          <div className="tab-content">
-            <h3>Layers</h3>
-            <div className="layer-item">
-              <span>Box 1</span>
-              <input type="checkbox" defaultChecked />
-            </div>
-            <div className="layer-item">
-              <span>Box 2</span>
-              <input type="checkbox" defaultChecked />
-            </div>
-            <div className="divider"></div>
-            <button className="tab-button">Add Layer</button>
-          </div>
+        
+      <ChatTab
+      chatMessages={chatMessages}
+      chatInput={chatInput}
+      setChatInput={handleSetChatInput}
+      setChatMessages={handleSetChatMessages}
+      userData={userData}
+    />
         )
       case 1:
         return (
           <div className="tab-content">
-            <h3>Settings</h3>
-            <div className="setting-item">
-              <label>Grid Size:</label>
-              <select value={snapToGrid} onChange={(e) => setSnapToGrid(Number.parseInt(e.target.value))}>
-                <option value="20">20x20</option>
-                <option value="40">40x40</option>
-                <option value="60">60x60</option>
-              </select>
-            </div>
-            <div className="setting-item">
-              <label>Show Grid:</label>
-              <input type="checkbox" defaultChecked />
-            </div>
+            <h3>Personajes</h3>
+            
           </div>
         )
-      case 2:
-        return (
-          <div className="tab-content">
-            <h3>Properties</h3>
-            {mouseDownBox !== null ? (
-              <div>
-                <div className="property-item">
-                  <label>Width:</label>
-                  <input type="number" defaultValue="100" />
-                </div>
-                <div className="property-item">
-                  <label>Height:</label>
-                  <input type="number" defaultValue="100" />
-                </div>
-                <div className="property-item">
-                  <label>Color:</label>
-                  <input type="color" defaultValue="#ff0000" />
-                </div>
-              </div>
-            ) : (
-              <p>Select an element to edit properties</p>
-            )}
-          </div>
-        )
+      // case 2:
+      //   return (
+      //     <div className="tab-content">
+      //       <h3>Properties</h3>
+      //       {mouseDownBox !== null ? (
+      //         <div>
+      //           <div className="property-item">
+      //             <label>Width:</label>
+      //             <input type="number" defaultValue="100" />
+      //           </div>
+      //           <div className="property-item">
+      //             <label>Height:</label>
+      //             <input type="number" defaultValue="100" />
+      //           </div>
+      //           <div className="property-item">
+      //             <label>Color:</label>
+      //             <input type="color" defaultValue="#ff0000" />
+      //           </div>
+      //         </div>
+      //       ) : (
+      //         <p>Select an element to edit properties</p>
+      //       )}
+      //     </div>
+      //   )
       default:
         return null
     }
@@ -149,21 +186,11 @@ const Tablero = () => {
       <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
         <div className="left-menu-content">
           <div className="left-menu-header">
-            <h3>Tools</h3>
+            <h3>Dados</h3>
           </div>
           <div className="left-menu-buttons">
-            <button className="left-menu-button" title="Select">
-              <Move size={18} />
-            </button>
-            <button className="left-menu-button" title="Add Box">
-              <Box size={18} />
-            </button>
-            <button className="left-menu-button" title="Layers">
-              <Layers size={18} />
-            </button>
-            <button className="left-menu-button" title="Settings">
-              <Settings size={18} />
-            </button>
+            
+            
           </div>
         </div>
       </div>
@@ -173,17 +200,17 @@ const Tablero = () => {
         <div className="right-menu-content">
           <div className="tabs-container">
             <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>
-              <Layers size={16} />
-              <span>Layers</span>
+              
+              <span>Chat</span>
             </div>
             <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}>
-              <Settings size={16} />
-              <span>Settings</span>
+              
+              <span>Personajes</span>
             </div>
-            <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}>
-              <Box size={16} />
+            {/* <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}>
+             
               <span>Properties</span>
-            </div>
+            </div> */}
           </div>
 
           <div className="tab-content-container">

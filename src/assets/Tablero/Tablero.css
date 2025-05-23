@@ -336,3 +336,13 @@ label {
 .chat-input-container button:hover {
   background-color: #45a049;
 }
+
+
+.chat-box {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.chat-box div {
+  margin-bottom: 4px;
+}
