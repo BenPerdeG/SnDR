@@ -4,7 +4,6 @@ header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 require_once 'conn.php';
 
-
 if (!$con || $con->connect_error) {
     http_response_code(500);
     echo json_encode([
@@ -13,7 +12,6 @@ if (!$con || $con->connect_error) {
     ]);
     exit;
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -37,7 +35,6 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 try {
-   
     $con->begin_transaction();
 
     $stmt = $con->prepare("SELECT nombre FROM Usuario WHERE id = ?");
@@ -58,7 +55,6 @@ try {
     $userName = $user['nombre'];
     $stmt->close();
     
-    // Contar partidas existentes
     $stmt = $con->prepare("SELECT COUNT(id) as count FROM Partida WHERE id_admin = ?");
     if (!$stmt) {
         throw new Exception("Error al preparar conteo de partidas");
@@ -73,11 +69,9 @@ try {
     $gameCount = $countData['count'] + 1;
     $stmt->close();
     
-    // Crear nombre y descripción de la partida
     $gameName = "Partida de $userName #$gameCount";
     $description = "Añade una descripción";
     
-    // Insertar nueva partida
     $stmt = $con->prepare("INSERT INTO Partida (id_admin, private, nombre, descripcion) VALUES (?, 1, ?, ?)");
     if (!$stmt) {
         throw new Exception("Error al preparar inserción de partida");
@@ -90,6 +84,26 @@ try {
     
     $newGameId = $con->insert_id;
     $stmt->close();
+
+    $stmt = $con->prepare("INSERT INTO Tablero (id) VALUES (?)");
+    if (!$stmt) {
+        throw new Exception("Error al preparar inserción de tablero");
+    }
+    $stmt->bind_param("i", $newGameId);
+    if (!$stmt->execute()) {
+        throw new Exception("Error al crear tablero");
+    }
+    $stmt->close();
+
+    $stmt = $con->prepare("UPDATE Partida SET id_tablero = ? WHERE id = ?");
+    if (!$stmt) {
+        throw new Exception("Error al preparar actualización de partida");
+    }
+    $stmt->bind_param("ii", $newGameId, $newGameId);
+    if (!$stmt->execute()) {
+        throw new Exception("Error al actualizar partida con tablero");
+    }
+    $stmt->close();
     
     $con->commit();
     
@@ -98,6 +112,7 @@ try {
         'success' => true,
         'message' => 'Partida creada exitosamente',
         'partida_id' => $newGameId,
+        'tablero_id' => $newGameId,
         'nombre' => $gameName
     ]);
 

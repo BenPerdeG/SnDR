@@ -1,27 +1,28 @@
-import { useEffect, useRef, useState } from "react"
-import { ChevronLeft, ChevronRight, Layers, Settings, Box, Move } from "lucide-react"
-import "./Tablero.css"
+import { useEffect, useRef, useState, useCallback } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import "./Tablero.css";
 import { initializeApp } from "firebase/app";
-import { useParams } from "react-router-dom"
-import { useUser } from "../../context/UserContext"
-import ChatTab from "../componentes/JS/ChatTab"; 
-
+import { useParams } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import ChatTab from "../componentes/JS/ChatTab";
+import { db } from "./fireBaseInit.js";
+import { onValue, ref } from "firebase/database";
 
 const Tablero = () => {
-  const containerRef = useRef(null)
-  const parentRef = useRef(null)
-  const boxRefs = useRef([])
-  const [snapToGrid, setSnapToGrid] = useState(40)
-  const [mouseDownBox, setMouseDownBox] = useState(null)
-  const canvasSize = 2000
-  const { id } = useParams()
+  const containerRef = useRef(null);
+  const parentRef = useRef(null);
+  const boxRefs = useRef([]);
+  const [snapToGrid, setSnapToGrid] = useState(40);
+  const [mouseDownBox, setMouseDownBox] = useState(null);
+  const canvasSize = 2000;
+  const { id } = useParams();
   const { user, setUser } = useUser();
   const [userData, setUserData] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+
   const handleSetChatInput = useCallback((value) => setChatInput(value), []);
   const handleSetChatMessages = useCallback((updater) => setChatMessages(updater), []);
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -31,199 +32,154 @@ const Tablero = () => {
           headers: { 'Accept': 'application/json' }
         });
         const data = await response.json();
-  
+
         if (!response.ok || !data.success) throw new Error(data.message || `Error ${response.status}`);
-  
+
         setUserData(data.user);
-        setIsPrivate(data.user.private || false);
         setUser(prev => ({ ...prev, ...data.user }));
-  
-        // <- asegúrate de que esto tampoco esté causando loops
       } catch (error) {
-        setError(error.message);
-        if (error.message.includes('autorizado')) handleLogout();
-      } finally {
-        setLoading(false);
+        console.error(error.message);
       }
     };
-  
+
     fetchUserData();
-  }, []); 
-  
+  }, []);
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDyerHDixc74S5J8N0HZ2f24Ka1zenTSlc",
-    authDomain: "sndr-6f63a.firebaseapp.com",
-    projectId: "sndr-6f63a",
-    storageBucket: "sndr-6f63a.firebasestorage.app",
-    messagingSenderId: "216451953397",
-    appId: "1:216451953397:web:82b40246d509628e8e0bbc"
-  };
-  
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+  // Escuchar mensajes en tiempo real
+  useEffect(() => {
+    if (!id) return;
 
-  // States for menu management
-  const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
-  const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true)
-  const [activeTab, setActiveTab] = useState(0)
+    const messagesRef = ref(db, `chatrooms/${id}/messages`);
+
+    const unsubscribe = onValue(messagesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        setChatMessages([]);
+        return;
+      }
+      const messagesArray = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+      setChatMessages(messagesArray);
+    });
+
+    return () => unsubscribe();
+  }, [id]);
+
+  const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true);
+  const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
-    updateGridClass()
-  }, [snapToGrid])
+    updateGridClass();
+  }, [snapToGrid]);
 
   const updateGridClass = () => {
     if (parentRef.current) {
-      parentRef.current.className = `grid g`
+      parentRef.current.className = `grid g`;
     }
-  }
+  };
 
   const calculateSnapValue = () => {
-    const snapToGridCount = Number.parseInt(snapToGrid, 10)
-    const snapToGridPct = 100 / snapToGridCount
-    return Number.parseInt((snapToGridPct / 100) * canvasSize, 10)
-  }
+    const snapToGridCount = Number.parseInt(snapToGrid, 10);
+    const snapToGridPct = 100 / snapToGridCount;
+    return Number.parseInt((snapToGridPct / 100) * canvasSize, 10);
+  };
 
   const handleMouseDown = (index) => () => {
-    setMouseDownBox(index)
-  }
+    setMouseDownBox(index);
+  };
 
   const handleMouseUp = () => {
-    setMouseDownBox(null)
-  }
+    setMouseDownBox(null);
+  };
 
   const handleMouseMove = (event) => {
-    if (mouseDownBox === null) return
+    if (mouseDownBox === null) return;
 
-    const container = containerRef.current
-    const box = boxRefs.current[mouseDownBox]
+    const container = containerRef.current;
+    const box = boxRefs.current[mouseDownBox];
 
-    if (!container || !box) return
+    if (!container || !box) return;
 
-    let clientX = event.clientX + container.scrollLeft
-    let clientY = event.clientY + container.scrollTop
+    let clientX = event.clientX + container.scrollLeft;
+    let clientY = event.clientY + container.scrollTop;
 
-    const offsetLeft = container.getBoundingClientRect().left
-    const offsetTop = container.getBoundingClientRect().top
+    const offsetLeft = container.getBoundingClientRect().left;
+    const offsetTop = container.getBoundingClientRect().top;
 
-    clientX = clientX - offsetLeft
-    clientY = clientY - offsetTop
+    clientX = clientX - offsetLeft;
+    clientY = clientY - offsetTop;
 
-    const snapValue = calculateSnapValue()
+    const snapValue = calculateSnapValue();
 
-    const snapedX = clientX - (clientX % snapValue)
-    const snapedY = clientY - (clientY % snapValue)
+    const snapedX = clientX - (clientX % snapValue);
+    const snapedY = clientY - (clientY % snapValue);
 
-    box.style.left = `${snapedX}px`
-    box.style.top = `${snapedY}px`
-  }
+    box.style.left = `${snapedX}px`;
+    box.style.top = `${snapedY}px`;
+  };
 
-  // Tab content components
   const TabContent = () => {
     switch (activeTab) {
       case 0:
         return (
-        
-      <ChatTab
-      chatMessages={chatMessages}
-      chatInput={chatInput}
-      setChatInput={handleSetChatInput}
-      setChatMessages={handleSetChatMessages}
-      userData={userData}
-    />
-        )
+          <ChatTab
+            chatMessages={chatMessages}
+            chatInput={chatInput}
+            setChatInput={handleSetChatInput}
+            userData={userData}
+            chatRoomId={id}
+          />
+        );
       case 1:
         return (
           <div className="tab-content">
             <h3>Personajes</h3>
-            
           </div>
-        )
-      // case 2:
-      //   return (
-      //     <div className="tab-content">
-      //       <h3>Properties</h3>
-      //       {mouseDownBox !== null ? (
-      //         <div>
-      //           <div className="property-item">
-      //             <label>Width:</label>
-      //             <input type="number" defaultValue="100" />
-      //           </div>
-      //           <div className="property-item">
-      //             <label>Height:</label>
-      //             <input type="number" defaultValue="100" />
-      //           </div>
-      //           <div className="property-item">
-      //             <label>Color:</label>
-      //             <input type="color" defaultValue="#ff0000" />
-      //           </div>
-      //         </div>
-      //       ) : (
-      //         <p>Select an element to edit properties</p>
-      //       )}
-      //     </div>
-      //   )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="tablero-container">
-      {/* Botones de colapso/expansión fuera de los menús */}
       <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
         {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
 
-      <button
-        className="collapse-button right-toggle-button"
-        onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}
-      >
+      <button className="collapse-button right-toggle-button" onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}>
         {rightMenuCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
       </button>
 
-      {/* Menú Izquierdo */}
       <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
         <div className="left-menu-content">
           <div className="left-menu-header">
             <h3>Dados</h3>
           </div>
-          <div className="left-menu-buttons">
-            
-            
-          </div>
+          <div className="left-menu-buttons"></div>
         </div>
       </div>
 
-      {/* Menú Derecho */}
       <div className={`right-menu ${rightMenuCollapsed ? "collapsed" : ""}`}>
         <div className="right-menu-content">
           <div className="tabs-container">
             <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}>
-              
               <span>Chat</span>
             </div>
             <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}>
-              
               <span>Personajes</span>
             </div>
-            {/* <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}>
-             
-              <span>Properties</span>
-            </div> */}
           </div>
-
           <div className="tab-content-container">
             <TabContent />
           </div>
         </div>
       </div>
 
-      {/* Tablero */}
       <div
         id="parentContainer"
         ref={parentRef}
-        className={`grid g`}
+        className="grid g"
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
         style={{ position: "relative" }}
@@ -249,7 +205,7 @@ const Tablero = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Tablero
+export default Tablero;
