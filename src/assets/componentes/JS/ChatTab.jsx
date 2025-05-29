@@ -9,7 +9,7 @@ const ChatTab = ({ chatMessages, chatInput, setChatInput, userData, chatRoomId }
 
     const newMessage = {
       nombre: userData?.nombre || "Anónimo",
-      mensaje: chatInput,
+      mensaje: chatInput,chatRoomId,
       timestamp: Date.now()
     };
 
@@ -31,13 +31,13 @@ const ChatTab = ({ chatMessages, chatInput, setChatInput, userData, chatRoomId }
         }}
       >
         {chatMessages.map((msg, index) => (
-          <div key={index}>
+          <div className="words" key={index}>
             <strong>{msg.nombre}</strong>: {msg.mensaje}
           </div>
         ))}
       </div>
       <form onSubmit={sendMessage}>
-        <input
+        <input className="submitChat"
           type="text"
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}

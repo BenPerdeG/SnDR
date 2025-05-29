@@ -8,6 +8,18 @@
   padding: 0;
 }
 
+input {
+  color: #000;
+}
+
+select {
+  color: #000;
+}
+
+option {
+  color: #000;
+}
+
 body {
   background-color: white;
   background: white;
@@ -244,9 +256,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   position: fixed;
-  z-index: 1010; /* Mayor que el menú para estar siempre visible */
+  z-index: 1010;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -254,7 +266,7 @@ body {
   background-color: #e0e0e0;
 }
 
-/* Botones de toggle independientes */
+/* Left toggle button - moves with left menu */
 .left-toggle-button {
   left: 0;
   top: 50%;
@@ -262,8 +274,15 @@ body {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   border-right: 1px solid #ddd;
+  transition: left 0.3s ease;
 }
 
+/* When left menu is not collapsed, move button to right edge of menu */
+.tablero-container:has(.left-menu:not(.collapsed)) .left-toggle-button {
+  left: 200px;
+}
+
+/* Right toggle button - moves with right menu */
 .right-toggle-button {
   right: 0;
   top: 50%;
@@ -271,6 +290,23 @@ body {
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
   border-left: 1px solid #ddd;
+  transition: right 0.3s ease;
+}
+
+/* When right menu is not collapsed, move button to left edge of menu */
+.tablero-container:has(.right-menu:not(.collapsed)) .right-toggle-button {
+  right: 280px;
+}
+
+/* Fallback for browsers that don't support :has() */
+@supports not selector(:has(*)) {
+  .left-menu:not(.collapsed) ~ .left-toggle-button {
+    left: 200px;
+  }
+
+  .right-menu:not(.collapsed) ~ .right-toggle-button {
+    right: 280px;
+  }
 }
 
 /* Form elements styling */
@@ -302,19 +338,28 @@ label {
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-bottom: 10px;
-  max-height: 300px;
+  /* max-height: 300px; */
 }
 
 .message {
   margin-bottom: 8px;
   padding: 5px;
-  background-color: #f5f5f5;
+  color: #000000;
   border-radius: 4px;
 }
 
 .chat-input-container {
   display: flex;
   gap: 8px;
+}
+
+.submitChat {
+  background-color: #f0f0f0;
+  color: #000000;
+  padding: 5px;
+}
+.words {
+  color: #000000;
 }
 
 .chat-input-container input {
@@ -326,7 +371,7 @@ label {
 
 .chat-input-container button {
   padding: 8px 12px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -337,10 +382,15 @@ label {
   background-color: #45a049;
 }
 
-
 .chat-box {
   background-color: #f9f9f9;
   border-radius: 8px;
+  height: 650px;
+  max-height: 650px !important;
+}
+
+.tab-content-container button {
+  margin-top: 5px;
 }
 
 .chat-box div {

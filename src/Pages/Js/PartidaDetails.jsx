@@ -314,7 +314,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                   ))}
                 </div>
               </div>
-              <button className="entrar" onClick={() => navigate('/tablero')}>Entrar</button>
+              <button className="entrar" onClick={() => navigate(`/tablero/${id}`)}>Entrar</button>
             </div>
           </div>
         </div>

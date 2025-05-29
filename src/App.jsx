@@ -31,7 +31,7 @@ function App() {
                 <Route path="/search" element={<Search isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/profile" element={<Profile isPopUp={isPopUp} setIsPopUp={setIsPopUp} />} />
                 <Route path="/partida/:id" element={<PartidaDetails isPopUp={isPopUp} setIsPopUp={setIsPopUp}/>} />
-                <Route path="/tablero" element={<Tablero />} />
+                <Route path="/tablero/:id" element={<Tablero />} />
               </Route>
 
               <Route path="/acceso-denegado" element={<AccessDenied />} />

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import ChatTab from "../componentes/JS/ChatTab";
 import { db } from "./fireBaseInit.js";
-import { onValue, ref } from "firebase/database";
+import { onValue, ref, push } from "firebase/database";
 
 const Tablero = () => {
   const containerRef = useRef(null);
@@ -21,8 +21,35 @@ const Tablero = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
 
+  const [selectedDice, setSelectedDice] = useState("d6");
+  const [diceCount, setDiceCount] = useState(1);
+
   const handleSetChatInput = useCallback((value) => setChatInput(value), []);
   const handleSetChatMessages = useCallback((updater) => setChatMessages(updater), []);
+
+
+const rollDice = () => {
+  const sides = parseInt(selectedDice.slice(1));
+  const rolls = Array.from({ length: diceCount }, () =>
+    Math.floor(Math.random() * sides) + 1
+  );
+  const total = rolls.reduce((sum, val) => sum + val, 0);
+
+  const userName = userData?.nombre || user?.nombre || "Jugador";
+
+  const resultMessage = `${userName} lanzó ${diceCount}${selectedDice}: [${rolls.join(", ")}] Total: ${total}`;
+
+  const message = {
+    chatRoomId: id,
+    mensaje: resultMessage,
+    nombre: userName,
+    timestamp: Date.now()
+  };
+
+  const newMessageRef = ref(db, `chatrooms/${id}/messages`);
+  push(newMessageRef, message);
+};
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -45,7 +72,6 @@ const Tablero = () => {
     fetchUserData();
   }, []);
 
-  // Escuchar mensajes en tiempo real
   useEffect(() => {
     if (!id) return;
 
@@ -156,7 +182,25 @@ const Tablero = () => {
           <div className="left-menu-header">
             <h3>Dados</h3>
           </div>
-          <div className="left-menu-buttons"></div>
+          <div className="left-menu-buttons">
+            <label>Tipo de dado:</label>
+            <select value={selectedDice} onChange={(e) => setSelectedDice(e.target.value)}>
+              {["d2", "d4", "d6", "d8", "d10", "d12", "d20"].map((die) => (
+                <option key={die} value={die}>{die}</option>
+              ))}
+            </select>
+
+            <label>Cantidad:</label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={diceCount}
+              onChange={(e) => setDiceCount(parseInt(e.target.value))}
+            />
+
+            <button onClick={rollDice}>Lanzar</button>
+          </div>
         </div>
       </div>
 
@@ -186,8 +230,8 @@ const Tablero = () => {
       >
         <div id="container" ref={containerRef} style={{ position: "relative" }}>
           {[
-            { left: 0, top: 0 },
-            { left: 100, top: 100 },
+            { left: 250, top: 250 },
+            { left: 350, top: 350 },
           ].map((pos, i) => (
             <div
               key={i}
