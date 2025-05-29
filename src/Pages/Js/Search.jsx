@@ -11,13 +11,27 @@ const Search = ({ isPopUp, setIsPopUp }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+
+
   const fetchPublicPartidas = async () => {
     try {
       const response = await fetch('https://sndr.42web.io/inc/getPublicPartidas.php', {
-        credentials: 'include' 
+        credentials: 'include'
       });
       const data = await response.json();
-      
+
       if (data.success && data.partidas) {
         setAllPartidas(data.partidas);
         setFilteredPartidas(data.partidas);
@@ -72,9 +86,9 @@ const Search = ({ isPopUp, setIsPopUp }) => {
       <div className="partidas-list">
         {filteredPartidas.length > 0 ? (
           filteredPartidas.map((partida) => (
-            <PartidaCard 
-              key={partida.id} 
-              partida={partida} 
+            <PartidaCard
+              key={partida.id}
+              partida={partida}
               buttonText="Unirte"
             />
           ))

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../Css/Login.css";
 import { useUser } from "../../context/UserContext.jsx";
@@ -8,6 +8,19 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [formReg, setFormReg] = useState({ name: "", email: "", password: "" });
   const [formLog, setFormLog] = useState({ email: "", password: "" });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
 
   const { setUser } = useUser();
   const location = useLocation();
@@ -29,7 +42,7 @@ const LoginPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formReg),
       });
-  
+
       const data = await responseRegister.json();
       if (data.success) {
         setUser(true);
@@ -44,7 +57,7 @@ const LoginPage = () => {
       setError("Error de conexión al servidor");
     }
   };
-  
+
   const handleSubmitLoginPage = async (e) => {
     e.preventDefault();
     try {
@@ -54,7 +67,7 @@ const LoginPage = () => {
         body: JSON.stringify(formLog),
         credentials: 'include'
       });
-  
+
       const data = await responseLogin.json();
       if (data.success) {
         setUser(true); // Update UserContext

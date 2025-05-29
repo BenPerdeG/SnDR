@@ -22,6 +22,18 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [isPopUpInvi, setIsPopUpInvi] = useState(false)
 
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   // Función para verificar si el usuario es admin
   const checkAdminStatus = async () => {
     try {

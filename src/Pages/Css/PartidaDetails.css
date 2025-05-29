@@ -6,10 +6,14 @@
   font-family: 'Poppins', sans-serif;
 }
 
+input{
+  color: white;
+}
+
 body {
   display: block;
-  background: url('../../assets/images/footer-background.png') no-repeat center top fixed;
-  background-size: cover;
+  background: url('../../assets/images/footer-background.png') no-repeat center top fixed !important;
+  background-size: cover !important;
   padding-top: 80px;
 }
 

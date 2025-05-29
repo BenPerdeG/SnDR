@@ -9,7 +9,7 @@ const ChatTab = ({ chatMessages, chatInput, setChatInput, userData, chatRoomId }
 
     const newMessage = {
       nombre: userData?.nombre || "Anónimo",
-      mensaje: chatInput,chatRoomId,
+      mensaje: chatInput, chatRoomId,
       timestamp: Date.now()
     };
 

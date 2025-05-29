@@ -16,6 +16,20 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
   const navigate = useNavigate();
   const { user } = useUser();
 
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+
+
   const faqData = [
     {
       question: "¿Qué es SnDR?",

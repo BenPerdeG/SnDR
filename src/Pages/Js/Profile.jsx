@@ -21,6 +21,20 @@ function Profile({ isPopUp, setIsPopUp }) {
   const [loadingGame, setLoadingGame] = useState(true);
 
   useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+
+
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await fetch('https://sndr.42web.io/inc/userData.php', {
@@ -188,7 +202,7 @@ function Profile({ isPopUp, setIsPopUp }) {
             <p className="perfil-value">{userData?.email || "No disponible"}</p>
           </div>
 
-            {/* Ya haré las horas jugadas en otra acualización */}
+          {/* Ya haré las horas jugadas en otra acualización */}
           {/* <div className="perfil-info-group">
             <p className="perfil-label">Horas Jugadas:</p>
             <p className="perfil-value">{userData?.horas_jugadas || 0}</p>

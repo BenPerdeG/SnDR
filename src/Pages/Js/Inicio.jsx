@@ -3,8 +3,22 @@ import "../Css/Inicio.css";
 import TopNav from "../../assets/componentes/JS/TopNav.jsx";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import React, { useState, useEffect } from "react";
 
 const Inicio = ({ isPopUp, setIsPopUp }) => {
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+
   return (
     <div className="LoginContainer">
       <header className="LoginHeader">
