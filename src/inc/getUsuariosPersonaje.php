@@ -3,32 +3,28 @@ include("conn.php");
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-// Validar que se haya enviado el ID del tablero
-if (!isset($_GET['id_tablero'])) {
-    echo json_encode(["success" => false, "message" => "Falta el parámetro id_tablero"]);
+
+if (!isset($_GET['id_personaje'])) {
+    echo json_encode(["success" => false, "message" => "Falta el parámetro id_personaje"]);
     exit;
 }
 
-$id_tablero = intval($_GET['id_tablero']);
+$id_tablero = intval($_GET['id_personaje']);
 
-// Consulta para obtener personajes y los usuarios asignados a cada uno
+
 $sql = "
 SELECT 
-    p.id AS id_personaje,
-    p.nombre AS nombre_personaje,
-    u.id AS id_usuario,
-    u.nombre AS nombre_usuario
-FROM 
-    Personaje p
-LEFT JOIN 
-    Personajes_Usuarios pu ON p.id = pu.id_personaje
-LEFT JOIN 
-    Usuario u ON pu.id_usuario = u.id
-WHERE 
-    p.id_tablero = ?
+p.id AS id_personaje, 
+p.nombre AS nombre_personaje, 
+u.id AS id_usuario, 
+u.nombre AS nombre_usuario
+FROM Personaje p 
+LEFT JOIN Personajes_Usuarios pu ON p.id = pu.id_personaje 
+LEFT JOIN Usuario u ON pu.id_usuario = u.id 
+WHERE p.id = ?
 ";
 
-$stmt = $conn->prepare($sql);
+$stmt = $con->prepare($sql);
 $stmt->bind_param("i", $id_tablero);
 $stmt->execute();
 $result = $stmt->get_result();

@@ -1,34 +1,52 @@
 <?php
-include 'conexion.php';
+include 'conn.php';
 header('Content-Type: application/json');
 session_start();
 
-$id_partida = filter_input(INPUT_GET, 'id_partida', FILTER_VALIDATE_INT);
+$input = json_decode(file_get_contents("php://input"), true);
 
-if (!$id_partida) {
-    echo json_encode(['success' => false, 'message' => 'ID de partida inválido']);
+// Validar entrada
+$id = intval($input['id'] ?? 0);
+$nombre = trim($input['nombre'] ?? '');
+$imagen = trim($input['imagen'] ?? '');
+$usuarios = $input['usuarios'] ?? [];
+
+if ($id <= 0 || empty($nombre)) {
+    echo json_encode(['success' => false, 'message' => 'Datos inválidos.']);
     exit;
 }
 
 try {
-    // Obtener usuarios de la partida
-    $stmt = $pdo->prepare("
-        SELECT u.id, u.nombre 
-        FROM Usuario u
-        JOIN Usuarios_Partidas up ON u.id = up.id_usuario
-        WHERE up.id_partida = ?
-    ");
-    $stmt->execute([$id_partida]);
-    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Actualizar personaje
+    $stmt = $con->prepare("UPDATE Personaje SET nombre = ?, imagen = ? WHERE id = ?");
+    if (!$stmt) throw new Exception("Error en prepare: " . $con->error);
+    $stmt->bind_param("ssi", $nombre, $imagen, $id);
+    $stmt->execute();
+    $stmt->close();
 
-    echo json_encode([
-        'success' => true,
-        'usuarios' => $usuarios
-    ]);
-} catch (PDOException $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error en la base de datos: ' . $e->getMessage()
-    ]);
+    // Borrar asignaciones previas
+    $stmt = $con->prepare("DELETE FROM Personajes_Usuarios WHERE id_personaje = ?");
+    if (!$stmt) throw new Exception("Error en prepare: " . $con->error);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Insertar nuevas asignaciones
+    if (!empty($usuarios)) {
+        $stmt = $con->prepare("INSERT INTO Personajes_Usuarios (id_personaje, id_usuario) VALUES (?, ?)");
+        if (!$stmt) throw new Exception("Error en prepare: " . $con->error);
+        foreach ($usuarios as $usuarioId) {
+            $usuarioId = intval($usuarioId);
+            if ($usuarioId > 0) {
+                $stmt->bind_param("ii", $id, $usuarioId);
+                $stmt->execute();
+            }
+        }
+        $stmt->close();
+    }
+
+    echo json_encode(['success' => true]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>

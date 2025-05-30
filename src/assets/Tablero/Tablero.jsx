@@ -142,7 +142,6 @@ const Tablero = () => {
     return () => unsubscribe()
   }, [id])
 
-
   const fetchPersonajes = useCallback(async () => {
     if (!id) return;
     try {
@@ -161,7 +160,6 @@ const Tablero = () => {
     }
   }, [id]);
 
-  // Función para crear un nuevo personaje
   const crearPersonaje = async (nombre, imagen) => {
     try {
       const response = await fetch("https://sndr.42web.io/inc/crearPersonaje.php", {
@@ -189,9 +187,11 @@ const Tablero = () => {
       return { success: false, message: "Error de red" };
     }
   };
+
   useEffect(() => {
     fetchPersonajes();
   }, [id, fetchPersonajes]);
+
   const fetchUsuariosPartida = useCallback(async () => {
     try {
       const response = await fetch(`https://sndr.42web.io/inc/getUserPartidas.php?id_partida=${id}`, {
@@ -206,9 +206,10 @@ const Tablero = () => {
     }
   }, [id]);
 
-  const fetchUsuariosPersonaje = useCallback(async () => {
+  const fetchUsuariosPersonaje = useCallback(async (idPersonaje) => {
+    if (!idPersonaje) return;
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_tablero=${id}`, {
+      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -223,9 +224,7 @@ const Tablero = () => {
   useEffect(() => {
     fetchPersonajes();
     fetchUsuariosPartida();
-    fetchUsuariosPersonaje();
-  }, [id, fetchPersonajes, fetchUsuariosPartida, fetchUsuariosPersonaje]);
-
+  }, [id, fetchPersonajes, fetchUsuariosPartida]);
 
   const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
   const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true)
@@ -306,7 +305,10 @@ const Tablero = () => {
                     key={p.id}
                     className="personaje-item"
                     style={{ display: "flex", alignItems: "center", marginBottom: "10px", cursor: "pointer" }}
-                    onClick={() => setEditingPersonaje(p)}
+                    onClick={() => {
+                      setEditingPersonaje(p);
+                      fetchUsuariosPersonaje(p.id);
+                    }}
                   >
                     <img
                       src={
@@ -320,7 +322,7 @@ const Tablero = () => {
                         height: "50px",
                         marginRight: "10px",
                         objectFit: "cover",
-                        pointerEvents: "none" // Esto evita que la imagen capture el click
+                        pointerEvents: "none"
                       }}
                     />
                     <span>{p.nombre}</span>
@@ -480,39 +482,40 @@ const Tablero = () => {
         </div>
       </div>
       {editingPersonaje && (
-      <PersonajeEdit
-        personaje={editingPersonaje}
-        onClose={() => setEditingPersonaje(null)}
-        onSave={async (data) => {
-          try {
-            const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                id: data.id,
-                nombre: data.nombre,
-                imagen: data.imagen,
-                usuarios: data.usuarios
-              }),
-            });
-            const result = await response.json();
-            if (result.success) {
-              fetchPersonajes();
-              setEditingPersonaje(null);
-            } else {
-              alert("Error al guardar: " + result.message);
+        <PersonajeEdit
+          personaje={editingPersonaje}
+          onClose={() => setEditingPersonaje(null)}
+          onSave={async (data) => {
+            try {
+              const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  id: data.id,
+                  nombre: data.nombre,
+                  imagen: data.imagen,
+                  usuarios: data.usuarios
+                }),
+              });
+              const result = await response.json();
+              if (result.success) {
+                fetchPersonajes();
+                fetchUsuariosPersonaje(data.id);
+                setEditingPersonaje(null);
+              } else {
+                alert("Error al guardar: " + result.message);
+              }
+            } catch (error) {
+              alert("Error de red: " + error.message);
             }
-          } catch (error) {
-            alert("Error de red: " + error.message);
-          }
-        }}
-        usuariosPartida={usuariosPartida}
-        usuariosPersonaje={usuariosPersonaje}
-      />
-    )}
+          }}
+          usuariosPartida={usuariosPartida}
+          usuariosPersonaje={usuariosPersonaje}
+        />
+      )}
     </div>
   )
 }
