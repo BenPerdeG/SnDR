@@ -29,6 +29,7 @@ const Tablero = () => {
   const [editingPersonaje, setEditingPersonaje] = useState(null);
   const [usuariosPartida, setUsuariosPartida] = useState([]);
   const [usuariosPersonaje, setUsuariosPersonaje] = useState([]);
+  const [personajeBoxes, setPersonajeBoxes] = useState([])
 
   useEffect(() => {
     const handlePopState = () => {
@@ -221,11 +222,68 @@ const Tablero = () => {
     }
   };
 
-
   useEffect(() => {
     fetchPersonajes();
     fetchUsuariosPartida();
   }, [id, fetchPersonajes, fetchUsuariosPartida]);
+
+  const addBoxForPersonaje = (personaje) => {
+    setPersonajeBoxes(prev => [
+      ...prev,
+      {
+        id: prev.length,
+        left: 250,
+        top: 250,
+        imagen: personaje.imagen || "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+      }
+    ])
+  }
+
+  const handleMouseDown = (index, type = "static") => () => {
+    setMouseDownBox({ index, type });
+  }
+
+  const handleMouseUp = () => {
+    setMouseDownBox(null)
+  }
+
+  const handleMouseMove = (event) => {
+    if (mouseDownBox === null) return
+
+    const container = containerRef.current
+    if (!container) return
+
+    let clientX = event.clientX + container.scrollLeft
+    let clientY = event.clientY + container.scrollTop
+
+    const offsetLeft = container.getBoundingClientRect().left
+    const offsetTop = container.getBoundingClientRect().top
+
+    clientX = clientX - offsetLeft
+    clientY = clientY - offsetTop
+
+    const snapValue = Math.floor((100 / snapToGrid) * canvasSize / 100)
+    const snapedX = clientX - (clientX % snapValue)
+    const snapedY = clientY - (clientY % snapValue)
+
+    if (mouseDownBox.type === "static") {
+      const box = boxRefs.current[mouseDownBox.index]
+      if (box) {
+        box.style.left = `${snapedX}px`
+        box.style.top = `${snapedY}px`
+      }
+    } else if (mouseDownBox.type === "personaje") {
+      setPersonajeBoxes(prev => {
+        const updated = [...prev];
+        updated[mouseDownBox.index] = {
+          ...updated[mouseDownBox.index],
+          left: snapedX,
+          top: snapedY
+        };
+        return updated;
+      });
+    }
+  }
 
   const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
   const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true)
@@ -239,46 +297,6 @@ const Tablero = () => {
     if (parentRef.current) {
       parentRef.current.className = `grid g`
     }
-  }
-
-  const calculateSnapValue = () => {
-    const snapToGridCount = Number.parseInt(snapToGrid, 10)
-    const snapToGridPct = 100 / snapToGridCount
-    return Number.parseInt((snapToGridPct / 100) * canvasSize, 10)
-  }
-
-  const handleMouseDown = (index) => () => {
-    setMouseDownBox(index)
-  }
-
-  const handleMouseUp = () => {
-    setMouseDownBox(null)
-  }
-
-  const handleMouseMove = (event) => {
-    if (mouseDownBox === null) return
-
-    const container = containerRef.current
-    const box = boxRefs.current[mouseDownBox]
-
-    if (!container || !box) return
-
-    let clientX = event.clientX + container.scrollLeft
-    let clientY = event.clientY + container.scrollTop
-
-    const offsetLeft = container.getBoundingClientRect().left
-    const offsetTop = container.getBoundingClientRect().top
-
-    clientX = clientX - offsetLeft
-    clientY = clientY - offsetTop
-
-    const snapValue = calculateSnapValue()
-
-    const snapedX = clientX - (clientX % snapValue)
-    const snapedY = clientY - (clientY % snapValue)
-
-    box.style.left = `${snapedX}px`
-    box.style.top = `${snapedY}px`
   }
 
   const TabContent = () => {
@@ -305,10 +323,11 @@ const Tablero = () => {
                   <div
                     key={p.id}
                     className="personaje-item"
-                    style={{ display: "flex", alignItems: "center", marginBottom: "10px", cursor: "pointer" }}
-                    onClick={() => {
-                      setEditingPersonaje(p);
-                      fetchUsuariosPersonaje(p.id);
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                      cursor: "pointer"
                     }}
                   >
                     <img
@@ -326,200 +345,175 @@ const Tablero = () => {
                         pointerEvents: "none"
                       }}
                     />
-                    <span>{p.nombre}</span>
+                    <span onClick={() => {
+                      setEditingPersonaje(p);
+                      fetchUsuariosPersonaje(p.id);
+                    }}>{p.nombre}</span>
+                    <button className="añadirTablero" onClick={() => addBoxForPersonaje(p)}>﹢</button>
                   </div>
-                ))
+            ))
               )}
-            </div>
-            {isAdmin && (
-              <div className="crear-personaje-form" style={{ marginBottom: "20px" }}>
-                <h4>Crear Nuevo Personaje</h4>
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const nombre = e.target.nombre.value;
-                  const imagen = e.target.imagen.value;
-                  const result = await crearPersonaje(nombre, imagen);
-                  if (result.success) {
-                    e.target.reset();
-                  } else {
-                    alert(result.message || "Error al crear el personaje");
-                  }
-                }}>
-                  <input className="crear-personaje"
-                    type="text"
-                    name="nombre"
-                    placeholder="Nombre del personaje"
-                    required
-                    style={{ width: "100%", marginBottom: "10px" }}
-                  />
-                  <input className="crear-personaje"
-                    type="text"
-                    name="imagen"
-                    placeholder="URL de la imagen"
-                    style={{ width: "100%", marginBottom: "10px" }}
-                  />
-                  <button type="submit">Crear Personaje</button>
-                </form>
-              </div>
-            )}
           </div>
+          </div >
         )
       case 2:
-        return (
-          <div className="tab-content">
-            <h3>Editar Imagen del Tablero</h3>
-            <input
-              type="text"
-              placeholder="URL de la imagen"
-              value={tableroImage}
-              onChange={(e) => setTableroImage(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
-            />
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch("https://sndr.42web.io/inc/updateTablero.php", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: tableroImage }),
-                  })
-                  const data = await response.json()
-                  if (data.success) {
-                    window.location.reload()
-                  } else {
-                    alert("Error: " + data.message)
-                  }
-                } catch (error) {
-                  alert("Error de red: " + error.message)
-                }
-              }}
-            >
-              Guardar
-            </button>
-          </div>
-        )
+return (
+  <div className="tab-content">
+    <h3>Editar Imagen del Tablero</h3>
+    <input
+      type="text"
+      placeholder="URL de la imagen"
+      value={tableroImage}
+      onChange={(e) => setTableroImage(e.target.value)}
+      style={{ width: "100%", marginBottom: "10px" }}
+    />
+    <button
+      onClick={async () => {
+        try {
+          const response = await fetch("https://sndr.42web.io/inc/updateTablero.php", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: tableroImage }),
+          })
+          const data = await response.json()
+          if (data.success) {
+            window.location.reload()
+          } else {
+            alert("Error: " + data.message)
+          }
+        } catch (error) {
+          alert("Error de red: " + error.message)
+        }
+      }}
+    >
+      Guardar
+    </button>
+  </div>
+)
       default:
-        return null
+return null
     }
   }
 
-  return (
-    <div className="tablero-container" style={{
-      backgroundColor: fondoUrl ? "transparent" : "white",
-      backgroundImage: fondoUrl ? `url(${fondoUrl})` : "none",
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-    }}>
-      <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
-        {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-      </button>
+return (
+  <div className="tablero-container" style={{
+    backgroundColor: fondoUrl ? "transparent" : "white",
+    backgroundImage: fondoUrl ? `url(${fondoUrl})` : "none",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+  }}>
+    <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
+      {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+    </button>
 
-      <button className="collapse-button right-toggle-button" onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}>
-        {rightMenuCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-      </button>
+    <button className="collapse-button right-toggle-button" onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}>
+      {rightMenuCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+    </button>
 
-      <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
-        <div className="left-menu-content">
-          <div className="left-menu-header">
-            <h3>Dados</h3>
-          </div>
-          <div className="left-menu-buttons">
-            <label>Tipo de dado:</label>
-            <select value={selectedDice} onChange={(e) => setSelectedDice(e.target.value)}>
-              {["d2", "d4", "d6", "d8", "d10", "d12", "d20"].map((die) => (
-                <option key={die} value={die}>{die}</option>
-              ))}
-            </select>
+    <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
+      <div className="left-menu-content">
+        <div className="left-menu-header">
+          <h3>Dados</h3>
+        </div>
+        <div className="left-menu-buttons">
+          <label>Tipo de dado:</label>
+          <select value={selectedDice} onChange={(e) => setSelectedDice(e.target.value)}>
+            {["d2", "d4", "d6", "d8", "d10", "d12", "d20"].map((die) => (
+              <option key={die} value={die}>{die}</option>
+            ))}
+          </select>
 
-            <label>Cantidad:</label>
-            <input type="number" min="1" max="10" value={diceCount} onChange={(e) => setDiceCount(Number.parseInt(e.target.value))} />
-            <button onClick={rollDice}>Lanzar</button>
-          </div>
+          <label>Cantidad:</label>
+          <input type="number" min="1" max="10" value={diceCount} onChange={(e) => setDiceCount(Number.parseInt(e.target.value))} />
+          <button onClick={rollDice}>Lanzar</button>
         </div>
       </div>
-
-      <div className={`right-menu ${rightMenuCollapsed ? "collapsed" : ""}`}>
-        <div className="right-menu-content">
-          <div className="tabs-container">
-            <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}><span>Chat</span></div>
-            <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}><span>Personajes</span></div>
-            {isAdmin && (
-              <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}><span>Editar Imagen</span></div>
-            )}
-          </div>
-          <div className="tab-content-container">
-            <TabContent />
-          </div>
-        </div>
-      </div>
-
-      <div
-        id="parentContainer"
-        ref={parentRef}
-        className="grid g"
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        style={{ position: "relative" }}
-      >
-        <div id="container" ref={containerRef} style={{ position: "relative" }}>
-          {[{ left: 250, top: 250 }, { left: 350, top: 350 }].map((pos, i) => (
-            <div
-              key={i}
-              className="box"
-              ref={(el) => (boxRefs.current[i] = el)}
-              onMouseDown={handleMouseDown(i)}
-              style={{
-                position: "absolute",
-                left: `${pos.left}px`,
-                top: `${pos.top}px`,
-                cursor: mouseDownBox === i ? "grabbing" : "grab",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-      {editingPersonaje && (
-        <PersonajeEdit
-          personaje={editingPersonaje}
-          onClose={() => setEditingPersonaje(null)}
-          onSave={async (data) => {
-            try {
-              const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  id: data.id,
-                  nombre: data.nombre,
-                  imagen: data.imagen
-                }),
-              });
-              const result = await response.json();
-              if (result.success) {
-                fetchPersonajes();
-                fetchUsuariosPersonaje(data.id); // ✅ actualizás luego del save
-                setEditingPersonaje(null);
-              } else {
-                alert("Error al guardar: " + result.message);
-              }
-            } catch (error) {
-              alert("Error de red: " + error.message);
-            }
-          }}
-          usuariosPartida={usuariosPartida}
-          usuariosPersonaje={usuariosPersonaje}
-          refreshUsuariosPersonaje={fetchUsuariosPersonaje} 
-        />
-
-      )}
     </div>
-  )
+
+    <div className={`right-menu ${rightMenuCollapsed ? "collapsed" : ""}`}>
+      <div className="right-menu-content">
+        <div className="tabs-container">
+          <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}><span>Chat</span></div>
+          <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}><span>Personajes</span></div>
+          {isAdmin && (
+            <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}><span>Editar Imagen</span></div>
+          )}
+        </div>
+        <div className="tab-content-container">
+          <TabContent />
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="parentContainer"
+      ref={parentRef}
+      className="grid g"
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      style={{ position: "relative" }}
+    >
+      <div id="container" ref={containerRef} style={{ position: "relative" }}>
+        {personajeBoxes.map((box, i) => (
+          <div
+            key={`personaje-${i}`}
+            className="box"
+            style={{
+              position: "absolute",
+              left: `${box.left}px`,
+              top: `${box.top}px`,
+              backgroundImage: `url(${box.imagen})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              cursor: mouseDownBox?.index === i && mouseDownBox?.type === "personaje" ? "grabbing" : "grab",
+            }}
+            onMouseDown={handleMouseDown(i, "personaje")}
+          />
+        ))}
+      </div>
+    </div>
+
+    {editingPersonaje && (
+      <PersonajeEdit
+        personaje={editingPersonaje}
+        onClose={() => setEditingPersonaje(null)}
+        onSave={async (data) => {
+          try {
+            const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                id: data.id,
+                nombre: data.nombre,
+                imagen: data.imagen
+              }),
+            });
+            const result = await response.json();
+            if (result.success) {
+              fetchPersonajes();
+              fetchUsuariosPersonaje(data.id);
+              setEditingPersonaje(null);
+            } else {
+              alert("Error al guardar: " + result.message);
+            }
+          } catch (error) {
+            alert("Error de red: " + error.message);
+          }
+        }}
+        usuariosPartida={usuariosPartida}
+        usuariosPersonaje={usuariosPersonaje}
+        refreshUsuariosPersonaje={fetchUsuariosPersonaje}
+      />
+    )}
+  </div>
+)
 }
 
 export default Tablero
