@@ -192,19 +192,22 @@ const Tablero = () => {
     fetchPersonajes();
   }, [id, fetchPersonajes]);
 
-  const fetchUsuariosPartida = useCallback(async () => {
-    try {
-      const response = await fetch(`https://sndr.42web.io/inc/getUserPartidas.php?id_partida=${id}`, {
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (data.success) {
-        setUsuariosPartida(data.usuarios);
-      }
-    } catch (error) {
-      console.error("Error cargando usuarios de partida:", error);
+const fetchUsuariosPartida = useCallback(async () => {
+  try {
+    const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, {
+      credentials: "include",
+    });
+    const data = await response.json();
+
+    if (data.success && data.partida && Array.isArray(data.partida.jugadores)) {
+      setUsuariosPartida(data.partida.jugadores);
+    } else {
+      console.warn("No jugadores found in partida data:", data);
     }
-  }, [id]);
+  } catch (error) {
+    console.error("Error fetching partida info:", error);
+  }
+}, [id]);
 
   const fetchUsuariosPersonaje = useCallback(async (idPersonaje) => {
     if (!idPersonaje) return;

@@ -8,22 +8,21 @@ header("Content-Type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!isset($data['id']) || !isset($data['nombre']) || !isset($data['imagen'])) {
+if (!isset($data['id_personaje']) || !isset($data['id_usuario'])) {
     echo json_encode(["success" => false, "message" => "Faltan campos"]);
     exit;
 }
 
-$id = intval($data['id']);
-$nombre = $data['nombre'];
-$imagen = $data['imagen'];
+$id_personaje = intval($data['id_personaje']);
+$id_usuario = intval($data['id_usuario']);
 
-$stmt = $con->prepare("UPDATE Personaje SET nombre = ?, imagen = ? WHERE id = ?");
-$stmt->bind_param("ssi", $nombre, $imagen, $id);
+$stmt = $con->prepare("DELETE FROM Personajes_Usuarios WHERE id_personaje = ? AND id_usuario = ?");
+$stmt->bind_param("ii", $id_personaje, $id_usuario);
 $success = $stmt->execute();
 
 echo json_encode([
     "success" => $success,
-    "message" => $success ? "Personaje actualizado" : "Error al actualizar"
+    "message" => $success ? "Usuario eliminado" : "Error al eliminar usuario"
 ]);
 
 $stmt->close();
