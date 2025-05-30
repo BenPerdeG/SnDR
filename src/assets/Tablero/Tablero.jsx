@@ -194,7 +194,7 @@ const Tablero = () => {
   }, [id, fetchPersonajes]);
   const fetchUsuariosPartida = useCallback(async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPartida.php?id_partida=${id}`, {
+      const response = await fetch(`https://sndr.42web.io/inc/getUserPartidas.php?id_partida=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -208,7 +208,7 @@ const Tablero = () => {
 
   const fetchUsuariosPersonaje = useCallback(async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php`, {
+      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_tablero=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
