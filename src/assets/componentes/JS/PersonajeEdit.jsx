@@ -6,7 +6,8 @@ const PersonajeEdit = ({
   onClose,
   onSave,
   usuariosPartida = [],
-  usuariosPersonaje = []
+  usuariosPersonaje = {},
+  refreshUsuariosPersonaje
 }) => {
   const [nombre, setNombre] = useState("");
   const [imagen, setImagen] = useState("");
@@ -21,52 +22,51 @@ const PersonajeEdit = ({
   }, [personaje]);
 
   useEffect(() => {
-    if (!personaje || !usuariosPersonaje) return;
+    if (!personaje || !usuariosPersonaje.success || !Array.isArray(usuariosPersonaje.data)) return;
 
-    const asignados = usuariosPersonaje
-      .filter(
-        (rel) => rel.id_personaje === personaje.id && rel.id_usuario
-      )
-      .map((rel) => ({
+    const asignados = usuariosPersonaje.data
+      .filter(rel => rel.id_personaje === personaje.id && rel.id_usuario !== null)
+      .map(rel => ({
         id: rel.id_usuario,
-        nombre: rel.nombre_usuario,
+        nombre: rel.nombre_usuario ?? "(sin nombre)"
       }));
 
     setUsuariosAsignados(asignados);
+  }, [personaje, usuariosPersonaje]);
 
+  useEffect(() => {
     const disponibles = usuariosPartida.filter(
-      (u) => !asignados.some((a) => a.id === u.id)
+      u => !usuariosAsignados.some(a => a.id === u.id)
     );
-
     if (disponibles.length > 0) {
       setUsuarioSeleccionado(disponibles[0].id);
     } else {
       setUsuarioSeleccionado(null);
     }
-  }, [personaje, usuariosPartida, usuariosPersonaje]);
+  }, [usuariosAsignados, usuariosPartida]);
 
   const handleAddUsuario = async () => {
-    const usuario = usuariosPartida.find(
-      (u) => u.id === usuarioSeleccionado
-    );
-    if (!usuario || usuariosAsignados.some((u) => u.id === usuario.id)) return;
+    if (usuarioSeleccionado === null) return;
+
+    const usuario = usuariosPartida.find(u => u.id === usuarioSeleccionado);
+    if (!usuario) return;
 
     try {
-      const res = await fetch(
-        "https://sndr.42web.io/inc/addUsuarioPersonaje.php",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id_personaje: personaje.id,
-            id_usuario: usuario.id,
-          }),
-        }
-      );
+      const res = await fetch("https://sndr.42web.io/inc/addUsuarioPersonaje.php", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_personaje: personaje.id,
+          id_usuario: usuario.id
+        })
+      });
+
       const data = await res.json();
       if (data.success) {
-        setUsuariosAsignados((prev) => [...prev, usuario]);
+        if (refreshUsuariosPersonaje) {
+          refreshUsuariosPersonaje(personaje.id);
+        }
       } else {
         alert(data.message);
       }
@@ -77,23 +77,21 @@ const PersonajeEdit = ({
 
   const handleRemoveUsuario = async (idUsuario) => {
     try {
-      const res = await fetch(
-        "https://sndr.42web.io/inc/removeUsuarioPersonaje.php",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id_personaje: personaje.id,
-            id_usuario: idUsuario,
-          }),
-        }
-      );
+      const res = await fetch("https://sndr.42web.io/inc/removeUsuarioPersonaje.php", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id_personaje: personaje.id,
+          id_usuario: idUsuario
+        })
+      });
+
       const data = await res.json();
       if (data.success) {
-        setUsuariosAsignados((prev) =>
-          prev.filter((u) => u.id !== idUsuario)
-        );
+        if (refreshUsuariosPersonaje) {
+          refreshUsuariosPersonaje(personaje.id);
+        }
       } else {
         alert(data.message);
       }
@@ -107,20 +105,22 @@ const PersonajeEdit = ({
     onSave({
       id: personaje.id,
       nombre,
-      imagen,
+      imagen
     });
   };
 
   if (!personaje) return null;
+
+  const usuariosDisponibles = usuariosPartida.filter(
+    u => !usuariosAsignados.some(a => a.id === u.id)
+  );
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
           <h3>Editar Personaje</h3>
-          <button onClick={onClose} className="close-button">
-            &times;
-          </button>
+          <button onClick={onClose} className="close-button">&times;</button>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -140,15 +140,10 @@ const PersonajeEdit = ({
               type="text"
               value={imagen}
               onChange={(e) => setImagen(e.target.value)}
-              placeholder="https://example.com/avatar.jpg"
             />
             {imagen && (
               <div className="image-preview">
-                <img
-                  src={imagen}
-                  alt="Vista previa"
-                  onError={(e) => (e.target.style.display = "none")}
-                />
+                <img src={imagen} alt="Vista previa" />
               </div>
             )}
           </div>
@@ -174,40 +169,31 @@ const PersonajeEdit = ({
               <p>No hay usuarios asignados a este personaje.</p>
             )}
 
-            <div className="add-user-container">
-              <select
-                value={usuarioSeleccionado ?? ""}
-                onChange={(e) =>
-                  setUsuarioSeleccionado(parseInt(e.target.value))
-                }
-              >
-                {usuariosPartida
-                  .filter(
-                    (u) => !usuariosAsignados.some((a) => a.id === u.id)
-                  )
-                  .map((usuario) => (
+            {usuariosDisponibles.length > 0 && (
+              <div className="add-user-container">
+                <select
+                  value={usuarioSeleccionado ?? ""}
+                  onChange={(e) => setUsuarioSeleccionado(parseInt(e.target.value))}
+                >
+                  {usuariosDisponibles.map((usuario) => (
                     <option key={usuario.id} value={usuario.id}>
                       {usuario.nombre}
                     </option>
                   ))}
-              </select>
-              <button
-                type="button"
-                onClick={handleAddUsuario}
-                className="add-user-button"
-                disabled={usuarioSeleccionado === null}
-              >
-                Añadir Usuario
-              </button>
-            </div>
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAddUsuario}
+                  className="add-user-button"
+                >
+                  Añadir Usuario
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="modal-actions">
-            <button
-              type="button"
-              onClick={onClose}
-              className="cancel-button"
-            >
+            <button type="button" onClick={onClose} className="cancel-button">
               Cancelar
             </button>
             <button type="submit" className="save-button">

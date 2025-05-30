@@ -192,37 +192,35 @@ const Tablero = () => {
     fetchPersonajes();
   }, [id, fetchPersonajes]);
 
-const fetchUsuariosPartida = useCallback(async () => {
-  try {
-    const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, {
-      credentials: "include",
-    });
-    const data = await response.json();
-
-    if (data.success && data.partida && Array.isArray(data.partida.jugadores)) {
-      setUsuariosPartida(data.partida.jugadores);
-    } else {
-      console.warn("No jugadores found in partida data:", data);
-    }
-  } catch (error) {
-    console.error("Error fetching partida info:", error);
-  }
-}, [id]);
-
-  const fetchUsuariosPersonaje = useCallback(async (idPersonaje) => {
-    if (!idPersonaje) return;
+  const fetchUsuariosPartida = useCallback(async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
+      const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
-      if (data.success) {
-        setUsuariosPersonaje(data.relaciones);
+
+      if (data.success && data.partida && Array.isArray(data.partida.jugadores)) {
+        setUsuariosPartida(data.partida.jugadores);
+      } else {
+        console.warn("No jugadores found in partida data:", data);
       }
     } catch (error) {
-      console.error("Error cargando relaciones usuario-personaje:", error);
+      console.error("Error fetching partida info:", error);
     }
-  }, []);
+  }, [id]);
+
+  const fetchUsuariosPersonaje = async (idPersonaje) => {
+    const res = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
+      credentials: "include"
+    });
+    const data = await res.json();
+    if (data.success) {
+      setUsuariosPersonaje(data);
+    } else {
+      console.error("Error cargando usuariosPersonaje:", data.message);
+    }
+  };
+
 
   useEffect(() => {
     fetchPersonajes();
@@ -499,14 +497,13 @@ const fetchUsuariosPartida = useCallback(async () => {
                 body: JSON.stringify({
                   id: data.id,
                   nombre: data.nombre,
-                  imagen: data.imagen,
-                  usuarios: data.usuarios
+                  imagen: data.imagen
                 }),
               });
               const result = await response.json();
               if (result.success) {
                 fetchPersonajes();
-                fetchUsuariosPersonaje(data.id);
+                fetchUsuariosPersonaje(data.id); // ✅ actualizás luego del save
                 setEditingPersonaje(null);
               } else {
                 alert("Error al guardar: " + result.message);
@@ -517,7 +514,9 @@ const fetchUsuariosPartida = useCallback(async () => {
           }}
           usuariosPartida={usuariosPartida}
           usuariosPersonaje={usuariosPersonaje}
+          refreshUsuariosPersonaje={fetchUsuariosPersonaje} 
         />
+
       )}
     </div>
   )
