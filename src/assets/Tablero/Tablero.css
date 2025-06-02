@@ -4,9 +4,14 @@
   box-sizing: border-box;
 }
 
-input {
+.left-menu input {
   background-color: white;
-  color: #000;
+  color: #000 !important;
+}
+
+.form-group input{
+  color: #000 !important;
+  background-color: white !important;
 }
 
 #root {
