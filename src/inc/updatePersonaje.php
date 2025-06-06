@@ -2,9 +2,9 @@
 include "conn.php";
 session_start();
 
-header("Access-Control-Allow-Origin: https://sndr.42web.io");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents("php://input"), true);
 

@@ -68,7 +68,7 @@ const Tablero = () => {
 
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`, {
+      const response = await fetch(`https://localhost/inc/isAdmin.php?partida_id=${id}`, {
         credentials: "include",
         headers: {
           Accept: "application/json",
@@ -90,7 +90,7 @@ const Tablero = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("https://sndr.42web.io/inc/userData.php", {
+        const response = await fetch("https://localhost/inc/userData.php", {
           credentials: "include",
           headers: { Accept: "application/json" },
         })
@@ -108,7 +108,7 @@ const Tablero = () => {
   useEffect(() => {
     const cargarImagenTablero = async () => {
       try {
-        const response = await fetch(`https://sndr.42web.io/inc/getImagenTablero.php?id_partida=${id}`, {
+        const response = await fetch(`https://localhost/inc/getImagenTablero.php?id_partida=${id}`, {
           credentials: "include",
         })
         const data = await response.json()
@@ -146,7 +146,7 @@ const Tablero = () => {
   const fetchPersonajes = useCallback(async () => {
     if (!id) return;
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getPersonajesTablero.php?id_tablero=${id}`, {
+      const response = await fetch(`https://localhost/inc/getPersonajesTablero.php?id_tablero=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -163,7 +163,7 @@ const Tablero = () => {
 
   const crearPersonaje = async (nombre, imagen) => {
     try {
-      const response = await fetch("https://sndr.42web.io/inc/crearPersonaje.php", {
+      const response = await fetch("https://localhost/inc/crearPersonaje.php", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -195,7 +195,7 @@ const Tablero = () => {
 
   const fetchUsuariosPartida = useCallback(async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, {
+      const response = await fetch(`https://localhost/inc/getPartida.php?id=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -211,7 +211,7 @@ const Tablero = () => {
   }, [id]);
 
   const fetchUsuariosPersonaje = async (idPersonaje) => {
-    const res = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
+    const res = await fetch(`https://localhost/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
       credentials: "include"
     });
     const data = await res.json();
@@ -370,7 +370,7 @@ return (
     <button
       onClick={async () => {
         try {
-          const response = await fetch("https://sndr.42web.io/inc/updateTablero.php", {
+          const response = await fetch("https://localhost/inc/updateTablero.php", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -483,7 +483,7 @@ return (
         onClose={() => setEditingPersonaje(null)}
         onSave={async (data) => {
           try {
-            const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
+            const response = await fetch("https://localhost/inc/updatePersonaje.php", {
               method: "POST",
               credentials: "include",
               headers: {

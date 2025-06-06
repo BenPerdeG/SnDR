@@ -37,7 +37,7 @@ function Profile({ isPopUp, setIsPopUp }) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('https://sndr.42web.io/inc/userData.php', {
+        const response = await fetch('https://localhost/inc/userData.php', {
           credentials: 'include',
           headers: { 'Accept': 'application/json' }
         });
@@ -62,7 +62,7 @@ function Profile({ isPopUp, setIsPopUp }) {
   const fetchLastGame = async () => {
     setLoadingGame(true);
     try {
-      const response = await fetch('https://sndr.42web.io/inc/ultimaPartida.php', {
+      const response = await fetch('https://localhost/inc/ultimaPartida.php', {
         credentials: 'include',
         headers: { 'Accept': 'application/json' }
       });
@@ -79,7 +79,7 @@ function Profile({ isPopUp, setIsPopUp }) {
   const handleLogout = async () => {
     setLogoutLoading(true);
     try {
-      await fetch('https://sndr.42web.io/inc/logout.php', {
+      await fetch('https://localhost/inc/logout.php', {
         method: 'POST',
         credentials: 'include'
       });
@@ -94,7 +94,7 @@ function Profile({ isPopUp, setIsPopUp }) {
     const newValue = e.target.checked;
     setIsPrivate(newValue);
     try {
-      await fetch('https://sndr.42web.io/inc/updatePrivacy.php', {
+      await fetch('https://localhost/inc/updatePrivacy.php', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -119,7 +119,7 @@ function Profile({ isPopUp, setIsPopUp }) {
 
     setIsDeleting(true);
     try {
-      const response = await fetch('https://sndr.42web.io/inc/deleteAccount.php', {
+      const response = await fetch('https://localhost/inc/deleteAccount.php', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -156,7 +156,7 @@ function Profile({ isPopUp, setIsPopUp }) {
 
   const handleCreatePartida = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/createPartida.php', {
+      const response = await fetch('https://localhost/inc/createPartida.php', {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -47,7 +47,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
 
   const fetchMisPartidas = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/getUserPartidas.php', {
+      const response = await fetch('https://localhost/inc/getUserPartidas.php', {
         credentials: 'include'
       });
       const data = await response.json();
@@ -85,7 +85,7 @@ const MisPartidas = ({ isPopUp, setIsPopUp }) => {
 
   const handleCreatePartida = async () => {
     try {
-      const response = await fetch('https://sndr.42web.io/inc/createPartida.php', {
+      const response = await fetch('https://localhost/inc/createPartida.php', {
         method: 'POST',
         credentials: 'include',
         headers: {

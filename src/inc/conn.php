@@ -1,12 +1,18 @@
 <?php
-$dbhost = "sql111.infinityfree.com";
-$dbuser = "if0_38158122";
-$dbpass = "lO0WGtEGoOc4T0";
+$host = "localhost";
 $dbname = "if0_38158122_sndr";
+$username = "root";
+$password = "";
 
-$con = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-
-if (!$con) {
-    die("Error de conexión: " . mysqli_connect_error());
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión: " . $e->getMessage()
+    ]);
+    exit;
 }
 ?>

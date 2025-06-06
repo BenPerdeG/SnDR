@@ -12,7 +12,7 @@ function Invitar({ isPopUpInvi, setIsPopUpInvi }) {
         e.preventDefault();
         
         try {
-            const response = await fetch("https://sndr.42web.io/inc/invitar.php", {
+            const response = await fetch("https://localhost/inc/invitar.php", {
                 method: "POST",
                 credentials: "include",
                 headers: {
