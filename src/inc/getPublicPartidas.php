@@ -1,7 +1,7 @@
 <?php
 include "conn.php";
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Content-Type: application/json");
 
 // Consulta simplificada - solo lo esencial

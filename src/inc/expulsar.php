@@ -1,6 +1,6 @@
 <?php
 ob_start();
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 require_once 'conn.php';
