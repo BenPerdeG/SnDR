@@ -1,27 +1,25 @@
 <?php
-// Iniciar buffer y sesión al principio
+// Configuración inicial
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ob_start();
 session_start();
 
-// Configurar reporte de errores
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Headers CORS (deben ir antes de cualquier output)
+// Headers CORS (ajustados para React/Vite)
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+header("Content-Type: application/json; charset=utf-8");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Manejar preflight OPTIONS
+// Manejo de preflight OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     ob_end_clean();
     http_response_code(200);
     exit;
 }
 
-// Verificar método POST
+// Validar método POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ob_end_clean();
     http_response_code(405);
@@ -29,13 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Incluir conexión después de headers
+// Conexión a BD (con detección de errores)
 include "conn.php";
+if (!$con) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 
-// Leer y validar input JSON
+// Leer input JSON
 $json = file_get_contents('php://input');
 $data = json_decode($json);
 
+// Validaciones básicas
 if ($data === null) {
     ob_end_clean();
     http_response_code(400);
@@ -43,31 +51,21 @@ if ($data === null) {
     exit;
 }
 
-// Validar campos requeridos
 if (!isset($data->email) || !isset($data->password)) {
     ob_end_clean();
     http_response_code(400);
-    echo json_encode(["success" => false, "message" => "Datos incompletos"]);
+    echo json_encode(["success" => false, "message" => "Email y contraseña requeridos"]);
     exit;
 }
 
-if (empty($data->password)) {
-    ob_end_clean();
-    http_response_code(400);
-    echo json_encode(["success" => false, "message" => "La contraseña no puede estar vacía"]);
-    exit;
-}
-
-// Procesar login
+// Procesamiento del login
 try {
-    $email = mysqli_real_escape_string($con, $data->email);
+    $email = mysqli_real_escape_string($con, trim($data->email));
     $password = $data->password;
 
-    $query = "SELECT id, password FROM Usuario WHERE email = ?";
-    $stmt = mysqli_prepare($con, $query);
-
+    $stmt = mysqli_prepare($con, "SELECT id, password FROM Usuario WHERE email = ?");
     if (!$stmt) {
-        throw new Exception("Error en la consulta: " . mysqli_error($con));
+        throw new Exception("Error en preparación de consulta: " . mysqli_error($con));
     }
 
     mysqli_stmt_bind_param($stmt, "s", $email);
@@ -80,7 +78,7 @@ try {
         ob_end_clean();
         echo json_encode([
             "success" => true,
-            "message" => "Usuario logueado correctamente",
+            "message" => "Login exitoso",
             "user_id" => $user_id
         ]);
     } else {
@@ -91,14 +89,14 @@ try {
 } catch (Exception $e) {
     ob_end_clean();
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Error del servidor: " . $e->getMessage()]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error del servidor",
+        "debug" => $e->getMessage() // Solo para desarrollo
+    ]);
 } finally {
-    if (isset($stmt)) {
-        mysqli_stmt_close($stmt);
-    }
-    if (isset($con)) {
-        mysqli_close($con);
-    }
+    if (isset($stmt)) mysqli_stmt_close($stmt);
+    if (isset($con)) mysqli_close($con);
     exit;
 }
 ?>
