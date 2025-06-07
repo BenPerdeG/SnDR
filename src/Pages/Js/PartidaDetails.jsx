@@ -37,7 +37,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   // Función para verificar si el usuario es admin
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch(`https://localhost/inc/isAdmin.php?partida_id=${id}`, {
+      const response = await fetch(`http://localhost/inc/isAdmin.php?partida_id=${id}`, {
         credentials: "include",
         headers: {
           Accept: "application/json",
@@ -67,7 +67,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const fetchPartida = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`https://localhost/inc/getPartida.php?id=${id}`, { credentials: "include" })
+      const response = await fetch(`http://localhost/inc/getPartida.php?id=${id}`, { credentials: "include" })
       const data = await response.json()
 
       if (data.success) {
@@ -101,7 +101,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     setIsPrivate(newValue)
 
     try {
-      await fetch("https://localhost/inc/updatePrivacy.php", {
+      await fetch("http://localhost/inc/updatePrivacy.php", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -120,7 +120,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     if (!isAdmin) return
 
     try {
-      const response = await fetch("https://localhost/inc/updatePartida.php", {
+      const response = await fetch("http://localhost/inc/updatePartida.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -153,7 +153,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
     if (window.confirm(`¿Estás seguro de que quieres expulsar a este jugador?`)) {
       try {
-        const response = await fetch("https://localhost/inc/expulsar.php", {
+        const response = await fetch("http://localhost/inc/expulsar.php", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -183,7 +183,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
     if (window.confirm("¿Estás seguro de que quieres borrar esta partida? Esta acción no se puede deshacer.")) {
       try {
-        const response = await fetch("https://localhost/inc/borrarPartida.php", {
+        const response = await fetch("http://localhost/inc/borrarPartida.php", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },

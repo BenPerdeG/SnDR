@@ -27,7 +27,7 @@ const Search = ({ isPopUp, setIsPopUp }) => {
 
   const fetchPublicPartidas = async () => {
     try {
-      const response = await fetch('https://localhost/inc/getPublicPartidas.php', {
+      const response = await fetch('http://localhost/inc/getPublicPartidas.php', {
         credentials: 'include'
       });
       const data = await response.json();

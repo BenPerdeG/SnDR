@@ -52,7 +52,7 @@ const PersonajeEdit = ({
     if (!usuario) return;
 
     try {
-      const res = await fetch("https://localhost/inc/addUsuarioPersonaje.php", {
+      const res = await fetch("http://localhost/inc/addUsuarioPersonaje.php", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ const PersonajeEdit = ({
 
   const handleRemoveUsuario = async (idUsuario) => {
     try {
-      const res = await fetch("https://localhost/inc/removeUsuarioPersonaje.php", {
+      const res = await fetch("http://localhost/inc/removeUsuarioPersonaje.php", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
