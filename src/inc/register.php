@@ -4,7 +4,17 @@ session_start();
 error_reporting(0);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 include "conn.php";
+if (!$con) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 require_once "cors-php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
