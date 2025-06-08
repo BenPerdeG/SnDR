@@ -94,6 +94,15 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     }
   }, [id, user])
 
+  const [imagenFile, setImagenFile] = useState(null);
+
+  const handleImagenChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagenFile(file);
+    }
+  };
+
   const handlePrivacyChange = async (e) => {
     if (!isAdmin) return
 
@@ -115,38 +124,68 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     }
   }
 
-  const handleUpdate = async (e) => {
-    e.preventDefault()
-    if (!isAdmin) return
+ const handleUpdate = async (e) => {
+  e.preventDefault();
+  if (!isAdmin) return;
+
+  let imagenUrl = editedImagen; // usa la imagen anterior por defecto
+
+  if (imagenFile) {
+    const formData = new FormData();
+    formData.append("imagen", imagenFile);
 
     try {
-      const response = await fetch("http://localhost/inc/updatePartida.php", {
+      const uploadResponse = await fetch("http://localhost/inc/uploadImagenPartida.php", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          id: partida.id,
-          nombre: editedNombre,
-          descripcion: editedDescripcion,
-          imagen: editedImagen,
-        }),
-      })
+        body: formData,
+      });
 
-      const data = await response.json()
-      if (data.success) {
-        setPartida({
-          ...partida,
-          nombre: editedNombre,
-          descripcion: editedDescripcion,
-          imagen: editedImagen,
-        })
-        setShowForm(false)
+      const uploadData = await uploadResponse.json();
+
+      if (uploadData.success) {
+        imagenUrl = uploadData.url;
+      } else {
+        alert("Error al subir imagen: " + uploadData.message);
+        return;
       }
-      fetchPartida()
-    } catch (err) {
-      alert("Error de red")
+    } catch (error) {
+      console.error("Error al subir imagen:", error);
+      alert("Error de red al subir la imagen");
+      return;
     }
   }
+
+  try {
+    const response = await fetch("http://localhost/inc/updatePartida.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        id: partida.id,
+        nombre: editedNombre,
+        descripcion: editedDescripcion,
+        imagen: imagenUrl,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      setPartida({
+        ...partida,
+        nombre: editedNombre,
+        descripcion: editedDescripcion,
+        imagen: imagenUrl,
+      });
+      setShowForm(false);
+    }
+
+    fetchPartida();
+  } catch (err) {
+    alert("Error de red");
+    console.error(err);
+  }
+};
+
   const navigate = useNavigate();
   const handleExpulsar = async (jugadorId) => {
     if (!isAdmin) return
@@ -260,7 +299,8 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                     </label>
                     <label>
                       Imagen (URL):
-                      <input type="text" value={editedImagen} onChange={(e) => setEditedImagen(e.target.value)} />
+                      <input type="file" name="imagen" accept="image/*" onChange={handleImagenChange} />
+
                     </label>
                     <label className="figma-private-btn">
                       <input type="checkbox" checked={isPrivate} onChange={handlePrivacyChange} disabled={!isAdmin} />
