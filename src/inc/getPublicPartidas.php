@@ -1,5 +1,12 @@
 <?php
-include "conn.php";
+if (!include "conn.php" || !$con) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Content-Type: application/json");
