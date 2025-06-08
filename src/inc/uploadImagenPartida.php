@@ -1,8 +1,9 @@
 <?php
 require_once "cors.php";
 
-// Ruta donde guardarás las imágenes
-$targetDir = "../../public/uploads/";
+
+$targetDir = "/var/www/html/uploads/";  
+
 if (!is_dir($targetDir)) {
     mkdir($targetDir, 0755, true);
 }
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $targetFile = $targetDir . $fileName;
 
     if (move_uploaded_file($file["tmp_name"], $targetFile)) {
-        // URL accesible públicamente (ajusta según tu entorno)
+        
         $url = "/uploads/" . $fileName;
         echo json_encode(["success" => true, "url" => $url]);
     } else {

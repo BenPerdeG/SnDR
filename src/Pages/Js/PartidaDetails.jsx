@@ -124,67 +124,66 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     }
   }
 
- const handleUpdate = async (e) => {
-  e.preventDefault();
-  if (!isAdmin) return;
-
-  let imagenUrl = editedImagen; // usa la imagen anterior por defecto
-
-  if (imagenFile) {
-    const formData = new FormData();
-    formData.append("imagen", imagenFile);
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!isAdmin) return;
 
     try {
-      const uploadResponse = await fetch("http://localhost/inc/uploadImagenPartida.php", {
-        method: "POST",
-        body: formData,
-      });
+      // 1. Subir imagen (si hay un archivo nuevo)
+      let imagenUrl = editedImagen; // Mantener la imagen actual por defecto
 
-      const uploadData = await uploadResponse.json();
+      if (imagenFile) {
+        const imagenFormData = new FormData();
+        imagenFormData.append("imagen", imagenFile);
 
-      if (uploadData.success) {
-        imagenUrl = uploadData.url;
-      } else {
-        alert("Error al subir imagen: " + uploadData.message);
-        return;
+        const uploadResponse = await fetch("http://localhost/inc/uploadImagenPartida.php", {
+          method: "POST",
+          body: imagenFormData, // ¡Sin headers! (Fetch genera automáticamente multipart/form-data)
+          credentials: "include",
+        });
+
+        const uploadData = await uploadResponse.json();
+
+        if (!uploadData.success) {
+          throw new Error(uploadData.message || "Error al subir imagen");
+        }
+
+        imagenUrl = uploadData.url; // URL de la nueva imagen
       }
-    } catch (error) {
-      console.error("Error al subir imagen:", error);
-      alert("Error de red al subir la imagen");
-      return;
-    }
-  }
 
-  try {
-    const response = await fetch("http://localhost/inc/updatePartida.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        id: partida.id,
-        nombre: editedNombre,
-        descripcion: editedDescripcion,
-        imagen: imagenUrl,
-      }),
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      setPartida({
-        ...partida,
-        nombre: editedNombre,
-        descripcion: editedDescripcion,
-        imagen: imagenUrl,
+      // 2. Actualizar datos de la partida (incluyendo la nueva URL)
+      const updateResponse = await fetch("http://localhost/inc/updatePartida.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          id: partida.id,
+          nombre: editedNombre,
+          descripcion: editedDescripcion,
+          imagen: imagenUrl, // Aquí envías la ruta de la imagen
+        }),
       });
-      setShowForm(false);
-    }
 
-    fetchPartida();
-  } catch (err) {
-    alert("Error de red");
-    console.error(err);
-  }
-};
+      const updateData = await updateResponse.json();
+
+      if (updateData.success) {
+        // Actualizar el estado local
+        setPartida({
+          ...partida,
+          nombre: editedNombre,
+          descripcion: editedDescripcion,
+          imagen: imagenUrl,
+        });
+        setShowForm(false);
+        alert("¡Partida actualizada!");
+      } else {
+        throw new Error(updateData.message || "Error al actualizar partida");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert(err.message);
+    }
+  };
 
   const navigate = useNavigate();
   const handleExpulsar = async (jugadorId) => {
@@ -298,9 +297,14 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                       <textarea value={editedDescripcion} onChange={(e) => setEditedDescripcion(e.target.value)} />
                     </label>
                     <label>
-                      Imagen (URL):
-                      <input type="file" name="imagen" accept="image/*" onChange={handleImagenChange} />
-
+                      Imagen:
+                      <input
+                        type="file"
+                        name="imagen"
+                        accept="image/*"
+                        onChange={handleImagenChange}
+                        key={imagenFile ? "file-selected" : "no-file"} // Esto ayuda a resetear el input
+                      />
                     </label>
                     <label className="figma-private-btn">
                       <input type="checkbox" checked={isPrivate} onChange={handlePrivacyChange} disabled={!isAdmin} />
