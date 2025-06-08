@@ -1,5 +1,7 @@
 <?php
-if (!include "conn.php" || !$con) {
+include "conn.php";
+if (!$con) {
+    ob_end_clean();
     http_response_code(500);
     echo json_encode([
         "success" => false,
