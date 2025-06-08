@@ -1,8 +1,6 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Credentials: true");
-header('Content-Type: application/json');
 require_once 'conn.php';
+require_once "cors.php";
 
 if (!$con || $con->connect_error) {
     http_response_code(500);

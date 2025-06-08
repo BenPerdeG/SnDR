@@ -7,9 +7,7 @@ if (!include "conn.php" || !$con) {
     ]);
     exit;
 }
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Credentials: true");
-header('Content-Type: application/json');
+require_once "cors.php";
 
 
 if (!isset($_GET['id_personaje'])) {

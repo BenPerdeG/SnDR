@@ -8,8 +8,7 @@ if (!include "conn.php" || !$con) {
     exit;
 }
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Content-Type: application/json");
+
 
 // Consulta simplificada - solo lo esencial
 $query = "SELECT id, nombre, descripcion, imagen 

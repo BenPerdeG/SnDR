@@ -9,9 +9,7 @@ if (!include "conn.php" || !$con) {
 }
 session_start();
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Credentials: true");
-header('Content-Type: application/json');
+require_once "cors.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
