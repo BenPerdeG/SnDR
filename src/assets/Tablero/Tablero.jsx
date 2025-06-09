@@ -422,6 +422,29 @@ const Tablero = () => {
                   </div>
                 ))
               )}
+              <button
+                className="crear-personaje-btn"
+                style={{ marginBottom: '10px' }}
+                onClick={async () => {
+                  const nombre = prompt("Nombre del personaje:");
+                  if (!nombre) return;
+
+                  const imagen = ""; // Puedes cambiar esto si quieres pedir una imagen
+                  const result = await crearPersonaje(nombre, imagen);
+
+                  if (result.success) {
+                    const nuevo = personajes.find(p => p.nombre === nombre); // busca el personaje recién creado
+                    if (nuevo) {
+                      setEditingPersonaje(nuevo);
+                      fetchUsuariosPersonaje(nuevo.id);
+                    }
+                  } else {
+                    alert("Error al crear personaje: " + result.message);
+                  }
+                }}
+              >
+                Crear personaje
+              </button>
             </div>
           </div >
         )
