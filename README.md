@@ -1,4 +1,5 @@
 SnDR
+#####
 El proyecto Stats and Dice Rolls (SnDR), desarrollado por Benjamín Pérez de Gea, es una plataforma web gratuita diseñada para facilitar partidas de juegos de rol de mesa (TTRPG) en línea. Surge como una alternativa accesible a herramientas comerciales como Roll20, con el objetivo de reducir barreras económicas y técnicas para nuevos jugadores.
 
 Propósito:
