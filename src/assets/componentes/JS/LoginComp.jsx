@@ -24,7 +24,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
     try {
-      const responseRegister = await fetch("https://sndr.42web.io/inc/register.php", {
+      const responseRegister = await fetch("http://localhost/inc/register.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formReg),
@@ -49,7 +49,7 @@ const Login = ({ isPopUp, setIsPopUp }) => {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     try {
-      const responseLogin = await fetch("https://sndr.42web.io/inc/login.php", {
+      const responseLogin = await fetch("http://localhost/inc/login.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formLog),

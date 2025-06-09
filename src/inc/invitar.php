@@ -1,6 +1,6 @@
 <?php
 ob_start();
-header('Content-Type: application/json');
+require_once "cors.php";
 require_once 'conn.php';
 
 if (!$con) {

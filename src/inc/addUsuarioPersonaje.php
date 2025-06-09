@@ -1,10 +1,18 @@
 <?php
 include "conn.php";
+if (!$con) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 session_start();
 
-header("Access-Control-Allow-Origin: https://sndr.42web.io");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+require_once "cors.php";
+
 
 $data = json_decode(file_get_contents("php://input"), true);
 

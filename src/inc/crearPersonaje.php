@@ -1,10 +1,17 @@
 <?php
 session_start();
 include "conn.php";
+if (!$con) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+require_once "cors.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

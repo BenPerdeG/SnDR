@@ -1,8 +1,18 @@
 <?php
-include "conn.php";
+require_once "cors.php";
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+include "conn.php";
+if (!$con) {
+    ob_end_clean();
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
+
+
 
 // Consulta simplificada - solo lo esencial
 $query = "SELECT id, nombre, descripcion, imagen 

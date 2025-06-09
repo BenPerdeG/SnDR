@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import { useUser } from "../../context/UserContext"
 import ChatTab from "../componentes/JS/ChatTab"
 import { db } from "./fireBaseInit.js"
-import { onValue, ref, push } from "firebase/database"
+import { onValue, ref, push, set } from "firebase/database"
 import PersonajeEdit from '../componentes/JS/PersonajeEdit.jsx';
 
 const Tablero = () => {
@@ -43,6 +43,25 @@ const Tablero = () => {
 
   const handleSetChatInput = useCallback((value) => setChatInput(value), [])
   const handleSetChatMessages = useCallback((updater) => setChatMessages(updater), [])
+  const getImagenUrl = (imagen) => {
+    if (!imagen) {
+
+      return "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
+    }
+
+    // Si imagen ya es una URL absoluta
+    if (imagen.startsWith("http://") || imagen.startsWith("https://")) {
+      return imagen;
+    }
+
+    // Si imagen es una ruta relativa 
+    if (imagen.startsWith("/uploads")) {
+      return `http://localhost${imagen}`;
+    }
+
+
+    return "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
+  }
 
   const rollDice = () => {
     const sides = Number.parseInt(selectedDice.slice(1))
@@ -68,7 +87,7 @@ const Tablero = () => {
 
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`, {
+      const response = await fetch(`http://localhost/inc/isAdmin.php?partida_id=${id}`, {
         credentials: "include",
         headers: {
           Accept: "application/json",
@@ -90,7 +109,7 @@ const Tablero = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("https://sndr.42web.io/inc/userData.php", {
+        const response = await fetch("http://localhost/inc/userData.php", {
           credentials: "include",
           headers: { Accept: "application/json" },
         })
@@ -105,29 +124,52 @@ const Tablero = () => {
     fetchUserData()
   }, [])
 
+
+  // Escuchar posición de personajes
+  useEffect(() => {
+    if (!id) return;
+
+    const boxesRef = ref(db, `tableros/${id}/boxes`);
+    const unsubscribe = onValue(boxesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const boxesArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value,
+        }));
+        setPersonajeBoxes(boxesArray);
+      }
+    });
+
+    return () => unsubscribe(); // Limpieza
+  }, [id]);
+
+
+
   useEffect(() => {
     const cargarImagenTablero = async () => {
       try {
-        const response = await fetch(`https://sndr.42web.io/inc/getImagenTablero.php?id_partida=${id}`, {
+        const response = await fetch(`http://localhost/inc/getImagenTablero.php?id_partida=${id}`, {
           credentials: "include",
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
         if (!data.success || !data.imagen) {
-          setFondoUrl(null)
-          return
+          setFondoUrl(null);
+          return;
         }
-        const img = new Image()
-        img.onload = () => setFondoUrl(data.imagen)
-        img.onerror = () => setFondoUrl(null)
-        img.src = data.imagen
+        const img = new Image();
+        img.onload = () => setFondoUrl(data.imagen);
+        img.onerror = () => setFondoUrl(null);
+        img.src = getImagenUrl(data.imagen);  // Aquí se usa getImagenUrl para obtener URL completa
       } catch (err) {
-        console.error("Error al cargar imagen:", err)
-        setFondoUrl(null)
+        console.error("Error al cargar imagen:", err);
+        setFondoUrl(null);
       }
-    }
+    };
 
-    if (id) cargarImagenTablero()
-  }, [id])
+    if (id) cargarImagenTablero();
+  }, [id]);
+
 
   useEffect(() => {
     const messagesRef = ref(db, `chatrooms/${id}/messages`)
@@ -146,7 +188,7 @@ const Tablero = () => {
   const fetchPersonajes = useCallback(async () => {
     if (!id) return;
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getPersonajesTablero.php?id_tablero=${id}`, {
+      const response = await fetch(`http://localhost/inc/getPersonajesTablero.php?id_tablero=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -163,7 +205,7 @@ const Tablero = () => {
 
   const crearPersonaje = async (nombre, imagen) => {
     try {
-      const response = await fetch("https://sndr.42web.io/inc/crearPersonaje.php", {
+      const response = await fetch("http://localhost/inc/crearPersonaje.php", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -195,7 +237,7 @@ const Tablero = () => {
 
   const fetchUsuariosPartida = useCallback(async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, {
+      const response = await fetch(`http://localhost/inc/getPartida.php?id=${id}`, {
         credentials: "include",
       });
       const data = await response.json();
@@ -211,7 +253,7 @@ const Tablero = () => {
   }, [id]);
 
   const fetchUsuariosPersonaje = async (idPersonaje) => {
-    const res = await fetch(`https://sndr.42web.io/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
+    const res = await fetch(`http://localhost/inc/getUsuariosPersonaje.php?id_personaje=${idPersonaje}`, {
       credentials: "include"
     });
     const data = await res.json();
@@ -228,16 +270,14 @@ const Tablero = () => {
   }, [id, fetchPersonajes, fetchUsuariosPartida]);
 
   const addBoxForPersonaje = (personaje) => {
-    setPersonajeBoxes(prev => [
-      ...prev,
-      {
-        id: prev.length,
-        left: 250,
-        top: 250,
-        imagen: personaje.imagen || "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-      }
-    ])
-  }
+    const boxRef = ref(db, `tableros/${id}/boxes/${personaje.id}`);
+    set(boxRef, {
+      left: 250,
+      top: 250,
+      imagen: personaje.imagen || "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg",
+    });
+  };
+
 
   const handleMouseDown = (index, type = "static") => () => {
     setMouseDownBox({ index, type });
@@ -248,46 +288,85 @@ const Tablero = () => {
   }
 
   const handleMouseMove = (event) => {
-    if (mouseDownBox === null) return
+    if (mouseDownBox === null || mouseDownBox.type !== "personaje") return;
 
-    const container = containerRef.current
-    if (!container) return
+    const container = containerRef.current;
+    if (!container) return;
 
-    let clientX = event.clientX + container.scrollLeft
-    let clientY = event.clientY + container.scrollTop
+    let clientX = event.clientX + container.scrollLeft;
+    let clientY = event.clientY + container.scrollTop;
 
-    const offsetLeft = container.getBoundingClientRect().left
-    const offsetTop = container.getBoundingClientRect().top
+    const offsetLeft = container.getBoundingClientRect().left;
+    const offsetTop = container.getBoundingClientRect().top;
 
-    clientX = clientX - offsetLeft
-    clientY = clientY - offsetTop
+    clientX = clientX - offsetLeft;
+    clientY = clientY - offsetTop;
 
-    const snapValue = Math.floor((100 / snapToGrid) * canvasSize / 100)
-    const snapedX = clientX - (clientX % snapValue)
-    const snapedY = clientY - (clientY % snapValue)
+    const snapValue = Math.floor((100 / snapToGrid) * canvasSize / 100);
+    const snapedX = clientX - (clientX % snapValue);
+    const snapedY = clientY - (clientY % snapValue);
 
-    if (mouseDownBox.type === "static") {
-      const box = boxRefs.current[mouseDownBox.index]
-      if (box) {
-        box.style.left = `${snapedX}px`
-        box.style.top = `${snapedY}px`
-      }
-    } else if (mouseDownBox.type === "personaje") {
-      setPersonajeBoxes(prev => {
-        const updated = [...prev];
-        updated[mouseDownBox.index] = {
-          ...updated[mouseDownBox.index],
-          left: snapedX,
-          top: snapedY
-        };
-        return updated;
+    const personajeId = personajeBoxes[mouseDownBox.index]?.id;
+    if (personajeId) {
+      const boxRef = ref(db, `tableros/${id}/boxes/${personajeId}`);
+      set(boxRef, {
+        left: snapedX,
+        top: snapedY,
+        imagen: personajeBoxes[mouseDownBox.index]?.imagen || "",
       });
     }
-  }
+  };
 
   const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
   const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true)
   const [activeTab, setActiveTab] = useState(0)
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Vista previa local inmediata (opcional)
+    const localUrl = URL.createObjectURL(file);
+    setFondoUrl(localUrl);
+
+    const formData = new FormData();
+    formData.append("imagen", file);
+
+    try {
+      const res = await fetch("http://localhost/inc/uploadImagen.php", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.url) {
+        setFondoUrl(data.url);      // Mostrar imagen real subida
+
+        // Aquí haces el update directamente:
+        const saveRes = await fetch("http://localhost/inc/updateTablero.php", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: data.url }),
+        });
+
+        const saveData = await saveRes.json();
+
+        if (!saveData.success) {
+          alert("Error guardando la imagen en el tablero: " + saveData.message);
+        } else {
+          setTableroImage(data.url); // Actualizas el estado con la url real
+        }
+
+      } else {
+        alert("Error al subir imagen: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
+    }
+  };
+
 
   useEffect(() => {
     updateGridClass()
@@ -331,19 +410,9 @@ const Tablero = () => {
                     }}
                   >
                     <img
-                      src={
-                        p.imagen && !p.imagen.startsWith('"')
-                          ? p.imagen
-                          : "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-                      }
+                      src={getImagenUrl(p.imagen)}
                       alt={`Personaje ${p.id}`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginRight: "10px",
-                        objectFit: "cover",
-                        pointerEvents: "none"
-                      }}
+                      style={{ width: 50, height: 50, marginRight: 10, objectFit: "cover" }}
                     />
                     <span onClick={() => {
                       setEditingPersonaje(p);
@@ -351,169 +420,146 @@ const Tablero = () => {
                     }}>{p.nombre}</span>
                     <button className="añadirTablero" onClick={() => addBoxForPersonaje(p)}>﹢</button>
                   </div>
-            ))
+                ))
               )}
-          </div>
+            </div>
           </div >
         )
       case 2:
-return (
-  <div className="tab-content">
-    <h3>Editar Imagen del Tablero</h3>
-    <input
-      type="text"
-      placeholder="URL de la imagen"
-      value={tableroImage}
-      onChange={(e) => setTableroImage(e.target.value)}
-      style={{ width: "100%", marginBottom: "10px" }}
-    />
-    <button
-      onClick={async () => {
-        try {
-          const response = await fetch("https://sndr.42web.io/inc/updateTablero.php", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: tableroImage }),
-          })
-          const data = await response.json()
-          if (data.success) {
-            window.location.reload()
-          } else {
-            alert("Error: " + data.message)
-          }
-        } catch (error) {
-          alert("Error de red: " + error.message)
-        }
-      }}
-    >
-      Guardar
-    </button>
-  </div>
-)
+        return (
+          <div className="tab-content">
+            <h3>Editar Imagen del Tablero</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+          </div>
+        )
       default:
-return null
+        return null
     }
   }
 
-return (
-  <div className="tablero-container" style={{
-    backgroundColor: fondoUrl ? "transparent" : "white",
-    backgroundImage: fondoUrl ? `url(${fondoUrl})` : "none",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-  }}>
-    <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
-      {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-    </button>
-
-    <button className="collapse-button right-toggle-button" onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}>
-      {rightMenuCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-    </button>
-
-    <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
-      <div className="left-menu-content">
-        <div className="left-menu-header">
-          <h3>Dados</h3>
-        </div>
-        <div className="left-menu-buttons">
-          <label>Tipo de dado:</label>
-          <select value={selectedDice} onChange={(e) => setSelectedDice(e.target.value)}>
-            {["d2", "d4", "d6", "d8", "d10", "d12", "d20"].map((die) => (
-              <option key={die} value={die}>{die}</option>
-            ))}
-          </select>
-
-          <label>Cantidad:</label>
-          <input type="number" min="1" max="10" value={diceCount} onChange={(e) => setDiceCount(Number.parseInt(e.target.value))} />
-          <button onClick={rollDice}>Lanzar</button>
-        </div>
-      </div>
-    </div>
-
-    <div className={`right-menu ${rightMenuCollapsed ? "collapsed" : ""}`}>
-      <div className="right-menu-content">
-        <div className="tabs-container">
-          <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}><span>Chat</span></div>
-          <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}><span>Personajes</span></div>
-          {isAdmin && (
-            <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}><span>Editar Imagen</span></div>
-          )}
-        </div>
-        <div className="tab-content-container">
-          <TabContent />
-        </div>
-      </div>
-    </div>
-
+  return (
     <div
-      id="parentContainer"
-      ref={parentRef}
-      className="grid g"
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-      style={{ position: "relative" }}
+      className="tablero-container"
+      style={{
+        backgroundColor: fondoUrl ? "transparent" : "white",
+        backgroundImage: fondoUrl ? `url(${getImagenUrl(fondoUrl)})` : "none",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
     >
-      <div id="container" ref={containerRef} style={{ position: "relative" }}>
-        {personajeBoxes.map((box, i) => (
-          <div
-            key={`personaje-${i}`}
-            className="box"
-            style={{
-              position: "absolute",
-              left: `${box.left}px`,
-              top: `${box.top}px`,
-              backgroundImage: `url(${box.imagen})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              cursor: mouseDownBox?.index === i && mouseDownBox?.type === "personaje" ? "grabbing" : "grab",
-            }}
-            onMouseDown={handleMouseDown(i, "personaje")}
-          />
-        ))}
-      </div>
-    </div>
+      <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
+        {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+      </button>
 
-    {editingPersonaje && (
-      <PersonajeEdit
-        personaje={editingPersonaje}
-        onClose={() => setEditingPersonaje(null)}
-        onSave={async (data) => {
-          try {
-            const response = await fetch("https://sndr.42web.io/inc/updatePersonaje.php", {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                id: data.id,
-                nombre: data.nombre,
-                imagen: data.imagen
-              }),
-            });
-            const result = await response.json();
-            if (result.success) {
-              fetchPersonajes();
-              fetchUsuariosPersonaje(data.id);
-              setEditingPersonaje(null);
-            } else {
-              alert("Error al guardar: " + result.message);
+      <button className="collapse-button right-toggle-button" onClick={() => setRightMenuCollapsed(!rightMenuCollapsed)}>
+        {rightMenuCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      </button>
+
+      <div className={`left-menu ${leftMenuCollapsed ? "collapsed" : ""}`}>
+        <div className="left-menu-content">
+          <div className="left-menu-header">
+            <h3>Dados</h3>
+          </div>
+          <div className="left-menu-buttons">
+            <label>Tipo de dado:</label>
+            <select value={selectedDice} onChange={(e) => setSelectedDice(e.target.value)}>
+              {["d2", "d4", "d6", "d8", "d10", "d12", "d20"].map((die) => (
+                <option key={die} value={die}>{die}</option>
+              ))}
+            </select>
+
+            <label>Cantidad:</label>
+            <input type="number" min="1" max="10" value={diceCount} onChange={(e) => setDiceCount(Number.parseInt(e.target.value))} />
+            <button onClick={rollDice}>Lanzar</button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`right-menu ${rightMenuCollapsed ? "collapsed" : ""}`}>
+        <div className="right-menu-content">
+          <div className="tabs-container">
+            <div className={`tab ${activeTab === 0 ? "active" : ""}`} onClick={() => setActiveTab(0)}><span>Chat</span></div>
+            <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => setActiveTab(1)}><span>Personajes</span></div>
+            {isAdmin && (
+              <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => setActiveTab(2)}><span>Editar Imagen</span></div>
+            )}
+          </div>
+          <div className="tab-content-container">
+            <TabContent />
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="parentContainer"
+        ref={parentRef}
+        className="grid g"
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        style={{ position: "relative" }}
+      >
+        <div id="container" ref={containerRef} style={{ position: "relative" }}>
+          {personajeBoxes.map((box, i) => (
+            <div
+              key={`personaje-${i}`}
+              className="box"
+              style={{
+                position: "absolute",
+                left: `${box.left}px`,
+                top: `${box.top}px`,
+                backgroundImage: `url(${getImagenUrl(box.imagen)})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                cursor: mouseDownBox?.index === i && mouseDownBox?.type === "personaje" ? "grabbing" : "grab",
+              }}
+              onMouseDown={handleMouseDown(i, "personaje")}
+            />
+          ))}
+        </div>
+      </div>
+
+      {editingPersonaje && (
+        <PersonajeEdit
+          personaje={editingPersonaje}
+          onClose={() => setEditingPersonaje(null)}
+          onSave={async (data) => {
+            try {
+              const response = await fetch("http://localhost/inc/updatePersonaje.php", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  id: data.id,
+                  nombre: data.nombre,
+                  imagen: data.imagen
+                }),
+              });
+              const result = await response.json();
+              if (result.success) {
+                fetchPersonajes();
+                fetchUsuariosPersonaje(data.id);
+                setEditingPersonaje(null);
+              } else {
+                alert("Error al guardar: " + result.message);
+              }
+            } catch (error) {
+              alert("Error de red: " + error.message);
             }
-          } catch (error) {
-            alert("Error de red: " + error.message);
-          }
-        }}
-        usuariosPartida={usuariosPartida}
-        usuariosPersonaje={usuariosPersonaje}
-        refreshUsuariosPersonaje={fetchUsuariosPersonaje}
-      />
-    )}
-  </div>
-)
+          }}
+          usuariosPartida={usuariosPartida}
+          usuariosPersonaje={usuariosPersonaje}
+          refreshUsuariosPersonaje={fetchUsuariosPersonaje}
+        />
+      )}
+    </div>
+  )
 }
 
 export default Tablero

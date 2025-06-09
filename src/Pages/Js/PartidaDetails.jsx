@@ -37,7 +37,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   // Función para verificar si el usuario es admin
   const checkAdminStatus = async () => {
     try {
-      const response = await fetch(`https://sndr.42web.io/inc/isAdmin.php?partida_id=${id}`, {
+      const response = await fetch(`http://localhost/inc/isAdmin.php?partida_id=${id}`, {
         credentials: "include",
         headers: {
           Accept: "application/json",
@@ -67,7 +67,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   const fetchPartida = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`https://sndr.42web.io/inc/getPartida.php?id=${id}`, { credentials: "include" })
+      const response = await fetch(`http://localhost/inc/getPartida.php?id=${id}`, { credentials: "include" })
       const data = await response.json()
 
       if (data.success) {
@@ -94,6 +94,15 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     }
   }, [id, user])
 
+  const [imagenFile, setImagenFile] = useState(null);
+
+  const handleImagenChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImagenFile(file);
+    }
+  };
+
   const handlePrivacyChange = async (e) => {
     if (!isAdmin) return
 
@@ -101,7 +110,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
     setIsPrivate(newValue)
 
     try {
-      await fetch("https://sndr.42web.io/inc/updatePrivacy.php", {
+      await fetch("http://localhost/inc/updatePrivacy.php", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -116,11 +125,34 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
   }
 
   const handleUpdate = async (e) => {
-    e.preventDefault()
-    if (!isAdmin) return
+    e.preventDefault();
+    if (!isAdmin) return;
 
     try {
-      const response = await fetch("https://sndr.42web.io/inc/updatePartida.php", {
+      // 1. Subir imagen (si hay un archivo nuevo)
+      let imagenUrl = editedImagen; // Mantener la imagen actual por defecto
+
+      if (imagenFile) {
+        const imagenFormData = new FormData();
+        imagenFormData.append("imagen", imagenFile);
+
+        const uploadResponse = await fetch("http://localhost/inc/uploadImagen.php", {
+          method: "POST",
+          body: imagenFormData, // ¡Sin headers! (Fetch genera automáticamente multipart/form-data)
+          credentials: "include",
+        });
+
+        const uploadData = await uploadResponse.json();
+
+        if (!uploadData.success) {
+          throw new Error(uploadData.message || "Error al subir imagen");
+        }
+
+        imagenUrl = uploadData.url; // URL de la nueva imagen
+      }
+
+      // 2. Actualizar datos de la partida (incluyendo la nueva URL)
+      const updateResponse = await fetch("http://localhost/inc/updatePartida.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -128,32 +160,38 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
           id: partida.id,
           nombre: editedNombre,
           descripcion: editedDescripcion,
-          imagen: editedImagen,
+          imagen: imagenUrl, // Aquí envías la ruta de la imagen
         }),
-      })
+      });
 
-      const data = await response.json()
-      if (data.success) {
+      const updateData = await updateResponse.json();
+
+      if (updateData.success) {
+        // Actualizar el estado local
         setPartida({
           ...partida,
           nombre: editedNombre,
           descripcion: editedDescripcion,
-          imagen: editedImagen,
-        })
-        setShowForm(false)
+          imagen: imagenUrl,
+        });
+        setShowForm(false);
+        alert("¡Partida actualizada!");
+      } else {
+        throw new Error(updateData.message || "Error al actualizar partida");
       }
-      fetchPartida()
     } catch (err) {
-      alert("Error de red")
+      console.error("Error:", err);
+      alert(err.message);
     }
-  }
+  };
+
   const navigate = useNavigate();
   const handleExpulsar = async (jugadorId) => {
     if (!isAdmin) return
 
     if (window.confirm(`¿Estás seguro de que quieres expulsar a este jugador?`)) {
       try {
-        const response = await fetch("https://sndr.42web.io/inc/expulsar.php", {
+        const response = await fetch("http://localhost/inc/expulsar.php", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -183,7 +221,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
 
     if (window.confirm("¿Estás seguro de que quieres borrar esta partida? Esta acción no se puede deshacer.")) {
       try {
-        const response = await fetch("https://sndr.42web.io/inc/borrarPartida.php", {
+        const response = await fetch("http://localhost/inc/borrarPartida.php", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -259,8 +297,14 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
                       <textarea value={editedDescripcion} onChange={(e) => setEditedDescripcion(e.target.value)} />
                     </label>
                     <label>
-                      Imagen (URL):
-                      <input type="text" value={editedImagen} onChange={(e) => setEditedImagen(e.target.value)} />
+                      Imagen:
+                      <input
+                        type="file"
+                        name="imagen"
+                        accept="image/*"
+                        onChange={handleImagenChange}
+                        key={imagenFile ? "file-selected" : "no-file"} // Esto ayuda a resetear el input
+                      />
                     </label>
                     <label className="figma-private-btn">
                       <input type="checkbox" checked={isPrivate} onChange={handlePrivacyChange} disabled={!isAdmin} />
@@ -283,7 +327,11 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
             <div className="partida-right-column">
               <div className="partida-image-placeholder">
                 {partida.imagen ? (
-                  <img src={partida.imagen || "/placeholder.svg"} alt="Imagen de partida" />
+                  <img
+                    src={`http://localhost${partida.imagen}` || Gris}
+                    alt="Imagen de partida"
+                  />
+
                 ) : (
                   <img src={Gris || "/placeholder.svg"} alt="Imagen de partida" />
                 )}

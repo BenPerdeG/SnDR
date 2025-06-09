@@ -2,9 +2,7 @@
 session_start();
 include "conn.php";
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+require_once "cors.php";
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);

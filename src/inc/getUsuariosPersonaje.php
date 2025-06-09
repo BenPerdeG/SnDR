@@ -1,7 +1,16 @@
 <?php
-include("conn.php");
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+require_once "conn.php"; // Si falla, PHP emitirá un error por sí mismo
+
+if (!isset($con) || !$con) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
+
+require_once "cors.php";
 
 
 if (!isset($_GET['id_personaje'])) {

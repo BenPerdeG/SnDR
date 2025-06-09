@@ -3,9 +3,7 @@ session_start();
 include "conn.php";
 
 // Enable CORS
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+require_once "cors.php";
 
 // Debug session
 error_log("Session check - ID: " . session_id());

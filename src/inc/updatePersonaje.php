@@ -1,11 +1,18 @@
 <?php
-include "conn.php";
-session_start();
+require_once "cors.php";  
 
-header("Access-Control-Allow-Origin: https://sndr.42web.io");
-header("Access-Control-Allow-Credentials: true");
-header("Content-Type: application/json");
+require_once "conn.php";   
 
+session_start();           
+
+if (!isset($con) || !$con) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Error de conexión a la base de datos"
+    ]);
+    exit;
+}
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!isset($data['id']) || !isset($data['nombre']) || !isset($data['imagen'])) {
