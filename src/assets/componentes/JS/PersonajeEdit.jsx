@@ -100,6 +100,34 @@ const PersonajeEdit = ({
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Mostrar vista previa local
+    setImagen(URL.createObjectURL(file));
+
+    const formData = new FormData();
+    formData.append("imagen", file);
+
+    try {
+      const res = await fetch("http://localhost/inc/uploadImagen.php", {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      });
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        setImagen(data.url); // backend path
+      } else {
+        alert("Error al subir imagen: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave({
@@ -114,6 +142,10 @@ const PersonajeEdit = ({
   const usuariosDisponibles = usuariosPartida.filter(
     u => !usuariosAsignados.some(a => a.id === u.id)
   );
+
+  // Mostrar imagen correctamente (local o desde el servidor)
+  const isLocalPreview = imagen.startsWith("blob:");
+  const imagenPreview = isLocalPreview ? imagen : `http://localhost${imagen}`;
 
   return (
     <div className="modal-overlay">
@@ -135,15 +167,15 @@ const PersonajeEdit = ({
           </div>
 
           <div className="form-group">
-            <label>Imagen (URL):</label>
+            <label>Imagen (subir archivo):</label>
             <input
-              type="text"
-              value={imagen}
-              onChange={(e) => setImagen(e.target.value)}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
             />
             {imagen && (
               <div className="image-preview">
-                <img src={imagen} alt="Vista previa" />
+                <img src={imagenPreview} alt="Vista previa" />
               </div>
             )}
           </div>

@@ -43,6 +43,25 @@ const Tablero = () => {
 
   const handleSetChatInput = useCallback((value) => setChatInput(value), [])
   const handleSetChatMessages = useCallback((updater) => setChatMessages(updater), [])
+  const getImagenUrl = (imagen) => {
+    if (!imagen) {
+
+      return "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
+    }
+
+    // Si imagen ya es una URL absoluta
+    if (imagen.startsWith("http://") || imagen.startsWith("https://")) {
+      return imagen;
+    }
+
+    // Si imagen es una ruta relativa 
+    if (imagen.startsWith("/uploads")) {
+      return `http://localhost${imagen}`;
+    }
+
+
+    return "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg";
+  }
 
   const rollDice = () => {
     const sides = Number.parseInt(selectedDice.slice(1))
@@ -132,24 +151,25 @@ const Tablero = () => {
       try {
         const response = await fetch(`http://localhost/inc/getImagenTablero.php?id_partida=${id}`, {
           credentials: "include",
-        })
-        const data = await response.json()
+        });
+        const data = await response.json();
         if (!data.success || !data.imagen) {
-          setFondoUrl(null)
-          return
+          setFondoUrl(null);
+          return;
         }
-        const img = new Image()
-        img.onload = () => setFondoUrl(data.imagen)
-        img.onerror = () => setFondoUrl(null)
-        img.src = data.imagen
+        const img = new Image();
+        img.onload = () => setFondoUrl(data.imagen);
+        img.onerror = () => setFondoUrl(null);
+        img.src = getImagenUrl(data.imagen);  // Aquí se usa getImagenUrl para obtener URL completa
       } catch (err) {
-        console.error("Error al cargar imagen:", err)
-        setFondoUrl(null)
+        console.error("Error al cargar imagen:", err);
+        setFondoUrl(null);
       }
-    }
+    };
 
-    if (id) cargarImagenTablero()
-  }, [id])
+    if (id) cargarImagenTablero();
+  }, [id]);
+
 
   useEffect(() => {
     const messagesRef = ref(db, `chatrooms/${id}/messages`)
@@ -300,6 +320,53 @@ const Tablero = () => {
   const [leftMenuCollapsed, setLeftMenuCollapsed] = useState(true)
   const [rightMenuCollapsed, setRightMenuCollapsed] = useState(true)
   const [activeTab, setActiveTab] = useState(0)
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Vista previa local inmediata (opcional)
+    const localUrl = URL.createObjectURL(file);
+    setFondoUrl(localUrl);
+
+    const formData = new FormData();
+    formData.append("imagen", file);
+
+    try {
+      const res = await fetch("http://localhost/inc/uploadImagen.php", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.url) {
+        setFondoUrl(data.url);      // Mostrar imagen real subida
+
+        // Aquí haces el update directamente:
+        const saveRes = await fetch("http://localhost/inc/updateTablero.php", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: data.url }),
+        });
+
+        const saveData = await saveRes.json();
+
+        if (!saveData.success) {
+          alert("Error guardando la imagen en el tablero: " + saveData.message);
+        } else {
+          setTableroImage(data.url); // Actualizas el estado con la url real
+        }
+
+      } else {
+        alert("Error al subir imagen: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error subiendo imagen:", error);
+    }
+  };
+
 
   useEffect(() => {
     updateGridClass()
@@ -343,19 +410,9 @@ const Tablero = () => {
                     }}
                   >
                     <img
-                      src={
-                        p.imagen && !p.imagen.startsWith('"')
-                          ? p.imagen
-                          : "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-                      }
+                      src={getImagenUrl(p.imagen)}
                       alt={`Personaje ${p.id}`}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        marginRight: "10px",
-                        objectFit: "cover",
-                        pointerEvents: "none"
-                      }}
+                      style={{ width: 50, height: 50, marginRight: 10, objectFit: "cover" }}
                     />
                     <span onClick={() => {
                       setEditingPersonaje(p);
@@ -373,36 +430,10 @@ const Tablero = () => {
           <div className="tab-content">
             <h3>Editar Imagen del Tablero</h3>
             <input
-              type="text"
-              placeholder="URL de la imagen"
-              value={tableroImage}
-              onChange={(e) => setTableroImage(e.target.value)}
-              style={{ width: "100%", marginBottom: "10px" }}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
             />
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch("http://localhost/inc/updateTablero.php", {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ id_partida: parseInt(id), nueva_imagen: tableroImage }),
-                  })
-                  const data = await response.json()
-                  if (data.success) {
-                    window.location.reload()
-                  } else {
-                    alert("Error: " + data.message)
-                  }
-                } catch (error) {
-                  alert("Error de red: " + error.message)
-                }
-              }}
-            >
-              Guardar
-            </button>
           </div>
         )
       default:
@@ -411,13 +442,16 @@ const Tablero = () => {
   }
 
   return (
-    <div className="tablero-container" style={{
-      backgroundColor: fondoUrl ? "transparent" : "white",
-      backgroundImage: fondoUrl ? `url(${fondoUrl})` : "none",
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-    }}>
+    <div
+      className="tablero-container"
+      style={{
+        backgroundColor: fondoUrl ? "transparent" : "white",
+        backgroundImage: fondoUrl ? `url(${getImagenUrl(fondoUrl)})` : "none",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    >
       <button className="collapse-button left-toggle-button" onClick={() => setLeftMenuCollapsed(!leftMenuCollapsed)}>
         {leftMenuCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
@@ -478,7 +512,7 @@ const Tablero = () => {
                 position: "absolute",
                 left: `${box.left}px`,
                 top: `${box.top}px`,
-                backgroundImage: `url(${box.imagen})`,
+                backgroundImage: `url(${getImagenUrl(box.imagen)})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 cursor: mouseDownBox?.index === i && mouseDownBox?.type === "personaje" ? "grabbing" : "grab",

@@ -1,5 +1,7 @@
 <?php
-if (!include "conn.php" || !$con) {
+require_once "conn.php"; // Si falla, PHP emitirá un error por sí mismo
+
+if (!isset($con) || !$con) {
     http_response_code(500);
     echo json_encode([
         "success" => false,
@@ -7,6 +9,7 @@ if (!include "conn.php" || !$con) {
     ]);
     exit;
 }
+
 require_once "cors.php";
 
 

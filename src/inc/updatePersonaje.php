@@ -1,5 +1,11 @@
 <?php
-if (!include "conn.php" || !$con) {
+require_once "cors.php";  
+
+require_once "conn.php";   
+
+session_start();           
+
+if (!isset($con) || !$con) {
     http_response_code(500);
     echo json_encode([
         "success" => false,
@@ -7,10 +13,6 @@ if (!include "conn.php" || !$con) {
     ]);
     exit;
 }
-session_start();
-
-require_once "cors.php";
-
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (!isset($data['id']) || !isset($data['nombre']) || !isset($data['imagen'])) {
