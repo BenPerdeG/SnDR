@@ -15,7 +15,7 @@ if (!$con) {
     ]);
     exit;
 }
-require_once "cors-php";
+require_once "cors.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
