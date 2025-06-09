@@ -136,7 +136,7 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
         const imagenFormData = new FormData();
         imagenFormData.append("imagen", imagenFile);
 
-        const uploadResponse = await fetch("http://localhost/inc/uploadImagenPartida.php", {
+        const uploadResponse = await fetch("http://localhost/inc/uploadImagen.php", {
           method: "POST",
           body: imagenFormData, // ¡Sin headers! (Fetch genera automáticamente multipart/form-data)
           credentials: "include",
@@ -327,7 +327,11 @@ const PartidaDetails = ({ isPopUp, setIsPopUp }) => {
             <div className="partida-right-column">
               <div className="partida-image-placeholder">
                 {partida.imagen ? (
-                  <img src={partida.imagen || "/placeholder.svg"} alt="Imagen de partida" />
+                  <img
+                    src={`http://localhost${partida.imagen}` || Gris}
+                    alt="Imagen de partida"
+                  />
+
                 ) : (
                   <img src={Gris || "/placeholder.svg"} alt="Imagen de partida" />
                 )}

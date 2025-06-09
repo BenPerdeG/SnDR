@@ -19,7 +19,7 @@ const PartidaCard = ({ partida, buttonText = 'Unirte', onButtonClick }) => {
     <div className="partida-card">
       <div className="partida-image-container">
         {partida.imagen ? (
-          <img src={partida.imagen} alt={partida.nombre} className="partida-image" />
+          <img src={`http://localhost${partida.imagen}`} alt={partida.nombre} className="partida-image" />
         ) : (
           <img src={Gris} alt="Default partida" className="partida-image" />
         )}
