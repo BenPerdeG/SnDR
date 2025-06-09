@@ -464,10 +464,10 @@ const Tablero = () => {
               </button>
               <button
                 variant="destructive"
-                className="mt-2"
+                className="eliminarPer"
                 onClick={eliminarTodosLosPersonajes}
               >
-                Eliminar personajes del Tablero
+                Eliminar
               </button>
 
             </div>

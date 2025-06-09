@@ -512,3 +512,15 @@ label {
   justify-content: center;
   line-height: 1;
 }
+
+
+.eliminarPer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5px;
+  margin-left: 90px;
+  background-color: red;
+  padding: 5px;
+  font-size: 1em;
+}
