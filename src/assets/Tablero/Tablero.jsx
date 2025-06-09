@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import { useUser } from "../../context/UserContext"
 import ChatTab from "../componentes/JS/ChatTab"
 import { db } from "./fireBaseInit.js"
-import { onValue, ref, push, set } from "firebase/database"
+import { onValue, ref, push, set, getDatabase, remove } from "firebase/database"
 import PersonajeEdit from '../componentes/JS/PersonajeEdit.jsx';
 
 const Tablero = () => {
@@ -377,6 +377,23 @@ const Tablero = () => {
       parentRef.current.className = `grid g`
     }
   }
+ 
+
+  const eliminarTodosLosPersonajes = async () => {
+    try {
+     
+      setPersonajeBoxes([]);
+
+      const db = getDatabase();
+      const personajesRef = ref(db, "personajes"); 
+      await remove(personajesRef);
+    } catch (error) {
+      console.error("Error al eliminar personajes:", error);
+      alert("Error al eliminar personajes");
+    }
+  };
+
+
 
   const TabContent = () => {
     switch (activeTab) {
@@ -445,6 +462,14 @@ const Tablero = () => {
               >
                 Crear personaje
               </button>
+              <button
+                variant="destructive"
+                className="mt-2"
+                onClick={eliminarTodosLosPersonajes}
+              >
+                Eliminar personajes del Tablero
+              </button>
+
             </div>
           </div >
         )
