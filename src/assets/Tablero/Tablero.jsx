@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import { useUser } from "../../context/UserContext"
 import ChatTab from "../componentes/JS/ChatTab"
 import { db } from "./fireBaseInit.js"
-import { onValue, ref, push, set } from "firebase/database"
+import { onValue, ref, push, set, getDatabase, remove } from "firebase/database"
 import PersonajeEdit from '../componentes/JS/PersonajeEdit.jsx';
 
 const Tablero = () => {
@@ -377,6 +377,23 @@ const Tablero = () => {
       parentRef.current.className = `grid g`
     }
   }
+ 
+
+  const eliminarTodosLosPersonajes = async () => {
+    try {
+     
+      setPersonajeBoxes([]);
+
+      const db = getDatabase();
+      const personajesRef = ref(db, "personajes"); 
+      await remove(personajesRef);
+    } catch (error) {
+      console.error("Error al eliminar personajes:", error);
+      alert("Error al eliminar personajes");
+    }
+  };
+
+
 
   const TabContent = () => {
     switch (activeTab) {
@@ -422,6 +439,37 @@ const Tablero = () => {
                   </div>
                 ))
               )}
+              <button
+                className="crear-personaje-btn"
+                style={{ marginBottom: '10px' }}
+                onClick={async () => {
+                  const nombre = prompt("Nombre del personaje:");
+                  if (!nombre) return;
+
+                  const imagen = ""; // Puedes cambiar esto si quieres pedir una imagen
+                  const result = await crearPersonaje(nombre, imagen);
+
+                  if (result.success) {
+                    const nuevo = personajes.find(p => p.nombre === nombre); // busca el personaje recién creado
+                    if (nuevo) {
+                      setEditingPersonaje(nuevo);
+                      fetchUsuariosPersonaje(nuevo.id);
+                    }
+                  } else {
+                    alert("Error al crear personaje: " + result.message);
+                  }
+                }}
+              >
+                Crear personaje
+              </button>
+              <button
+                variant="destructive"
+                className="mt-2"
+                onClick={eliminarTodosLosPersonajes}
+              >
+                Eliminar personajes del Tablero
+              </button>
+
             </div>
           </div >
         )
